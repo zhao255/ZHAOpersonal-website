@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zhao Xuecen - Mechanical Engineering Student</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --background-color: #f9f9f9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+        
+        nav {
+            background-color: var(--dark-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        
+        nav ul li {
+            margin: 0 1rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        section {
+            padding: 3rem 0;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .contact-info {
+            margin: 1rem 0;
+        }
+        
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .education, .experience, .projects, .skills {
+            margin-bottom: 2rem;
+        }
+        
+        .education-item, .experience-item, .project-item {
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .education-header, .experience-header, .project-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .institution, .company, .project-title {
+            font-weight: 600;
+        }
+        
+        .dates {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+        
+        ul.bullet-list {
+            list-style-type: disc;
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+        
+        .skill-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .skill-category {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .skill-category h3 {
+            margin-bottom: 1rem;
+        }
+        
+        #contact {
+            background-color: var(--light-color);
+            padding: 3rem 0;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, textarea, button {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .footer-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Skill and Project Links */
+        .skill-link, .project-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.5rem;
+            transition: color 0.3s;
+        }
+        
+        .skill-link:hover, .project-link:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        
+        /* Detailed Pages */
+        .detail-page {
+            display: none;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        
+        .detail-page.active {
+            display: block;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        
+        .back-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .gallery-placeholder {
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            margin: 2rem 0;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        /* Snake Game */
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+        
+        #snake-game {
+            display: block;
+            background-color: #111;
+            border-radius: 4px;
+        }
+        
+        #game-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        #game-controls button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            width: auto;
+        }
+        
+        #game-options {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        #game-options h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .option-group {
+            margin-bottom: 1rem;
+        }
+        
+        .color-option {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 0 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .color-option.selected {
+            border: 2px solid black;
+        }
+        
+        .on-screen-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 150px;
+            height: 150px;
+            margin: 1rem auto;
+        }
+        
+        .control-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: background-color 0.2s;
+        }
+        
+        .control-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .control-btn:active {
+            background-color: #1c6ea4;
+        }
+        
+        .control-btn.empty {
+            background-color: transparent;
+            pointer-events: none;
+        }
+        
+        .game-score {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        /* Language Skills */
+        .language-skill {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .language-name {
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        .proficiency-bar {
+            flex: 2;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .proficiency-level {
+            height: 100%;
+            background-color: var(--secondary-color);
+        }
+        
+        .youtube-embed {
+            width: 100%;
+            margin: 2rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+            
+            .education-header, .experience-header, .project-header {
+                flex-direction: column;
+            }
+            
+            .skill-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        
+        #success-message {
+            display: none;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="profile-img">ZX</div>
+            <h1>ZHAO XUECEN</h1>
+            <p>Mechanical Engineering Student</p>
+            <div class="contact-info">
+                <p>Phone: 56170888 | Email: <a href="mailto:zhaoj6332@gmail.com">zhaoj6332@gmail.com</a></p>
+            </div>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact Me</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main class="container" id="main-content">
+        <section id="about">
+            <h2>About Me</h2>
+            <p>I am a mechanical engineering student at The Hong Kong Polytechnic University with expertise in CAD design, programming, and automation. I have experience in project leadership, technical problem-solving, and cross-functional collaboration. I am particularly interested in AI applications, sustainable materials, and BIM innovation.</p>
+        </section>
+        
+        <section id="education">
+            <h2>Education</h2>
+            
+            <div class="education-item">
+                <div class="education-header">
+                    <div class="institution">The Hong Kong Polytechnic University (HK POLYU)</div>
+                    <div class="dates">Expected Graduation: 2026</div>
+                </div>
+                <div class="degree">Bachelor of Engineering (Mechanical Engineering)</div>
+                <p>Relevant Coursework: Structural Mechanics, LINEAR SYSTEMS AND CONTROL, DYNAMICS AND VIBRATIONS, NUMERICAL METHODS FOR ENGINEERS, CAD/CAM Systems, Automation & Robotics, Fluid Dynamics, Materials Science, Programming (Python, MATLAB).</p>
+            </div>
+            
+            <div class="education-item">
+                <div class="education-header">
+                    <div class="institution">Oxford International College</div>
+                    <div class="dates">2018-2022</div>
+                </div>
+                <div class="degree">British A-Levels/GCSE</div>
+            </div>
+        </section>
+        
+        <section id="experience">
+            <h2>Work Experience</h2>
+            
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div class="company">Self-employed (STEM Tutor)</div>
+                    <div class="dates">2022-2023</div>
+                </div>
+                <div class="position">Part-Time via ZOOM</div>
+                <ul class="bullet-list">
+                    <li>Taught secondary students physics and mathematics via Zoom.</li>
+                    <li>Developed customized lesson plans to address individual learning gaps.</li>
+                </ul>
+            </div>
+            
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div class="company">VineUp company</div>
+                    <div class="dates">April 2019</div>
+                </div>
+                <div class="position">Digital Engineering Intern | Gloucester UK</div>
+                <ul class="bullet-list">
+                    <li>Collaborated with cross-functional teams to digitize project documentation.</li>
+                    <li>Research and report of the user experience with their current interface.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="projects">
+            <h2>Projects</h2>
+            
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-title">Robot Basketball Competition (Team Leader)</div>
+                    <div class="dates">First semester 2024</div>
+                </div>
+                <div class="project-details">HK POLYU</div>
+                <ul class="bullet-list">
+                    <li>Led a 8-member team to design and build a functional robot using SolidWorks (3D modeling) and Python (sensor programming).</li>
+                    <li>Resolved mechanical stability and sensor integration challenges through iterative prototyping.</li>
+                    <li>Managed timelines, budgets, and technical troubleshooting under a 6-month deadline.</li>
+                </ul>
+                <a href="#" class="project-link" data-project="robot-basketball">View Project Details</a>
+            </div>
+            
+            <div class="project-item">
+                <div class="project-header">
+                    <div class="project-title">AI-Powered Automation program Plugin (Personal Research Project)</div>
+                    <div class="dates">2025</div>
+                </div>
+                <ul class="bullet-list">
+                    <li>Attempt to developed a tool using Python to automate task on Excel and computer tasks</li>
+                    <li>Integrated open source machine learning algorithms to assist user experience through learning user preferred patterns.</li>
+                </ul>
+                <a href="#" class="project-link" data-project="ai-automation">View Project Details</a>
+            </div>
+        </section>
+        
+        <section id="skills">
+            <h2>Skills</h2>
+            
+            <div class="skill-categories">
+                <div class="skill-category">
+                    <h3>Technical</h3>
+                    <ul class="bullet-list">
+                        <li><strong>CAD:</strong> 
+                            <a href="#" class="skill-link" data-skill="revit">Revit (Advanced)</a>, 
+                            <a href="#" class="skill-link" data-skill="solidworks">SolidWorks (Advanced)</a>, 
+                            <a href="#" class="skill-link" data-skill="autocad">AutoCAD</a>
+                        </li>
+                        <li><strong>Coding:</strong> 
+                            <a href="#" class="skill-link" data-skill="python">Python</a>, 
+                            <a href="#" class="skill-link" data-skill="matlab">MATLAB</a>, 
+                            <a href="#" class="skill-link" data-skill="java">Java</a>, 
+                            <a href="#" class="skill-link" data-skill="html">HTML</a>, 
+                            <a href="#" class="skill-link" data-skill="sql">SQL (Basic)</a>
+                        </li>
+                        <li><strong>Tools:</strong> 
+                            <a href="#" class="skill-link" data-skill="office">Microsoft Office Suite</a>, 
+                            <a href="#" class="skill-link" data-skill="bim">BIM Basics</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Soft Skills</h3>
+                    <ul class="bullet-list">
+                        <li>Agile Project Management</li>
+                        <li>Cross-functional Collaboration</li>
+                        <li>Problem-Solving</li>
+                        <li>Technical Tutoring</li>
+                    </ul>
+                    <a href="#" class="skill-link" data-skill="soft-skills">Learn more about my soft skills</a>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    <ul class="bullet-list">
+                        <li>Native Cantonese</li>
+                        <li>English (Written & Spoken)</li>
+                        <li>Putonghua (Written & Spoken)</li>
+                    </ul>
+                    <a href="#" class="skill-link" data-skill="languages">See my language proficiency</a>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Interests</h3>
+                    <ul class="bullet-list">
+                        <li>AI applications in construction (e.g., predictive maintenance, generative design)</li>
+                        <li>Sustainable materials and prefabrication techniques</li>
+                        <li>BIM innovation and automation</li>
+                    </ul>
+                    <a href="#" class="skill-link" data-skill="interests">Explore my interests</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Detailed Pages (Initially Hidden) -->
+    <div class="container">
+        <!-- Project: Robot Basketball -->
+        <div id="robot-basketball-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('robot-basketball-detail')">← Back to Main</a>
+            <h2>Robot Basketball Competition</h2>
+            <p><strong>Role:</strong> Team Leader</p>
+            <p><strong>Date:</strong> First semester 2024</p>
+            <p><strong>Institution:</strong> HK POLYU</p>
+            
+            <h3>Project Overview</h3>
+            <p>Led an 8-member multidisciplinary team in designing and constructing a robot capable of autonomously shooting basketballs into hoops of varying heights. The robot incorporated sensors for spatial awareness, motors for movement and shooting mechanisms, and a sophisticated control system.</p>
+            
+            <h3>Challenges & Solutions</h3>
+            <p>One of our biggest challenges was the robot's shooting mechanism stability. Initially, the robot would tilt when extending its arm to shoot, causing missed shots. After three design iterations, I implemented a counterweight system and modified the center of gravity, ultimately improving accuracy by 65%.</p>
+            
+            <p>Another significant challenge was sensor integration. The proximity sensors were initially giving inconsistent readings when detecting the hoop's position. I led the team in creating a calibration algorithm that helped normalize sensor readings across different lighting conditions.</p>
+            
+            <div class="gallery">
+                <div class="gallery-placeholder">Robot Design Image</div>
+                <div class="gallery-placeholder">Team Working Photo</div>
+                <div class="gallery-placeholder">Prototype Testing</div>
+                <div class="gallery-placeholder">Final Competition</div>
+            </div>
+            
+            <h3>Technical Implementation</h3>
+            <p>The robot used an array of technologies:</p>
+            <ul class="bullet-list">
+                <li>SolidWorks for 3D modeling and simulation testing</li>
+                <li>Python for sensor data processing and control algorithms</li>
+                <li>Arduino microcontrollers for motor control</li>
+                <li>Ultrasonic sensors for distance measurement</li>
+                <li>Computer vision using OpenCV for hoop detection</li>
+            </ul>
+            
+            <h3>Project Journey</h3>
+            <p>The competition spanned six months, from initial design to final implementation. We started with brainstorming sessions where we sketched potential robot designs. After selecting our approach, we divided into sub-teams focusing on mechanical design, electronics, and programming.</p>
+            
+            <p>Weekly progress meetings kept the project on track. When we encountered the stability issue in month three, I organized an intensive two-day workshop where we completely redesigned the shooting mechanism. This pivotal moment transformed our robot from a basic prototype to a competition-ready machine.</p>
+            
+            <p>The final week before the competition involved round-the-clock testing and fine-tuning. Our efforts paid off when our robot successfully completed 7 out of 8 shooting challenges.</p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">Video of Robot in Action</div>
+            </div>
+            
+            <h3>Learnings & Takeaways</h3>
+            <p>This project taught me invaluable lessons about leading technical teams, solving complex engineering problems under pressure, and the importance of iterative design. The experience strengthened my project management skills and deepened my understanding of robotics and control systems.</p>
+        </div>
+        
+        <!-- Project: AI Automation -->
+        <div id="ai-automation-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('ai-automation-detail')">← Back to Main</a>
+            <h2>AI-Powered Automation Program Plugin</h2>
+            <p><strong>Type:</strong> Personal Research Project</p>
+            <p><strong>Date:</strong> 2025</p>
+            
+            <h3>Project Overview</h3>
+            <p>Developed a Python-based tool that automates repetitive tasks in Excel and across various computer applications. The tool uses machine learning to identify patterns in user behavior and suggests automation opportunities.</p>
+            
+            <h3>Project Genesis</h3>
+            <p>The idea for this project came when I was working on a data analysis assignment that required repetitive formatting and calculation steps in Excel. I realized I was spending more time on mechanical tasks than actual analysis. This sparked my interest in creating a tool that could learn from my actions and eventually automate them.</p>
+            
+            <h3>Technical Implementation</h3>
+            <p>The plugin consists of three main components:</p>
+            <ul class="bullet-list">
+                <li>A background listener that records user actions in supported applications</li>
+                <li>A pattern recognition engine powered by machine learning algorithms</li>
+                <li>An execution module that can repeat identified patterns with minimal user input</li>
+            </ul>
+            
+            <p>For the machine learning component, I utilized open-source libraries like scikit-learn for pattern recognition and PyAutoGUI for task automation. The most challenging aspect was creating an algorithm that could distinguish between intentional patterns and random actions.</p>
+            
+            <div class="gallery">
+                <div class="gallery-placeholder">Interface Screenshot</div>
+                <div class="gallery-placeholder">Workflow Diagram</div>
+                <div class="gallery-placeholder">Pattern Recognition Demo</div>
+            </div>
+            
+            <h3>Development Journey</h3>
+            <p>The project evolved through several phases:</p>
+            <p><strong>Phase 1:</strong> Basic action recording and playback in Excel</p>
+            <p><strong>Phase 2:</strong> Implementation of pattern recognition algorithms</p>
+            <p><strong>Phase 3:</strong> Expansion to other applications beyond Excel</p>
+            <p><strong>Phase 4:</strong> Addition of a user-friendly interface for managing automation tasks</p>
+            
+            <p>One notable challenge occurred during Phase 2 when the initial pattern recognition algorithm had an accuracy of only 40%. After researching different machine learning approaches, I switched from a rule-based system to a neural network, which improved accuracy to over 75%.</p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">Demo Video</div>
+            </div>
+            
+            <h3>Current Status & Future Plans</h3>
+            <p>The plugin is currently functional for Excel and several text editors. I'm working on expanding compatibility to more applications and improving the learning algorithm to recognize complex multi-step workflows.</p>
+            
+            <p>Future enhancements will include cloud synchronization to transfer learned patterns across devices and a collaborative feature allowing users to share automation recipes.</p>
+        </div>
+        
+        <!-- Skill: Python -->
+        <div id="python-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('python-detail')">← Back to Main</a>
+            <h2>Python Programming</h2>
+            
+            <h3>My Experience</h3>
+            <p>I've been programming in Python for over 3 years, starting with introductory courses at university and quickly advancing to complex applications. Python has become my primary programming language for automation, data analysis, and machine learning projects.</p>
+            
+            <h3>Projects & Applications</h3>
+            <ul class="bullet-list">
+                <li>Developed sensor programming for the Robot Basketball Competition using Python</li>
+                <li>Created an AI-powered automation tool for Excel and other applications</li>
+                <li>Built data visualization tools for engineering course projects</li>
+                <li>Implemented machine learning algorithms for pattern recognition</li>
+            </ul>
+            
+            <h3>Certifications & Courses</h3>
+            <ul class="bullet-list">
+                <li>Completed "Python for Engineers" course at HK POLYU</li>
+                <li>Attended Python data science workshop by the Engineering Department</li>
+            </ul>
+            
+            <div class="gallery">
+                <div class="gallery-placeholder">Python Code Sample</div>
+                <div class="gallery-placeholder">Project Screenshot</div>
+                <div class="gallery-placeholder">Certificate Image</div>
+            </div>
+            
+            <h3>Interactive Python Snake Game</h3>
+            <p>Here's a demonstration of my Python skills with an interactive Snake game:</p>
+            
+            <div id="game-container">
+                <div class="game-score">Score: <span id="score-value">0</span></div>
+                
+                <canvas id="snake-game" width="400" height="400"></canvas>
+                
+                <div id="game-options">
+                    <h4>Game Settings</h4>
+                    
+                    <div class="option-group">
+                        <label>Snake Color:</label>
+                        <div class="color-picker">
+                            <span class="color-option selected" style="background-color: #3498db;" data-color="#3498db"></span>
+                            <span class="color-option" style="background-color: #2ecc71;" data-color="#2ecc71"></span>
+                            <span class="color-option" style="background-color: #e74c3c;" data-color="#e74c3c"></span>
+                            <span class="color-option" style="background-color: #f1c40f;" data-color="#f1c40f"></span>
+                            <span class="color-option" style="background-color: #9b59b6;" data-color="#9b59b6"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>Game Mode:</label>
+                        <select id="game-mode">
+                            <option value="single">Single Player</option>
+                            <option value="ai">AI Snake Only</option>
+                            <option value="mixed">Player vs AI Snakes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>Number of AI Snakes (for mixed mode):</label>
+                        <select id="ai-count">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>Difficulty:</label>
+                        <select id="difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="on-screen-controls">
+                    <button class="control-btn empty"></button>
+                    <button class="control-btn" id="btn-up">▲</button>
+                    <button class="control-btn empty"></button>
+                    <button class="control-btn" id="btn-left">◀</button>
+                    <button class="control-btn empty"></button>
+                    <button class="control-btn" id="btn-right">▶</button>
+                    <button class="control-btn empty"></button>
+                    <button class="control-btn" id="btn-down">▼</button>
+                    <button class="control-btn empty"></button>
+                </div>
+                
+                <div id="game-controls">
+                    <button id="start-button">Start Game</button>
+                    <button id="pause-button">Pause Game</button>
+                    <button id="reset-button">Reset Game</button>
+                </div>
+            </div>
+            
+            <h3>Code Sample</h3>
+            <p>Here's a sample of Python code I've written for automating data processing:</p>
+            <pre>
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Load and prepare data
+def prepare_data(filename):
+    data = pd.read_excel(filename)
+    # Clean missing values
+    data.fillna(data.mean(), inplace=True)
+    
+    # Feature engineering
+    data['efficiency_ratio'] = data['output'] / data['input']
+    
+    return data
+
+# Train prediction model
+def train_model(data, target_column, test_size=0.3):
+    features = data.drop(columns=[target_column])
+    target = data[target_column]
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        features, target, test_size=test_size, random_state=42
+    )
+    
+    model = RandomForestClassifier(n_estimators=100)
+    model.fit(X_train, y_train)
+    
+    # Evaluate model
+    predictions = model.predict(X_test)
+    accuracy = accuracy_score(y_test, predictions)
+    
+    return model, accuracy
+
+# Main automation function
+def process_mechanical_data(input_file, output_file):
+    print("Loading data...")
+    data = prepare_data(input_file)
+    
+    print("Training predictive model...")
+    model, accuracy = train_model(data, 'failure_risk')
+    print(f"Model accuracy: {accuracy:.2f}")
+    
+    # Apply predictions to new data
+    new_data = data.copy()
+    new_data['predicted_risk'] = model.predict(
+        new_data.drop(columns=['failure_risk'])
+    )
+    
+    # Save results
+    new_data.to_excel(output_file, index=False)
+    print(f"Results saved to {output_file}")
+    
+# Example usage
+if __name__ == "__main__":
+    process_mechanical_data("mechanical_components.xlsx", "risk_assessment.xlsx")
+            </pre>
+        </div>
+        
+        <!-- Skill: SolidWorks -->
+        <div id="solidworks-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('solidworks-detail')">← Back to Main</a>
+            <h2>SolidWorks (Advanced)</h2>
+            
+            <h3>My Experience</h3>
+            <p>I have been using SolidWorks for over 4 years, developing advanced skills in 3D modeling, assembly design, and simulation. SolidWorks has been my primary CAD tool for mechanical engineering projects, both academic and personal.</p>
+            
+            <h3>Projects & Applications</h3>
+            <ul class="bullet-list">
+                <li>Designed the complete mechanical assembly for the Robot Basketball Competition</li>
+                <li>Created detailed models of mechanical components for various coursework</li>
+                <li>Performed stress analysis and motion studies for optimizing designs</li>
+                <li>Developed parametric models for rapid prototyping and iteration</li>
+            </ul>
+            
+            <h3>Specific Skills</h3>
+            <ul class="bullet-list">
+                <li>Advanced part modeling techniques including complex surfaces and lofts</li>
+                <li>Assembly design with proper constraints and motion</li>
+                <li>Finite Element Analysis for structural optimization</li>
+                <li>Flow simulation for fluid dynamics studies</li>
+                <li>Design documentation including technical drawings with GD&T</li>
+                <li>Sheet metal design for fabrication</li>
+            </ul>
+            
+            <div class="gallery">
+                <div class="gallery-placeholder">3D Model Example</div>
+                <div class="gallery-placeholder">Assembly Design</div>
+                <div class="gallery-placeholder">Simulation Results</div>
+                <div class="gallery-placeholder">Technical Drawing</div>
+            </div>
+            
+            <h3>Notable Projects</h3>
+            <p><strong>Robot Arm Design:</strong> For the basketball robot, I designed a multi-joint arm with optimized weight distribution and balance. The design went through several iterations based on simulation results to achieve the required strength while minimizing weight.</p>
+            
+            <p><strong>Pneumatic Actuator Optimization:</strong> Created a parametric model of a pneumatic cylinder for a course project, then used SolidWorks simulation to optimize wall thickness and material selection. The final design achieved a 30% weight reduction while maintaining safety factors.</p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">SolidWorks Demo Video</div>
+            </div>
+        </div>
+        
+        <!-- Other Technical Skills (placeholders) -->
+        <div id="revit-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('revit-detail')">← Back to Main</a>
+            <h2>Revit (Advanced)</h2>
+            <h3>My Experience</h3>
+            <p>I have extensive experience with Autodesk Revit, focusing on mechanical systems and structural elements. My proficiency includes creating detailed BIM models, parameter-based families, and coordinating multi-discipline projects.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">Revit Model Example</div>
+                <div class="gallery-placeholder">BIM Coordination</div>
+            </div>
+        </div>
+        
+        <div id="autocad-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('autocad-detail')">← Back to Main</a>
+            <h2>AutoCAD</h2>
+            <h3>My Experience</h3>
+            <p>I have used AutoCAD for 2D drafting and technical documentation across various engineering projects. My skills include precise dimensioning, layer management, and creating professional technical drawings.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">AutoCAD Drawing</div>
+                <div class="gallery-placeholder">Technical Detail</div>
+            </div>
+        </div>
+        
+        <div id="matlab-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('matlab-detail')">← Back to Main</a>
+            <h2>MATLAB</h2>
+            <h3>My Experience</h3>
+            <p>I've utilized MATLAB for numerical analysis, data visualization, and algorithm development in engineering applications. My experience includes creating simulation models and analyzing complex engineering systems.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">MATLAB Script</div>
+                <div class="gallery-placeholder">Simulation Results</div>
+            </div>
+        </div>
+        
+        <div id="java-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('java-detail')">← Back to Main</a>
+            <h2>Java</h2>
+            <h3>My Experience</h3>
+            <p>I've learned Java programming for software development and automation. While not my primary programming language, I've used Java for creating simple applications and understanding object-oriented programming concepts.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">Java Code</div>
+                <div class="gallery-placeholder">Project Sample</div>
+            </div>
+        </div>
+        
+        <div id="html-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('html-detail')">← Back to Main</a>
+            <h2>HTML</h2>
+            <h3>My Experience</h3>
+            <p>I've developed web-based interfaces for engineering data visualization and reporting. My HTML skills include creating responsive layouts, forms, and integrating with CSS and JavaScript for interactive content.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">HTML Project</div>
+                <div class="gallery-placeholder">Web Interface</div>
+            </div>
+        </div>
+        
+        <div id="sql-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('sql-detail')">← Back to Main</a>
+            <h2>SQL (Basic)</h2>
+            <h3>My Experience</h3>
+            <p>I have basic knowledge of SQL for database queries and data management. I've used SQL for retrieving and organizing engineering data from project databases and creating simple reports.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">SQL Query Example</div>
+                <div class="gallery-placeholder">Database Schema</div>
+            </div>
+        </div>
+        
+        <div id="office-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('office-detail')">← Back to Main</a>
+            <h2>Microsoft Office Suite</h2>
+            <h3>My Experience</h3>
+            <p>I have advanced skills in Microsoft Excel, PowerPoint, and Word for engineering documentation, data analysis, and presentations. My Excel skills include complex formulas, pivot tables, and macro development for engineering calculations.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">Excel Engineering Model</div>
+                <div class="gallery-placeholder">Project Presentation</div>
+            </div>
+        </div>
+        
+        <div id="bim-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('bim-detail')">← Back to Main</a>
+            <h2>BIM Basics</h2>
+            <h3>My Experience</h3>
+            <p>I understand Building Information Modeling fundamentals, including 3D modeling, information management, and collaboration workflows. I've applied BIM concepts in mechanical system design and building integration projects.</p>
+            <div class="gallery">
+                <div class="gallery-placeholder">BIM Model</div>
+                <div class="gallery-placeholder">Coordination View</div>
+            </div>
+        </div>
+        
+        <!-- Soft Skills -->
+        <div id="soft-skills-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('soft-skills-detail')">← Back to Main</a>
+            <h2>Soft Skills</h2>
+            
+            <h3>Agile Project Management</h3>
+            <p>As team leader for the Robot Basketball Competition, I implemented agile project management practices to ensure timely delivery and flexibility. We used two-week sprints with regular reviews and adjustments to our approach based on testing results.</p>
+            
+            <h3>Cross-functional Collaboration</h3>
+            <p>I effectively coordinated team members with different technical backgrounds (mechanical design, electronics, programming) during the robotics project. This required clear communication, understanding diverse perspectives, and integrating different components into a cohesive system.</p>
+            
+            <h3>Problem-Solving</h3>
+            <p>When our robot design faced stability issues, I led a systematic problem-solving approach: thoroughly analyzing the root cause, exploring multiple solutions, building and testing prototypes, and implementing the optimal design modification.</p>
+            
+            <h3>Technical Tutoring</h3>
+            <p>As a STEM tutor, I developed the ability to explain complex concepts in simple terms, adapt teaching methods to different learning styles, and create engaging learning materials that improved student comprehension.</p>
+            
+            <h3>YouTube Video About My Leadership Approach</h3>
+            <div class="youtube-embed">
+                <p>Insert YouTube video embed code here for a video about your leadership style or team management approach.</p>
+                <div class="video-placeholder">Leadership Video Placeholder</div>
+            </div>
+        </div>
+        
+        <!-- Language Skills -->
+        <div id="languages-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('languages-detail')">← Back to Main</a>
+            <h2>Language Proficiency</h2>
+            
+            <h3>My Language Skills</h3>
+            
+            <div class="language-skill">
+                <div class="language-name">Cantonese</div>
+                <div class="proficiency-bar">
+                    <div class="proficiency-level" style="width: 100%;"></div>
+                </div>
+                <div class="proficiency-text">Native</div>
+            </div>
+            
+            <div class="language-skill">
+                <div class="language-name">English</div>
+                <div class="proficiency-bar">
+                    <div class="proficiency-level" style="width: 95%;"></div>
+                </div>
+                <div class="proficiency-text">Fluent</div>
+            </div>
+            
+            <div class="language-skill">
+                <div class="language-name">Putonghua</div>
+                <div class="proficiency-bar">
+                    <div class="proficiency-level" style="width: 90%;"></div>
+                </div>
+                <div class="proficiency-text">Fluent</div>
+            </div>
+            
+            <h3>Language Applications</h3>
+            <p>My multilingual skills have been valuable in international collaboration and research. During my studies at Oxford International College and HK POLYU, I've worked with diverse teams and accessed technical resources in multiple languages.</p>
+            
+            <h3>Sample Conversation</h3>
+            <div class="video-container">
+                <div class="video-placeholder">Language Sample Video</div>
+            </div>
+        </div>
+        
+        <!-- Interests -->
+        <div id="interests-detail" class="detail-page">
+            <a class="back-button" onclick="hideDetailPage('interests-detail')">← Back to Main</a>
+            <h2>Professional Interests</h2>
+            
+            <h3>AI Applications in Construction</h3>
+            <p>I'm fascinated by how artificial intelligence is transforming the construction industry. My particular interests include predictive maintenance systems that can identify potential equipment failures before they occur, and generative design algorithms that can optimize structural elements for both strength and material efficiency.</p>
+            
+            <p>I've been following research on using machine learning to analyze sensor data from construction equipment to predict maintenance needs, potentially reducing downtime and extending machinery lifespan.</p>
+            
+            <h3>Sustainable Materials and Prefabrication</h3>
+            <p>I'm deeply interested in environmentally friendly building materials and modular construction techniques. The potential for reducing construction waste, shortening project timelines, and improving quality control through prefabrication aligns with my vision for the future of construction.</p>
+            
+            <p>I've been researching cross-laminated timber and other engineered wood products as sustainable alternatives to traditional construction materials.</p>
+            
+            <h3>BIM Innovation and Automation</h3>
+            <p>Building Information Modeling is revolutionizing how we design, construct, and manage buildings. I'm particularly interested in the integration of BIM with automation tools to streamline workflows and improve coordination between different disciplines.</p>
+            
+            <p>I believe the future of construction lies in fully integrated digital workflows from design to construction to facility management.</p>
+            
+            <h3>Related YouTube Video</h3>
+            <div class="youtube-embed">
+                <p>Insert YouTube video embed code here related to your professional interests.</p>
+                <div class="video-placeholder">AI in Construction Video Placeholder</div>
+            </div>
+        </div>
+    </div>
+    
+    <section id="contact">
+        <div class="container">
+            <h2>Contact Me</h2>
+            <div class="contact-form">
+                <form id="email-form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    
+                    <button type="submit">Send Message</button>
+                </form>
+                <div id="success-message">
+                    Your message has been sent! I'll get back to you as soon as possible.
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <p>Thank you for visiting my personal website. Feel free to reach out for collaborations or opportunities.</p>
+            <p>ZHAO XUECEN | Mechanical Engineering Student</p>
+            <p>Email: zhaoj6332@gmail.com | Phone: 56170888</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Form submission handler
+        document.getElementById('email-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const company = document.getElementById('company').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // In a real implementation, you would send this data to your server
+            // For now, we'll simulate a successful submission
+            
+            // Clear form
+            document.getElementById('name').value = '';
+            document.getElementById('company').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('subject').value = '';
+            document.getElementById('message').value = '';
+            
+            // Show success message
+            document.getElementById('success-message').style.display = 'block';
+            
+            // Hide success message after 5 seconds
+            setTimeout(function() {
+                document.getElementById('success-message').style.display = 'none';
+            }, 5000);
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Detail page navigation
+        document.querySelectorAll('.skill-link, .project-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const skillId = this.getAttribute('data-skill');
+                const projectId = this.getAttribute('data-project');
+                const targetId = skillId ? skillId + '-detail' : projectId + '-detail';
+                
+                // Hide main content
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('contact').style.display = 'none';
+                
+                // Show target detail page
+                document.getElementById(targetId).classList.add('active');
+                
+                // Scroll to top
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Function to hide detail page and show main content
+        function hideDetailPage(detailId) {
+            document.getElementById(detailId).classList.remove('active');
+            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('contact').style.display = 'block';
+        }
+        
+        // Snake Game Implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('snake-game');
+            const ctx = canvas.getContext('2d');
+            const startButton = document.getElementById('start-button');
+            const pauseButton = document.getElementById('pause-button');
+            const resetButton = document.getElementById('reset-button');
+            const scoreValue = document.getElementById('score-value');
+            
+            const gridSize = 20;
+            const tileCount = canvas.width / gridSize;
+            
+            let snake = [];
+            let aiSnakes = [];
+            let foods = [];
+            let direction = 'right';
+            let gameRunning = false;
+            let gamePaused = false;
+            let gameLoop;
+            let score = 0;
+            let snakeColor = "#3498db";
+            let gameSpeed = 100; // milliseconds
+            let gameMode = "single"; // single, ai, mixed
+            let aiCount = 1;
+            let difficulty = "medium";
+            
+            // Initialize game
+            function initGame() {
+                // Clear previous game
+                clearInterval(gameLoop);
+                
+                // Initialize player snake
+                snake = [
+                    { x: 5, y: 10 },
+                    { x: 4, y: 10 },
+                    { x: 3, y: 10 }
+                ];
+                
+                // Initialize game state
+                direction = 'right';
+                score = 0;
+                scoreValue.textContent = score;
+                
+                // Get game settings
+                gameMode = document.getElementById('game-mode').value;
+                aiCount = parseInt(document.getElementById('ai-count').value);
+                difficulty = document.getElementById('difficulty').value;
+                
+                // Set game speed based on difficulty
+                if (difficulty === "easy") {
+                    gameSpeed = 120;
+                } else if (difficulty === "medium") {
+                    gameSpeed = 100;
+                } else {
+                    gameSpeed = 80;
+                }
+                
+                // Initialize AI snakes
+                aiSnakes = [];
+                if (gameMode === "ai" || gameMode === "mixed") {
+                    initAiSnakes();
+                }
+                
+                // Initialize foods
+                foods = [];
+                placeFood();
+                
+                // Draw initial game state
+                drawGame();
+            }
+            
+            // Initialize AI snakes
+            function initAiSnakes() {
+                const aiColors = ["#e74c3c", "#2ecc71", "#9b59b6"];
+                
+                for (let i = 0; i < aiCount; i++) {
+                    // Place AI snake in a random position
+                    const startX = Math.floor(Math.random() * (tileCount - 10)) + 5;
+                    const startY = Math.floor(Math.random() * (tileCount - 10)) + 5;
+                    
+                    const aiSnake = {
+                        body: [
+                            { x: startX, y: startY },
+                            { x: startX - 1, y: startY },
+                            { x: startX - 2, y: startY }
+                        ],
+                        direction: 'right',
+                        color: aiColors[i % aiColors.length],
+                        score: 0
+                    };
+                    
+                    aiSnakes.push(aiSnake);
+                }
+            }
+            
+            // Place food at random position
+            function placeFood() {
+                const food = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount),
+                    color: "#e74c3c" // red
+                };
+                
+                // Make sure food doesn't appear on any snake
+                let validPosition = true;
+                
+                // Check player snake
+                if (gameMode !== "ai") {
+                    for (let i = 0; i < snake.length; i++) {
+                        if (snake[i].x === food.x && snake[i].y === food.y) {
+                            validPosition = false;
+                            break;
+                        }
+                    }
+                }
+                
+                // Check AI snakes
+                if (validPosition && (gameMode === "ai" || gameMode === "mixed")) {
+                    for (let i = 0; i < aiSnakes.length; i++) {
+                        for (let j = 0; j < aiSnakes[i].body.length; j++) {
+                            if (aiSnakes[i].body[j].x === food.x && aiSnakes[i].body[j].y === food.y) {
+                                validPosition = false;
+                                break;
+                            }
+                        }
+                        if (!validPosition) break;
+                    }
+                }
+                
+                if (validPosition) {
+                    foods.push(food);
+                } else {
+                    placeFood();
+                }
+            }
+            
+            // Draw game elements
+            function drawGame() {
+                // Clear canvas
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw food
+                for (let i = 0; i < foods.length; i++) {
+                    ctx.fillStyle = foods[i].color;
+                    ctx.fillRect(foods[i].x * gridSize, foods[i].y * gridSize, gridSize, gridSize);
+                }
+                
+                // Draw player snake if in single or mixed mode
+                if (gameMode !== "ai") {
+                    ctx.fillStyle = snakeColor;
+                    for (let i = 0; i < snake.length; i++) {
+                        ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
+                    }
+                    
+                    // Draw snake head with a different color
+                    ctx.fillStyle = darkenColor(snakeColor, 20);
+                    ctx.fillRect(snake[0].x * gridSize, snake[0].y * gridSize, gridSize - 2, gridSize - 2);
+                }
+                
+                // Draw AI snakes if in AI or mixed mode
+                if (gameMode === "ai" || gameMode === "mixed") {
+                    for (let i = 0; i < aiSnakes.length; i++) {
+                        const aiSnake = aiSnakes[i];
+                        
+                        ctx.fillStyle = aiSnake.color;
+                        for (let j = 0; j < aiSnake.body.length; j++) {
+                            ctx.fillRect(aiSnake.body[j].x * gridSize, aiSnake.body[j].y * gridSize, gridSize - 2, gridSize - 2);
+                        }
+                        
+                        // Draw AI snake head
+                        ctx.fillStyle = darkenColor(aiSnake.color, 20);
+                        ctx.fillRect(aiSnake.body[0].x * gridSize, aiSnake.body[0].y * gridSize, gridSize - 2, gridSize - 2);
+                    }
+                }
+                
+                // Draw score
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('Score: ' + score, 10, 30);
+                
+                // Draw game status
+                if (gamePaused) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = 'black';
+                    ctx.font = '30px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
+                    ctx.textAlign = 'left';
+                }
+            }
+            
+            // Update game state
+            function updateGame() {
+                if (gamePaused) return;
+                
+                // Update player snake if in single or mixed mode
+                if (gameMode !== "ai") {
+                    updatePlayerSnake();
+                }
+                
+                // Update AI snakes if in AI or mixed mode
+                if (gameMode === "ai" || gameMode === "mixed") {
+                    updateAiSnakes();
+                }
+                
+                // Add new food if needed (roughly 5% chance per tick, or if no food exists)
+                if (foods.length === 0 || (Math.random() < 0.05 && foods.length < 3)) {
+                    placeFood();
+                }
+                
+                // Draw updated game
+                drawGame();
+            }
+            
+            // Update player snake
+            function updatePlayerSnake() {
+                // Move snake body
+                for (let i = snake.length - 1; i > 0; i--) {
+                    snake[i].x = snake[i - 1].x;
+                    snake[i].y = snake[i - 1].y;
+                }
+                
+                // Move snake head
+                if (direction === 'right') snake[0].x++;
+                if (direction === 'left') snake[0].x--;
+                if (direction === 'up') snake[0].y--;
+                if (direction === 'down') snake[0].y++;
+                
+                // Check for wall collision
+                if (
+                    snake[0].x < 0 || 
+                    snake[0].x >= tileCount || 
+                    snake[0].y < 0 || 
+                    snake[0].y >= tileCount
+                ) {
+                    gameOver();
+                    return;
+                }
+                
+                // Check for self collision
+                for (let i = 1; i < snake.length; i++) {
+                    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+                        gameOver();
+                        return;
+                    }
+                }
+                
+                // Check for collision with AI snakes in mixed mode
+                if (gameMode === "mixed") {
+                    for (let i = 0; i < aiSnakes.length; i++) {
+                        for (let j = 0; j < aiSnakes[i].body.length; j++) {
+                            if (snake[0].x === aiSnakes[i].body[j].x && snake[0].y === aiSnakes[i].body[j].y) {
+                                gameOver();
+                                return;
+                            }
+                        }
+                    }
+                }
+                
+                // Check for food collision
+                for (let i = 0; i < foods.length; i++) {
+                    if (snake[0].x === foods[i].x && snake[0].y === foods[i].y) {
+                        // Add new segment to snake
+                        const newSegment = { x: snake[snake.length - 1].x, y: snake[snake.length - 1].y };
+                        snake.push(newSegment);
+                        
+                        // Remove food
+                        foods.splice(i, 1);
+                        
+                        // Increase score
+                        score++;
+                        scoreValue.textContent = score;
+                        
+                        break;
+                    }
+                }
+            }
+            
+            // Update AI snakes
+            function updateAiSnakes() {
+                for (let s = 0; s < aiSnakes.length; s++) {
+                    const aiSnake = aiSnakes[s];
+                    
+                    // AI decision making
+                    aiDecision(aiSnake);
+                    
+                    // Move snake body
+                    for (let i = aiSnake.body.length - 1; i > 0; i--) {
+                        aiSnake.body[i].x = aiSnake.body[i - 1].x;
+                        aiSnake.body[i].y = aiSnake.body[i - 1].y;
+                    }
+                    
+                    // Move snake head
+                    if (aiSnake.direction === 'right') aiSnake.body[0].x++;
+                    if (aiSnake.direction === 'left') aiSnake.body[0].x--;
+                    if (aiSnake.direction === 'up') aiSnake.body[0].y--;
+                    if (aiSnake.direction === 'down') aiSnake.body[0].y++;
+                    
+                    // Handle wrap-around for AI snakes
+                    if (aiSnake.body[0].x < 0) aiSnake.body[0].x = tileCount - 1;
+                    if (aiSnake.body[0].x >= tileCount) aiSnake.body[0].x = 0;
+                    if (aiSnake.body[0].y < 0) aiSnake.body[0].y = tileCount - 1;
+                    if (aiSnake.body[0].y >= tileCount) aiSnake.body[0].y = 0;
+                    
+                    // Check for self collision
+                    for (let i = 1; i < aiSnake.body.length; i++) {
+                        if (aiSnake.body[0].x === aiSnake.body[i].x && aiSnake.body[0].y === aiSnake.body[i].y) {
+                            // Reset this AI snake
+                            const startX = Math.floor(Math.random() * (tileCount - 10)) + 5;
+                            const startY = Math.floor(Math.random() * (tileCount - 10)) + 5;
+                            
+                            aiSnake.body = [
+                                { x: startX, y: startY },
+                                { x: startX - 1, y: startY },
+                                { x: startX - 2, y: startY }
+                            ];
+                            aiSnake.direction = 'right';
+                            break;
+                        }
+                    }
+                    
+                    // Check for food collision
+                    for (let i = 0; i < foods.length; i++) {
+                        if (aiSnake.body[0].x === foods[i].x && aiSnake.body[0].y === foods[i].y) {
+                            // Add new segment to snake
+                            const newSegment = { 
+                                x: aiSnake.body[aiSnake.body.length - 1].x, 
+                                y: aiSnake.body[aiSnake.body.length - 1].y 
+                            };
+                            aiSnake.body.push(newSegment);
+                            
+                            // Remove food
+                            foods.splice(i, 1);
+                            
+                            // Increase score
+                            aiSnake.score++;
+                            
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // AI decision making
+            function aiDecision(aiSnake) {
+                // Find closest food
+                let closestFood = null;
+                let closestDist = Infinity;
+                
+                for (let i = 0; i < foods.length; i++) {
+                    const food = foods[i];
+                    const dx = food.x - aiSnake.body[0].x;
+                    const dy = food.y - aiSnake.body[0].y;
+                    const dist = Math.abs(dx) + Math.abs(dy); // Manhattan distance
+                    
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestFood = food;
+                    }
+                }
+                
+                // If no food is available, just keep going
+                if (!closestFood) return;
+                
+                // Calculate direction to food
+                const dx = closestFood.x - aiSnake.body[0].x;
+                const dy = closestFood.y - aiSnake.body[0].y;
+                
+                // First try moving horizontally or vertically based on which is further
+                let preferredDirection = Math.abs(dx) > Math.abs(dy) ? 
+                    (dx > 0 ? 'right' : 'left') : 
+                    (dy > 0 ? 'down' : 'up');
+                
+                // Check if the preferred direction would cause a collision
+                // If so, try the other axis
+                if (!isValidMove(aiSnake, preferredDirection)) {
+                    preferredDirection = Math.abs(dx) <= Math.abs(dy) ? 
+                        (dx > 0 ? 'right' : 'left') : 
+                        (dy > 0 ? 'down' : 'up');
+                    
+                    // If still not valid, try all directions
+                    if (!isValidMove(aiSnake, preferredDirection)) {
+                        const directions = ['up', 'right', 'down', 'left'];
+                        let validDirections = [];
+                        
+                        for (let i = 0; i < directions.length; i++) {
+                            if (isValidMove(aiSnake, directions[i])) {
+                                validDirections.push(directions[i]);
+                            }
+                        }
+                        
+                        // If there are valid directions, choose one randomly
+                        if (validDirections.length > 0) {
+                            preferredDirection = validDirections[Math.floor(Math.random() * validDirections.length)];
+                        }
+                        // Else keep current direction (might lead to death)
+                    }
+                }
+                
+                // Set new direction
+                aiSnake.direction = preferredDirection;
+            }
+            
+            // Check if a move is valid for AI
+            function isValidMove(aiSnake, direction) {
+                // Create a temporary head position
+                let newHead = { x: aiSnake.body[0].x, y: aiSnake.body[0].y };
+                
+                // Move in the specified direction
+                if (direction === 'right') newHead.x++;
+                if (direction === 'left') newHead.x--;
+                if (direction === 'up') newHead.y--;
+                if (direction === 'down') newHead.y++;
+                
+                // Handle wrap-around
+                if (newHead.x < 0) newHead.x = tileCount - 1;
+                if (newHead.x >= tileCount) newHead.x = 0;
+                if (newHead.y < 0) newHead.y = tileCount - 1;
+                if (newHead.y >= tileCount) newHead.y = 0;
+                
+                // Check for collision with own body
+                for (let i = 1; i < aiSnake.body.length; i++) {
+                    if (newHead.x === aiSnake.body[i].x && newHead.y === aiSnake.body[i].y) {
+                        return false;
+                    }
+                }
+                
+                // Check for collision with other AI snakes
+                for (let s = 0; s < aiSnakes.length; s++) {
+                    if (aiSnakes[s] === aiSnake) continue; // Skip self
+                    
+                    for (let i = 0; i < aiSnakes[s].body.length; i++) {
+                        if (newHead.x === aiSnakes[s].body[i].x && newHead.y === aiSnakes[s].body[i].y) {
+                            return false;
+                        }
+                    }
+                }
+                
+                // Check for collision with player snake in mixed mode
+                if (gameMode === "mixed") {
+                    for (let i = 0; i < snake.length; i++) {
+                        if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            // Game over function
+            function gameOver() {
+                clearInterval(gameLoop);
+                gameRunning = false;
+                
+                // Draw game over message
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 15);
+                ctx.fillText('Score: ' + score, canvas.width / 2, canvas.height / 2 + 25);
+                ctx.textAlign = 'left';
+            }
+            
+            // Helper function to darken a color
+            function darkenColor(color, percent) {
+                // Convert hex to RGB
+                let r = parseInt(color.substring(1, 3), 16);
+                let g = parseInt(color.substring(3, 5), 16);
+                let b = parseInt(color.substring(5, 7), 16);
+                
+                // Darken
+                r = Math.floor(r * (100 - percent) / 100);
+                g = Math.floor(g * (100 - percent) / 100);
+                b = Math.floor(b * (100 - percent) / 100);
+                
+                // Convert back to hex
+                return "#" + 
+                    ((r < 16) ? "0" + r.toString(16) : r.toString(16)) +
+                    ((g < 16) ? "0" + g.toString(16) : g.toString(16)) +
+                    ((b < 16) ? "0" + b.toString(16) : b.toString(16));
+            }
+            
+            // Start game
+            startButton.addEventListener('click', function() {
+                if (!gameRunning) {
+                    gameRunning = true;
+                    gamePaused = false;
+                    initGame();
+                    gameLoop = setInterval(updateGame, gameSpeed);
+                }
+            });
+            
+            // Pause game
+            pauseButton.addEventListener('click', function() {
+                if (gameRunning) {
+                    gamePaused = !gamePaused;
+                    drawGame();
+                }
+            });
+            
+            // Reset game
+            resetButton.addEventListener('click', function() {
+                clearInterval(gameLoop);
+                gameRunning = false;
+                gamePaused = false;
+                initGame();
+            });
+            
+            // Keyboard controls
+            document.addEventListener('keydown', function(e) {
+                if (gameRunning && !gamePaused && gameMode !== "ai") {
+                    if (e.key === 'ArrowUp' && direction !== 'down') {
+                        direction = 'up';
+                    } else if (e.key === 'ArrowDown' && direction !== 'up') {
+                        direction = 'down';
+                    } else if (e.key === 'ArrowLeft' && direction !== 'right') {
+                        direction = 'left';
+                    } else if (e.key === 'ArrowRight' && direction !== 'left') {
+                        direction = 'right';
+                    }
+                }
+                
+                // Pause game with spacebar
+                if (e.key === ' ' && gameRunning) {
+                    gamePaused = !gamePaused;
+                    drawGame();
+                }
+            });
+            
+            // On-screen controls
+            document.getElementById('btn-up').addEventListener('click', function() {
+                if (gameRunning && !gamePaused && gameMode !== "ai" && direction !== 'down') {
+                    direction = 'up';
+                }
+            });
+            
+            document.getElementById('btn-down').addEventListener('click', function() {
+                if (gameRunning && !gamePaused && gameMode !== "ai" && direction !== 'up') {
+                    direction = 'down';
+                }
+            });
+            
+            document.getElementById('btn-left').addEventListener('click', function() {
+                if (gameRunning && !gamePaused && gameMode !== "ai" && direction !== 'right') {
+                    direction = 'left';
+                }
+            });
+            
+            document.getElementById('btn-right').addEventListener('click', function() {
+                if (gameRunning && !gamePaused && gameMode !== "ai" && direction !== 'left') {
+                    direction = 'right';
+                }
+            });
+            
+            // Color selection
+            document.querySelectorAll('.color-option').forEach(colorOption => {
+                colorOption.addEventListener('click', function() {
+                    // Remove 'selected' class from all color options
+                    document.querySelectorAll('.color-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    
+                    // Add 'selected' class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Set snake color
+                    snakeColor = this.getAttribute('data-color');
+                });
+            });
+            
+            // Initialize game on load
+            initGame();
+        });
+    </script>
+</body>
+</html>
