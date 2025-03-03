@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Methods Solver</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/math.js@1.1.0/lib/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <style>
+        :root {
+            /* Light theme */
+            --primary-color: #2c3e50;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #25434b;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --card-background: white;
+            --table-header-bg: var(--primary-color);
+            --table-header-color: white;
+            --table-row-even: #f2f2f2;
+            --table-row-odd: #ffffff;
+            --table-border: #ddd;
+            --input-border: #ddd;
+            --input-background: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #1a2639;
+            --secondary-color: #1a2639;
+            --accent-color: #ff6b6b;
+            --light-color: #3f4e5e;
+            --dark-color: #121a24;
+            --success-color: #4ecca3;
+            --warning-color: #ffb142;
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --card-background: #1e272e;
+            --table-header-bg: #1a2639;
+            --table-header-color: #e0e0e0;
+            --table-row-even: #2c3e50;
+            --table-row-odd: #1e272e;
+            --table-border: #34495e;
+            --input-border: #34495e;
+            --input-background: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: #7e808e;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            color: white;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .profile-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info {
+            margin: 1rem 0;
+        }
+        
+        .contact-info a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: var(--card-background);
+            border-radius: 0 5px 5px 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--light-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-radius: 4px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--table-border);
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--table-header-bg);
+            color: var(--table-header-color);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--table-row-even);
+        }
+
+        tr:nth-child(odd) {
+            background-color: var(--table-row-odd);
+        }
+
+        .matrix-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 5px;
+        }
+
+        .matrix-input {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+        }
+
+        .matrix-controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .matrix-dimensions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .matrix-dimensions input {
+            width: 60px;
+        }
+
+        .math-shortcuts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .math-btn {
+            padding: 5px 10px;
+            background-color: var(--light-color);
+            border: 1px solid var(--input-border);
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+        }
+
+        .math-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .error {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .convergence-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid var(--warning-color);
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .iterations-table {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+            
+            .matrix-row {
+                flex-wrap: wrap;
+            }
+            
+            .math-shortcuts {
+                justify-content: center;
+            }
+        }
+
+        /* Style for method options */
+        .method-options {
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .omega-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .omega-input label {
+            margin-bottom: 0;
+        }
+
+        .omega-input input {
+            width: 80px;
+        }
+        
+        /* Added styles for function preview */
+        .function-preview {
+            margin-top: 5px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+            min-height: 40px;
+        }
+        
+        .function-preview.error {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+        
+        .function-preview.valid {
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+        <div class="profile-info">
+            <h1>Numerical Methods Solver</h1>
+            <p>Solve equations using various numerical methods</p>
+            <p>ZHAO XUECEN Mechanical Engineering Student</p>
+            <div class="contact-info"></div>
+                <p>Phone: +852 56170888 | Email: zhaoj6332@gmail.com</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn" onclick="openTab(event, 'gauss-seidel')">Gauss-Seidel Method</button>
+            <button class="tab-btn" onclick="openTab(event, 'gauss-elimination')">Gauss Elimination</button>
+            <button class="tab-btn" onclick="openTab(event, 'lu-decomposition')">LU Decomposition</button>
+            <button class="tab-btn" onclick="openTab(event, 'bisection')">Bisection Method</button>
+            <button class="tab-btn active" onclick="openTab(event, 'newton')">Newton-Raphson Method</button>
+            <button class="tab-btn" onclick="openTab(event, 'cramers')">Cramer's Rule</button>
+        </div>
+
+        <!-- Gauss-Seidel Method Tab -->
+        <div id="gauss-seidel" class="tab-content">
+            <h2>Gauss-Seidel Iteration Method</h2>
+            <p>Solve systems of linear equations using iterative approximation.</p>
+            
+            <div class="input-group matrix-dimensions">
+                <label for="gs-rows">Matrix Size:</label>
+                <input type="number" id="gs-rows" min="2" value="3" placeholder="Size">
+                <button onclick="createGaussSeidelMatrix()">Create Matrix</button>
+            </div>
+            
+            <div class="method-options">
+                <div class="omega-input">
+                    <label for="gs-omega">Relaxation Factor (ω):</label>
+                    <input type="number" id="gs-omega" min="0.1" max="2.0" step="0.1" value="1.0" placeholder="1.0">
+                    <span>(1.0 = Standard Gauss-Seidel, 0 < ω < 2 for SOR method)</span>
+                </div>
+            </div>
+            
+            <div id="gs-matrix-container" class="matrix-container">
+                <!-- Matrix will be generated here -->
+            </div>
+            
+            <div class="input-group">
+                <label for="gs-tolerance">Tolerance (% Relative Error):</label>
+                <input type="number" id="gs-tolerance" min="0.0001" max="10" step="0.0001" value="0.0001" placeholder="e.g., 0.0001">
+            </div>
+            
+            <div class="input-group">
+                <label for="gs-max-iterations">Maximum Iterations:</label>
+                <input type="number" id="gs-max-iterations" min="1" max="1000" value="50" placeholder="e.g., 50">
+            </div>
+            
+            <div class="input-group">
+                <label for="gs-initial-guess">Initial Guess (comma separated):</label>
+                <input type="text" id="gs-initial-guess" placeholder="e.g., 0,0,0">
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="solveGaussSeidel()">Solve</button>
+                <button onclick="checkGaussSeidelConvergence()">Check Convergence</button>
+                <button onclick="rearrangeForConvergence()">Rearrange for Convergence</button>
+            </div>
+            
+            <div id="gs-convergence-result" class="result" style="display: none;"></div>
+            <div id="gs-result" class="result" style="display: none;"></div>
+            
+            <div id="gs-iterations" class="iterations-table" style="display: none;">
+                <h3>Iterations:</h3>
+                <table id="gs-iterations-table">
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <!-- Variable columns will be added dynamically -->
+                            <th>Max Relative Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterations will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gauss Elimination Tab -->
+        <div id="gauss-elimination" class="tab-content">
+            <h2>Gauss Elimination Method</h2>
+            <p>Solve systems of linear equations using elimination and back substitution.</p>
+            
+            <div class="input-group matrix-dimensions">
+                <label for="ge-rows">Matrix Size:</label>
+                <input type="number" id="ge-rows" min="2" value="3" placeholder="Size">
+                <button onclick="createGaussEliminationMatrix()">Create Matrix</button>
+            </div>
+            
+            <div class="method-options">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ge-pivoting" checked>
+                    <label for="ge-pivoting">Use Partial Pivoting (Recommended for numerical stability)</label>
+                </div>
+            </div>
+            
+            <div id="ge-matrix-container" class="matrix-container">
+                <!-- Matrix will be generated here -->
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="solveGaussElimination()">Solve</button>
+                <button onclick="resetGaussElimination()">Reset</button>
+            </div>
+            
+            <div id="ge-result" class="result" style="display: none;"></div>
+            
+            <div id="ge-steps" class="iterations-table" style="display: none;">
+                <h3>Elimination Steps:</h3>
+                <div id="ge-steps-content"></div>
+            </div>
+        </div>
+
+        <!-- LU Decomposition Tab -->
+        <div id="lu-decomposition" class="tab-content">
+            <h2>LU Decomposition Method</h2>
+            <p>Decompose a matrix into lower and upper triangular matrices.</p>
+            
+            <div class="input-group matrix-dimensions">
+                <label for="lu-rows">Matrix Size:</label>
+                <input type="number" id="lu-rows" min="2" value="3" placeholder="Size">
+                <button onclick="createLUMatrix()">Create Matrix</button>
+            </div>
+            
+            <div id="lu-matrix-container" class="matrix-container">
+                <!-- Matrix will be generated here -->
+            </div>
+            
+            <div class="input-group">
+                <label for="lu-vector-b">Vector b (comma separated):</label>
+                <input type="text" id="lu-vector-b" placeholder="e.g., 1,2,3">
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="solveLUDecomposition()">Solve</button>
+                <button onclick="resetLUDecomposition()">Reset</button>
+            </div>
+            
+            <div id="lu-result" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Bisection Method Tab -->
+        <div id="bisection" class="tab-content">
+            <h2>Bisection Method</h2>
+            <p>Find the root of an equation using the bisection method.</p>
+            
+            <div class="input-group">
+                <label for="bisection-equation">Equation (in terms of x, equal to 0):</label>
+                <div class="math-shortcuts">
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'x^2')">x²</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'sin(x)')">sin(x)</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'cos(x)')">cos(x)</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'tan(x)')">tan(x)</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', '1/x')">1/x</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'sqrt(x)')">√x</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'log10(x)')">log(x)</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'log(x)')">ln(x)</button>
+                    <button class="math-btn" onclick="insertMath('bisection-equation', 'exp(x)')">e^x</button>
+                </div>
+                <textarea id="bisection-equation" placeholder="e.g., x^2 - 4"></textarea>
+               
+            </div>
+            
+            <div class="input-group">
+                <label for="lower-bound">Lower Bound (a):</label>
+                <input type="number" id="lower-bound" step="any" placeholder="e.g., 0">
+            </div>
+            
+            <div class="input-group">
+                <label for="upper-bound">Upper Bound (b):</label>
+                <input type="number" id="upper-bound" step="any" placeholder="e.g., 3">
+            </div>
+            
+            <div class="input-group">
+                <label for="tolerance">Tolerance (% Relative Error):</label>
+                <input type="number" id="tolerance" min="0.0001" max="10" step="0.0001" value="0.1" placeholder="e.g., 0.1">
+            </div>
+            
+            <div class="input-group">
+                <label for="max-iterations">Maximum Iterations:</label>
+                <input type="number" id="max-iterations" min="1" max="1000" value="50" placeholder="e.g., 50">
+            </div>
+            
+            <button onclick="solveBisection()">Solve</button>
+            <button onclick="resetBisection()">Reset</button>
+            
+            <div id="bisection-result" class="result" style="display: none;"></div>
+            
+            <div id="bisection-iterations" class="iterations-table" style="display: none;">
+                <h3>Iterations:</h3>
+                <table id="bisection-iterations-table">
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <th>a</th>
+                            <th>b</th>
+                            <th>c (middle)</th>
+                            <th>f(c)</th>
+                            <th>Relative Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterations will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Newton-Raphson Method Tab -->
+        <div id="newton" class="tab-content active">
+            <h2>Newton-Raphson Method</h2>
+            <p>Find the root of an equation using the Newton-Raphson method.</p>
+            
+            <div class="input-group">
+                <label for="newton-equation">Equation f(x) (in terms of x, set equal to 0):</label>
+                <div class="math-shortcuts">
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'x^2')">x²</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'sin(x)')">sin(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'cos(x)')">cos(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'tan(x)')">tan(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', '1/x')">1/x</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'sqrt(x)')">√x</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'log10(x)')">log(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'log(x)')">ln(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'exp(x)')">e^x</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'asin(x)')">arcsin(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'acos(x)')">arccos(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-equation', 'atan(x)')">arctan(x)</button>
+                </div>
+                <textarea id="newton-equation" placeholder="e.g., x^2 - 4" oninput="checkEquation('newton-equation')"></textarea>
+                <div id="newton-equation-check" class="function-preview">Enter an equation to see preview</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="newton-derivative">Derivative f'(x) (in terms of x):</label>
+                <div class="math-shortcuts">
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '2*x')">2x</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', 'cos(x)')">cos(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '-sin(x)')">-sin(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', 'sec(x)^2')">sec²(x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '-1/x^2')">-1/x²</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '1/(2*sqrt(x))')">1/(2√x)</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '1/(x*log(10))')">1/(x·ln(10))</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', '1/x')">1/x</button>
+                    <button class="math-btn" onclick="insertMath('newton-derivative', 'exp(x)')">e^x</button>
+                </div>
+                <textarea id="newton-derivative" placeholder="e.g., 2*x" oninput="checkEquation('newton-derivative')"></textarea>
+                <div id="newton-derivative-check" class="function-preview">Enter an equation to see preview</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="newton-initial">Initial Guess:</label>
+                <input type="number" id="newton-initial" step="any" placeholder="e.g., 1">
+            </div>
+            
+            <div class="input-group">
+                <label for="newton-tolerance">Tolerance (% Relative Error):</label>
+                <input type="number" id="newton-tolerance" min="0.0001" max="10" step="0.0001" value="0.0001" placeholder="e.g., 0.0001">
+            </div>
+            
+            <div class="input-group">
+                <label for="newton-max-iterations">Maximum Iterations:</label>
+                <input type="number" id="newton-max-iterations" min="1" max="1000" value="50" placeholder="e.g., 50">
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="solveNewton()">Solve</button>
+                <button onclick="resetNewton()">Reset</button>
+                <button onclick="deriveEquation()">Auto-Derive</button>
+                <button onclick="testAllValues()">Test Multiple Initial Values</button>
+            </div>
+            
+            <div id="newton-result" class="result" style="display: none;"></div>
+            
+            <div id="newton-iterations" class="iterations-table" style="display: none;">
+                <h3>Iterations:</h3>
+                <table id="newton-iterations-table">
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <th>x_i</th>
+                            <th>f(x_i)</th>
+                            <th>f'(x_i)</th>
+                            <th>x_{i+1}</th>
+                            <th>Relative Error (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterations will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="newton-tests" class="iterations-table" style="display: none;">
+                <h3>Multiple Initial Value Tests:</h3>
+                <table id="newton-tests-table">
+                    <thead>
+                        <tr>
+                            <th>Initial x₀</th>
+                            <th>Final Root</th>
+                            <th>Iterations</th>
+                            <th>Converged</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Test results will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cramer's Rule Tab -->
+        <div id="cramers" class="tab-content">
+            <h2>Cramer's Rule</h2>
+            <p>Solve systems of linear equations using determinants.</p>
+            
+            <div class="input-group matrix-dimensions">
+                <label for="cr-rows">Matrix Size:</label>
+                <input type="number" id="cr-rows" min="2" value="3" placeholder="Size">
+                <button onclick="createCramersMatrix()">Create Matrix</button>
+            </div>
+            
+            <div id="cr-matrix-container" class="matrix-container">
+                <!-- Matrix will be generated here -->
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="solveCramers()">Solve</button>
+                <button onclick="resetCramers()">Reset</button>
+            </div>
+            
+            <div id="cr-result" class="result" style="display: none;"></div>
+            
+            <div id="cr-steps" class="iterations-table" style="display: none;">
+                <h3>Solution Steps:</h3>
+                <div id="cr-steps-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Update button text
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.textContent = newTheme === 'dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Insert math symbols into textarea
+        function insertMath(elementId, math) {
+            const textarea = document.getElementById(elementId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const before = text.substring(0, start);
+            const after = text.substring(end, text.length);
+            textarea.value = before + math + after;
+            textarea.focus();
+            textarea.selectionStart = start + math.length;
+            textarea.selectionEnd = start + math.length;
+            
+            // Update preview
+            checkEquation(elementId);
+        }
+
+        // Check equation validity and update preview
+        function checkEquation(elementId) {
+            const equation = document.getElementById(elementId).value.trim();
+            const checkDiv = document.getElementById(elementId + '-check');
+            
+            if (!equation) {
+                checkDiv.innerHTML = "Enter an equation to see preview";
+                checkDiv.className = "function-preview";
+                return;
+            }
+            
+            try {
+                // Parse the equation using math.js
+                const node = math.parse(equation);
+                // Create a function to evaluate the expression
+                const f = node.compile().evaluate;
+                
+                // Test with a sample value
+                try {
+                    const testValue = f({x: 1});
+                    checkDiv.innerHTML = `
+                        <p>✓ Valid function</p>
+                        <p>LaTeX: \\(${equation}\\)</p>
+                        <p>Test value: f(1) = ${testValue}</p>
+                    `;
+                    checkDiv.className = "function-preview valid";
+                    MathJax.typeset([checkDiv]);
+                } catch (evalError) {
+                    checkDiv.innerHTML = `❌ Error evaluating at x=1: ${evalError.message}`;
+                    checkDiv.className = "function-preview error";
+                }
+            } catch (parseError) {
+                checkDiv.innerHTML = `❌ Invalid equation: ${parseError.message}`;
+                checkDiv.className = "function-preview error";
+            }
+        }
+
+        // Create function from equation string
+        function createFunction(equationStr) {
+            try {
+                // Parse the equation using math.js
+                const node = math.parse(equationStr);
+                // Compile the expression to a function
+                return node.compile().evaluate;
+            } catch (e) {
+                throw new Error("Invalid equation format: " + e.message);
+            }
+        }
+        
+        // Calculate determinant of a matrix
+        function determinant(matrix) {
+            const n = matrix.length;
+            
+            // Base case for 1x1 matrix
+            if (n === 1) {
+                return matrix[0][0];
+            }
+            
+            // Base case for 2x2 matrix
+            if (n === 2) {
+                return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+            }
+            
+            // For larger matrices, use cofactor expansion
+            let det = 0;
+            for (let j = 0; j < n; j++) {
+                det += Math.pow(-1, j) * matrix[0][j] * determinant(getSubmatrix(matrix, 0, j));
+            }
+            
+            return det;
+        }
+        
+        // Get submatrix by removing the specified row and column
+        function getSubmatrix(matrix, row, col) {
+            const n = matrix.length;
+            const submatrix = [];
+            
+            for (let i = 0; i < n; i++) {
+                if (i === row) continue;
+                
+                const subrow = [];
+                for (let j = 0; j < n; j++) {
+                    if (j === col) continue;
+                    subrow.push(matrix[i][j]);
+                }
+                
+                submatrix.push(subrow);
+            }
+            
+            return submatrix;
+        }
+        
+        // Clone matrix
+        function cloneMatrix(matrix) {
+            return matrix.map(row => [...row]);
+        }
+
+        // ----------------- NUMERICAL DIFFERENTIATION -----------------
+        
+        // Calculate numerical derivative using central difference
+        function numericalDerivative(f, x, h = 0.0001) {
+            return (f({x: x + h}) - f({x: x - h})) / (2 * h);
+        }
+        
+        // Symbolic differentiation for common functions
+        function symbolicDerivative(equationStr) {
+            // For simplicity, we handle some common cases
+            // In a production system, you'd use a symbolic differentiation library
+            
+            // Clean up the equation
+            const equation = equationStr.replace(/\s+/g, '');
+            
+            // Polynomial terms like a*x^n
+            if (/^([0-9]*)\*?x(\^([0-9]+))?$/.test(equation)) {
+                const match = equation.match(/^([0-9]*)\*?x(\^([0-9]+))?$/);
+                const coef = match[1] ? parseInt(match[1]) : 1;
+                const power = match[3] ? parseInt(match[3]) : 1;
+                
+                if (power === 0) return "0";
+                if (power === 1) return coef.toString();
+                return `${coef * power}*x^${power - 1}`;
+            }
+            
+            // sin(x)
+            if (equation === 'sin(x)') return 'cos(x)';
+            
+            // cos(x)
+            if (equation === 'cos(x)') return '-sin(x)';
+            
+            // tan(x)
+            if (equation === 'tan(x)') return 'sec(x)^2';
+            
+            // e^x or exp(x)
+            if (equation === 'exp(x)' || equation === 'e^x') return equation;
+            
+            // ln(x) or log(x)
+            if (equation === 'log(x)') return '1/x';
+            
+            // log10(x)
+            if (equation === 'log10(x)') return '1/(x*log(10))';
+            
+            // sqrt(x)
+            if (equation === 'sqrt(x)') return '1/(2*sqrt(x))';
+            
+            // 1/x
+            if (equation === '1/x') return '-1/x^2';
+            
+            // Function couldn't be derived symbolically
+            return null;
+        }
+        
+        // Symbolically derive the function if possible, otherwise use numerical differentiation
+        function deriveEquation() {
+            try {
+                const equationStr = document.getElementById('newton-equation').value.trim();
+                if (!equationStr) {
+                    throw new Error("Please enter an equation to derive");
+                }
+                
+                // Try symbolic differentiation first
+                let derivativeStr = symbolicDerivative(equationStr);
+                
+                // If symbolic differentiation fails, show info about numerical differentiation
+                if (!derivativeStr) {
+                    // Try to create a function for numerical differentiation warning
+                    try {
+                        const f = createFunction(equationStr);
+                        const deriv1 = numericalDerivative(f, 1).toFixed(6);
+                        
+                        document.getElementById('newton-derivative-check').innerHTML = `
+                            <p>⚠️ Couldn't derive symbolically. Will use numerical differentiation.</p>
+                            <p>Test value: f'(1) ≈ ${deriv1}</p>
+                        `;
+                        document.getElementById('newton-derivative-check').className = "function-preview warning";
+                        
+                        document.getElementById('newton-derivative').value = "numerical";
+                        return;
+                    } catch (error) {
+                        throw new Error("Couldn't create function for numerical differentiation: " + error.message);
+                    }
+                }
+                
+                document.getElementById('newton-derivative').value = derivativeStr;
+                checkEquation('newton-derivative');
+                alert("Derivative generated: " + derivativeStr);
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+       
+        // ----------------- NEWTON-RAPHSON METHOD -----------------
+        
+        function resetNewton() {
+            document.getElementById('newton-equation').value = '';
+            document.getElementById('newton-derivative').value = '';
+            document.getElementById('newton-initial').value = '';
+            document.getElementById('newton-tolerance').value = '0.0001';
+            document.getElementById('newton-max-iterations').value = '50';
+            
+            document.getElementById('newton-equation-check').innerHTML = 'Enter an equation to see preview';
+            document.getElementById('newton-equation-check').className = 'function-preview';
+            
+            document.getElementById('newton-derivative-check').innerHTML = 'Enter an equation to see preview';
+            document.getElementById('newton-derivative-check').className = 'function-preview';
+            
+            document.getElementById('newton-result').style.display = 'none';
+            document.getElementById('newton-iterations').style.display = 'none';
+            document.getElementById('newton-tests').style.display = 'none';
+        }
+        
+        function solveNewton() {
+            try {
+                const equationStr = document.getElementById('newton-equation').value.trim();
+                let derivativeStr = document.getElementById('newton-derivative').value.trim();
+                
+                if (!equationStr) {
+                    throw new Error("Please enter the function f(x)");
+                }
+                
+                // Create function for f(x)
+                const f = createFunction(equationStr);
+                
+                // Create function for f'(x) or use numerical differentiation
+                let fprime;
+                if (!derivativeStr || derivativeStr === "numerical") {
+                    fprime = x => numericalDerivative(f, x);
+                } else {
+                    fprime = createFunction(derivativeStr);
+                }
+                
+                const x0 = parseFloat(document.getElementById('newton-initial').value);
+                const tolerance = parseFloat(document.getElementById('newton-tolerance').value) / 100; // Convert percent to decimal
+                const maxIterations = parseInt(document.getElementById('newton-max-iterations').value);
+                
+                if (isNaN(x0)) {
+                    throw new Error("Please enter a valid initial guess");
+                }
+                
+                if (isNaN(tolerance) || tolerance <= 0) {
+                    throw new Error("Please enter a valid tolerance value");
+                }
+                
+                if (isNaN(maxIterations) || maxIterations <= 0) {
+                    throw new Error("Please enter a valid maximum iterations value");
+                }
+                
+                // Perform Newton-Raphson method
+                let x = x0;
+                let error = 100; // 100%
+                let iteration = 0;
+                
+                const iterations = [];
+                iterations.push({
+                    iteration,
+                    x: x,
+                    fx: f({x}),
+                    fpx: fprime({x}),
+                    nextX: null,
+                    error: '-'
+                });
+                
+                let converged = false;
+                
+                while (error > tolerance && iteration < maxIterations && Math.abs(f({x})) > 1e-10) {
+                    iteration++;
+                    
+                    const fx = f({x});
+                    const fpx = fprime({x});
+                    
+                    if (Math.abs(fpx) < 1e-10) {
+                        throw new Error(`Derivative is too close to zero at x = ${x.toFixed(6)}`);
+                    }
+                    
+                    const nextX = x - fx / fpx;
+                    error = Math.abs((nextX - x) / nextX);
+                    
+                    iterations.push({
+                        iteration,
+                        x: x,
+                        fx: fx,
+                        fpx: fpx,
+                        nextX: nextX,
+                        error: error * 100 // Convert to percentage
+                    });
+                    
+                    x = nextX;
+                    
+                    if (error <= tolerance || Math.abs(f({x})) <= 1e-10) {
+                        converged = true;
+                        break;
+                    }
+                }
+                
+                // Display results
+                const resultDiv = document.getElementById('newton-result');
+                const iterationsDiv = document.getElementById('newton-iterations');
+                const iterationsTable = document.getElementById('newton-iterations-table');
+                
+                resultDiv.style.display = 'block';
+                iterationsDiv.style.display = 'block';
+                document.getElementById('newton-tests').style.display = 'none';
+                
+                // Create result summary
+                let resultHtml = '<h3>Result</h3>';
+                
+                if (converged) {
+                    if (Math.abs(f({x})) < 1e-10) {
+                        resultHtml += `<p style="color: var(--success-color);">✓ Root found at x = ${x.toFixed(8)}</p>`;
+                    } else {
+                        resultHtml += `<p style="color: var(--success-color);">✓ Converged to x = ${x.toFixed(8)} with tolerance ${tolerance * 100}%</p>`;
+                    }
+                    resultHtml += `<p>Converged after ${iteration} iterations</p>`;
+                } else {
+                    resultHtml += `<p style="color: var(--accent-color);">⚠ Did not converge within ${maxIterations} iterations</p>`;
+                    resultHtml += `<p>Best approximation: x = ${x.toFixed(8)}</p>`;
+                }
+                
+                resultHtml += `<p>Function value at x: f(${x.toFixed(8)}) = ${f({x: x}).toFixed(8)}</p>`;
+                resultHtml += `<p>Number of iterations: ${iteration}</p>`;
+                resultHtml += `<p>Final relative error: ${(error * 100).toFixed(8)}%</p>`;
+                
+                resultDiv.innerHTML = resultHtml;
+                
+                // Create iterations table
+                let tableHtml = '<thead><tr><th>Iteration</th><th>x_i</th><th>f(x_i)</th><th>f\'(x_i)</th><th>x_{i+1}</th><th>Relative Error (%)</th></tr></thead><tbody>';
+                
+                for (const iter of iterations) {
+                    tableHtml += `<tr>
+                        <td>${iter.iteration}</td>
+                        <td>${iter.x.toFixed(6)}</td>
+                        <td>${iter.fx.toFixed(6)}</td>
+                        <td>${iter.fpx.toFixed(6)}</td>
+                        <td>${iter.nextX === null ? '-' : iter.nextX.toFixed(6)}</td>
+                        <td>${iter.error === '-' ? '-' : iter.error.toFixed(6)}</td>
+                    </tr>`;
+                }
+                
+                tableHtml += '</tbody>';
+                iterationsTable.innerHTML = tableHtml;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // Test Newton-Raphson with multiple initial values
+        function testAllValues() {
+            try {
+                const equationStr = document.getElementById('newton-equation').value.trim();
+                let derivativeStr = document.getElementById('newton-derivative').value.trim();
+                
+                if (!equationStr) {
+                    throw new Error("Please enter the function f(x)");
+                }
+                
+                // Create function for f(x)
+                const f = createFunction(equationStr);
+                
+                // Create function for f'(x) or use numerical differentiation
+                let fprime;
+                if (!derivativeStr || derivativeStr === "numerical") {
+                    fprime = x => numericalDerivative(f, x);
+                } else {
+                    fprime = createFunction(derivativeStr);
+                }
+                
+                const tolerance = parseFloat(document.getElementById('newton-tolerance').value) / 100; // Convert percent to decimal
+                const maxIterations = parseInt(document.getElementById('newton-max-iterations').value);
+                
+                // Test a range of initial values
+                const testValues = [-10, -5, -2, -1, -0.5, 0.5, 1, 2, 5, 10];
+                const results = [];
+                
+                for (const x0 of testValues) {
+                    // Skip x0 = 0 if it causes problems with the function
+                    if (x0 === 0 && (equationStr.includes('1/x') || equationStr.includes('log(x)'))) {
+                        results.push({
+                            x0,
+                            root: 'N/A',
+                            iterations: 'N/A',
+                            converged: false,
+                            error: 'Function undefined at x=0'
+                        });
+                        continue;
+                    }
+                    
+                    try {
+                        // Try to evaluate the function at the initial point
+                        const fx0 = f({x: x0});
+                        if (isNaN(fx0) || !isFinite(fx0)) {
+                            results.push({
+                                x0,
+                                root: 'N/A',
+                                iterations: 'N/A',
+                                converged: false,
+                                error: 'Function undefined at initial point'
+                            });
+                            continue;
+                        }
+                        
+                        // Perform Newton-Raphson
+                        let x = x0;
+                        let error = 100;
+                        let iteration = 0;
+                        let converged = false;
+                        
+                        while (error > tolerance && iteration < maxIterations && Math.abs(f({x})) > 1e-10) {
+                            iteration++;
+                            
+                            const fx = f({x});
+                            const fpx = fprime({x});
+                            
+                            if (Math.abs(fpx) < 1e-10) {
+                                throw new Error('Derivative too close to zero');
+                            }
+                            
+                            const nextX = x - fx / fpx;
+                            error = Math.abs((nextX - x) / nextX);
+                            
+                            x = nextX;
+                            
+                            if (error <= tolerance || Math.abs(f({x})) <= 1e-10) {
+                                converged = true;
+                                break;
+                            }
+                            
+                            // Check for NaN or infinity
+                            if (isNaN(x) || !isFinite(x)) {
+                                throw new Error('Calculation resulted in NaN or Infinity');
+                            }
+                        }
+                        
+                        results.push({
+                            x0,
+                            root: x,
+                            iterations: iteration,
+                            converged
+                        });
+                        
+                    } catch (error) {
+                        results.push({
+                            x0,
+                            root: 'Error',
+                            iterations: 'N/A',
+                            converged: false,
+                            error: error.message
+                        });
+                    }
+                }
+                
+                // Display test results
+                const testsDiv = document.getElementById('newton-tests');
+                const testsTable = document.getElementById('newton-tests-table');
+                
+                testsDiv.style.display = 'block';
+                
+                let tableHtml = '<thead><tr><th>Initial x₀</th><th>Final Root</th><th>Iterations</th><th>Converged</th><th>Notes</th></tr></thead><tbody>';
+                
+                for (const result of results) {
+                    tableHtml += `<tr>
+                        <td>${result.x0}</td>
+                        <td>${typeof result.root === 'number' ? result.root.toFixed(6) : result.root}</td>
+                        <td>${result.iterations}</td>
+                        <td>${result.converged ? '✓' : '✗'}</td>
+                        <td>${result.error || ''}</td>
+                    </tr>`;
+                }
+                
+                tableHtml += '</tbody>';
+                testsTable.innerHTML = tableHtml;
+                
+                // Group roots to find all distinct solutions
+                const distinctRoots = new Map();
+                for (const result of results) {
+                    if (typeof result.root === 'number' && result.converged) {
+                        const roundedRoot = Math.round(result.root * 1000000) / 1000000; // Round to 6 decimal places
+                        if (!distinctRoots.has(roundedRoot)) {
+                            distinctRoots.set(roundedRoot, []);
+                        }
+                        distinctRoots.get(roundedRoot).push(result.x0);
+                    }
+                }
+                
+                // Display summary in result div
+                const resultDiv = document.getElementById('newton-result');
+                resultDiv.style.display = 'block';
+                
+                let resultHtml = '<h3>Multiple Initial Values Test</h3>';
+                resultHtml += `<p>Found ${distinctRoots.size} distinct root(s):</p><ul>`;
+                
+                for (const [root, initialValues] of distinctRoots) {
+                    const fvalue = f({x: root});
+                    resultHtml += `<li>x = ${root.toFixed(8)} (f(x) = ${fvalue.toExponential(6)})<br>`;
+                    resultHtml += `Found from initial values: ${initialValues.join(', ')}</li>`;
+                }
+                
+                resultHtml += '</ul>';
+                
+                if (distinctRoots.size === 0) {
+                    resultHtml += '<p style="color: var(--accent-color);">No convergence found with any tested initial value.</p>';
+                }
+                
+                resultDiv.innerHTML = resultHtml;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // ----------------- GAUSS-SEIDEL METHOD -----------------
+        
+        function createGaussSeidelMatrix() {
+            const size = parseInt(document.getElementById('gs-rows').value);
+            if (size < 2) {
+                alert("Matrix size must be at least 2");
+                return;
+            }
+            
+            const container = document.getElementById('gs-matrix-container');
+            container.innerHTML = '';
+            
+            // Create augmented matrix [A|b]
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                // Coefficients (A)
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.placeholder = `a${i+1}${j+1}`;
+                    input.id = `gs-a-${i}-${j}`;
+                    input.className = 'matrix-input';
+                    row.appendChild(input);
+                }
+                
+                // Add equals sign
+                const equalsSpan = document.createElement('span');
+                equalsSpan.textContent = '=';
+                equalsSpan.style.margin = '0 10px';
+                equalsSpan.style.fontWeight = 'bold';
+                row.appendChild(equalsSpan);
+                
+                // Result (b)
+                const bInput = document.createElement('input');
+                bInput.type = 'number';
+                bInput.step = 'any';
+                bInput.placeholder = `b${i+1}`;
+                bInput.id = `gs-b-${i}`;
+                bInput.className = 'matrix-input';
+                row.appendChild(bInput);
+                
+                container.appendChild(row);
+            }
+            
+            // Add row swap controls
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'matrix-controls';
+            
+            const swapFromInput = document.createElement('input');
+            swapFromInput.type = 'number';
+            swapFromInput.min = '1';
+            swapFromInput.max = size.toString();
+            swapFromInput.placeholder = 'Row #';
+            swapFromInput.id = 'gs-swap-from';
+            swapFromInput.style.width = '80px';
+            
+            const swapToInput = document.createElement('input');
+            swapToInput.type = 'number';
+            swapToInput.min = '1';
+            swapToInput.max = size.toString();
+            swapToInput.placeholder = 'Row #';
+            swapToInput.id = 'gs-swap-to';
+            swapToInput.style.width = '80px';
+            
+            const swapBtn = document.createElement('button');
+            swapBtn.textContent = 'Swap Rows';
+            swapBtn.onclick = swapGaussSeidelRows;
+            
+            controlsDiv.appendChild(document.createTextNode('Swap row '));
+            controlsDiv.appendChild(swapFromInput);
+            controlsDiv.appendChild(document.createTextNode(' with row '));
+            controlsDiv.appendChild(swapToInput);
+            controlsDiv.appendChild(swapBtn);
+            
+            container.appendChild(controlsDiv);
+            
+            // Guess field update
+            const initialGuessField = document.getElementById('gs-initial-guess');
+            initialGuessField.placeholder = `e.g., ${Array(size).fill('0').join(',')}`;
+        }
+        
+        function swapGaussSeidelRows() {
+            const size = parseInt(document.getElementById('gs-rows').value);
+            const from = parseInt(document.getElementById('gs-swap-from').value) - 1;
+            const to = parseInt(document.getElementById('gs-swap-to').value) - 1;
+            
+            if (isNaN(from) || isNaN(to) || from < 0 || to < 0 || from >= size || to >= size) {
+                alert("Invalid row numbers");
+                return;
+            }
+            
+            // Swap A matrix rows
+            for (let j = 0; j < size; j++) {
+                const fromInput = document.getElementById(`gs-a-${from}-${j}`);
+                const toInput = document.getElementById(`gs-a-${to}-${j}`);
+                const tempValue = fromInput.value;
+                fromInput.value = toInput.value;
+                toInput.value = tempValue;
+            }
+            
+            // Swap b vector values
+            const fromB = document.getElementById(`gs-b-${from}`);
+            const toB = document.getElementById(`gs-b-${to}`);
+            const tempB = fromB.value;
+            fromB.value = toB.value;
+            toB.value = tempB;
+        }
+        
+        function getGaussSeidelMatrix() {
+            const size = parseInt(document.getElementById('gs-rows').value);
+            const A = [];
+            const b = [];
+            
+            // Read A matrix
+            for (let i = 0; i < size; i++) {
+                const row = [];
+                for (let j = 0; j < size; j++) {
+                    const value = parseFloat(document.getElementById(`gs-a-${i}-${j}`).value);
+                    if (isNaN(value)) {
+                        throw new Error(`Missing or invalid value at position (${i+1},${j+1})`);
+                    }
+                    row.push(value);
+                }
+                A.push(row);
+                
+                // Read b vector
+                const bValue = parseFloat(document.getElementById(`gs-b-${i}`).value);
+                if (isNaN(bValue)) {
+                    throw new Error(`Missing or invalid value in right side at row ${i+1}`);
+                }
+                b.push(bValue);
+            }
+            
+            return { A, b };
+        }
+        
+        function checkGaussSeidelConvergence() {
+            try {
+                const { A } = getGaussSeidelMatrix();
+                const size = A.length;
+                
+                const resultDiv = document.getElementById('gs-convergence-result');
+                resultDiv.style.display = 'block';
+                
+                // Check diagonal dominance
+                let isDiagonallyDominant = true;
+                let isDiagonallyDominantAtLeastOne = false;
+                
+                for (let i = 0; i < size; i++) {
+                    const diagonalValue = Math.abs(A[i][i]);
+                    let rowSum = 0;
+                    
+                    for (let j = 0; j < size; j++) {
+                        if (i !== j) {
+                            rowSum += Math.abs(A[i][j]);
+                        }
+                    }
+                    
+                    if (diagonalValue < rowSum) {
+                        isDiagonallyDominant = false;
+                    }
+                    
+                    if (diagonalValue > rowSum) {
+                        isDiagonallyDominantAtLeastOne = true;
+                    }
+                }
+                
+                let html = '<h3>Convergence Analysis</h3>';
+                
+                if (isDiagonallyDominant && isDiagonallyDominantAtLeastOne) {
+                    html += '<p style="color: var(--success-color);">✓ The matrix is diagonally dominant. The Gauss-Seidel method will converge.</p>';
+                } else {
+                    html += '<p style="color: var(--accent-color);">⚠ The matrix is not diagonally dominant. Convergence is not guaranteed.</p>';
+                    html += '<p>Consider rearranging the equations to achieve diagonal dominance for better convergence.</p>';
+                }
+                
+                // Calculate spectral radius
+                try {
+                    const D = [];
+                    const L = [];
+                    const U = [];
+                    
+                    // Initialize matrices
+                    for (let i = 0; i < size; i++) {
+                        D.push(Array(size).fill(0));
+                        L.push(Array(size).fill(0));
+                        U.push(Array(size).fill(0));
+                    }
+                    
+                    // Fill matrices
+                    for (let i = 0; i < size; i++) {
+                        for (let j = 0; j < size; j++) {
+                            if (i === j) {
+                                D[i][j] = A[i][j];
+                            } else if (i > j) {
+                                L[i][j] = A[i][j];
+                            } else {
+                                U[i][j] = A[i][j];
+                            }
+                        }
+                    }
+                    
+                    html += '<h4>Decomposition into D, L, U matrices</h4>';
+                    html += '<p>Where D is diagonal, L is lower triangular, and U is upper triangular.</p>';
+                    
+                    html += '<p>For Gauss-Seidel: x<sup>k+1</sup> = (D - L)<sup>-1</sup>Ux<sup>k</sup> + (D - L)<sup>-1</sup>b</p>';
+                    
+                    html += '<p>The method will converge if the spectral radius of the iteration matrix is less than 1.</p>';
+                    
+                } catch (error) {
+                    console.error("Error calculating spectral radius:", error);
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        function rearrangeForConvergence() {
+            try {
+                const matrix = getGaussSeidelMatrix();
+                const size = matrix.A.length;
+                
+                // Find row with largest diagonal element for each column
+                const rowOrder = [];
+                const usedRows = new Set();
+                
+                for (let j = 0; j < size; j++) {
+                    let maxVal = -Infinity;
+                    let maxRow = -1;
+                    
+                    for (let i = 0; i < size; i++) {
+                        if (!usedRows.has(i)) {
+                            // Calculate how dominant this element would be if placed on the diagonal
+                            const diagValue = Math.abs(matrix.A[i][j]);
+                            let rowSum = 0;
+                            
+                            for (let k = 0; k < size; k++) {
+                                if (k !== j) {
+                                    rowSum += Math.abs(matrix.A[i][k]);
+                                }
+                            }
+                            
+                            // Ratio of diagonal to sum of other elements (higher is better)
+                            const dominanceRatio = diagValue / (rowSum + 1e-10); // Avoid division by zero
+                            
+                            if (dominanceRatio > maxVal) {
+                                maxVal = dominanceRatio;
+                                maxRow = i;
+                            }
+                        }
+                    }
+                    
+                    if (maxRow !== -1) {
+                        rowOrder.push(maxRow);
+                        usedRows.add(maxRow);
+                    }
+                }
+                
+                // Apply reordering to matrix
+                const newA = [];
+                const newB = [];
+                
+                for (let i = 0; i < size; i++) {
+                    const originalRow = rowOrder[i];
+                    newA.push([...matrix.A[originalRow]]);
+                    newB.push(matrix.b[originalRow]);
+                }
+                
+                // Update UI with reordered matrix
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        document.getElementById(`gs-a-${i}-${j}`).value = newA[i][j];
+                    }
+                    document.getElementById(`gs-b-${i}`).value = newB[i];
+                }
+                
+                alert("Matrix rearranged for better convergence. Check the convergence status now.");
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        function solveGaussSeidel() {
+            try {
+                const { A, b } = getGaussSeidelMatrix();
+                const size = A.length;
+                const tolerance = parseFloat(document.getElementById('gs-tolerance').value) / 100; // Convert percent to decimal
+                const maxIterations = parseInt(document.getElementById('gs-max-iterations').value);
+                const omega = parseFloat(document.getElementById('gs-omega').value); // Get relaxation factor
+                
+                if (isNaN(omega) || omega <= 0 || omega >= 2) {
+                    throw new Error("Relaxation factor ω must be between 0 and 2");
+                }
+                
+                // Get initial guess
+                let x = [];
+                const initialGuessStr = document.getElementById('gs-initial-guess').value.trim();
+                
+                if (initialGuessStr) {
+                    x = initialGuessStr.split(',').map(val => parseFloat(val.trim()));
+                    if (x.length !== size || x.some(isNaN)) {
+                        throw new Error("Invalid initial guess. Please provide " + size + " comma-separated numbers.");
+                    }
+                } else {
+                    x = Array(size).fill(0); // Default to zeros
+                }
+                
+                // Perform Gauss-Seidel iteration
+                const iterations = [];
+                let converged = false;
+                let iteration = 0;
+                
+                // Save initial guess as iteration 0
+                iterations.push({
+                    iteration: 0,
+                    values: [...x],
+                    errors: Array(size).fill(0)
+                });
+                
+                while (iteration < maxIterations) {
+                    iteration++;
+                    const xOld = [...x];
+                    const errors = [];
+                    let maxError = 0;
+                    
+                    for (let i = 0; i < size; i++) {
+                        let sum = b[i];
+                        
+                        for (let j = 0; j < size; j++) {
+                            if (j !== i) {
+                                sum -= A[i][j] * x[j];
+                            }
+                        }
+                        
+                        // Calculate new value with relaxation factor
+                        const newValue = (1 - omega) * x[i] + (omega * sum / A[i][i]);
+                        const error = Math.abs((newValue - x[i]) / newValue);
+                        errors.push(error * 100); // Store as percentage
+                        maxError = Math.max(maxError, error);
+                        
+                        x[i] = newValue;
+                    }
+                    
+                    // Save iteration results
+                    iterations.push({
+                        iteration,
+                        values: [...x],
+                        errors,
+                        maxError: maxError * 100 // Store as percentage
+                    });
+                    
+                    if (maxError < tolerance) {
+                        converged = true;
+                        break;
+                    }
+                }
+                
+                // Display results
+                const resultDiv = document.getElementById('gs-result');
+                const iterationsDiv = document.getElementById('gs-iterations');
+                const iterationsTable = document.getElementById('gs-iterations-table');
+                
+                resultDiv.style.display = 'block';
+                iterationsDiv.style.display = 'block';
+                
+                // Create result summary
+                let resultHtml = '<h3>Solution</h3>';
+                
+                if (converged) {
+                    resultHtml += `<p style="color: var(--success-color);">✓ Converged after ${iteration} iterations</p>`;
+                } else {
+                    resultHtml += `<p style="color: var(--accent-color);">⚠ Did not converge within ${maxIterations} iterations</p>`;
+                }
+                
+                // Add SOR method note if omega != 1
+                if (omega !== 1.0) {
+                    resultHtml += `<p>Used SOR method with relaxation factor ω = ${omega}</p>`;
+                }
+                
+                resultHtml += '<p>Final solution:</p><ul>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += `<li>x<sub>${i+1}</sub> = ${x[i].toFixed(6)}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                resultDiv.innerHTML = resultHtml;
+                
+                // Create iterations table
+                let tableHtml = '<thead><tr><th>Iteration</th>';
+                for (let i = 0; i < size; i++) {
+                    tableHtml += `<th>x<sub>${i+1}</sub></th>`;
+                    tableHtml += `<th>Error %</th>`;
+                }
+                tableHtml += '</tr></thead><tbody>';
+                
+                for (const iter of iterations) {
+                    tableHtml += `<tr><td>${iter.iteration}</td>`;
+                    
+                    for (let i = 0; i < size; i++) {
+                        tableHtml += `<td>${iter.values[i].toFixed(6)}</td>`;
+                        tableHtml += `<td>${iter.iteration === 0 ? '-' : iter.errors[i].toFixed(6)}</td>`;
+                    }
+                    
+                    tableHtml += '</tr>';
+                }
+                
+                tableHtml += '</tbody>';
+                iterationsTable.innerHTML = tableHtml;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // ----------------- GAUSS ELIMINATION -----------------
+        
+        function createGaussEliminationMatrix() {
+            const size = parseInt(document.getElementById('ge-rows').value);
+            if (size < 2) {
+                alert("Matrix size must be at least 2");
+                return;
+            }
+            
+            const container = document.getElementById('ge-matrix-container');
+            container.innerHTML = '';
+            
+            // Create augmented matrix [A|b]
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                // Coefficients (A)
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.placeholder = `a${i+1}${j+1}`;
+                    input.id = `ge-a-${i}-${j}`;
+                    input.className = 'matrix-input';
+                    row.appendChild(input);
+                }
+                
+                // Add equals sign
+                const equalsSpan = document.createElement('span');
+                equalsSpan.textContent = '=';
+                equalsSpan.style.margin = '0 10px';
+                equalsSpan.style.fontWeight = 'bold';
+                row.appendChild(equalsSpan);
+                
+                // Result (b)
+                const bInput = document.createElement('input');
+                bInput.type = 'number';
+                bInput.step = 'any';
+                bInput.placeholder = `b${i+1}`;
+                bInput.id = `ge-b-${i}`;
+                bInput.className = 'matrix-input';
+                row.appendChild(bInput);
+                
+                container.appendChild(row);
+            }
+        }
+        
+        function resetGaussElimination() {
+            const size = parseInt(document.getElementById('ge-rows').value);
+            
+            // Clear inputs
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    document.getElementById(`ge-a-${i}-${j}`).value = '';
+                }
+                document.getElementById(`ge-b-${i}`).value = '';
+            }
+            
+            // Clear results
+            document.getElementById('ge-result').style.display = 'none';
+            document.getElementById('ge-steps').style.display = 'none';
+            document.getElementById('ge-steps-content').innerHTML = '';
+        }
+        
+        function getGaussEliminationMatrix() {
+            const size = parseInt(document.getElementById('ge-rows').value);
+            const A = [];
+            const b = [];
+            
+            // Read A matrix
+            for (let i = 0; i < size; i++) {
+                const row = [];
+                for (let j = 0; j < size; j++) {
+                    const value = parseFloat(document.getElementById(`ge-a-${i}-${j}`).value);
+                    if (isNaN(value)) {
+                        throw new Error(`Missing or invalid value at position (${i+1},${j+1})`);
+                    }
+                    row.push(value);
+                }
+                A.push(row);
+                
+                // Read b vector
+                const bValue = parseFloat(document.getElementById(`ge-b-${i}`).value);
+                if (isNaN(bValue)) {
+                    throw new Error(`Missing or invalid value in right side at row ${i+1}`);
+                }
+                b.push(bValue);
+            }
+            
+            return { A, b };
+        }
+        
+        function solveGaussElimination() {
+            try {
+                const { A: originalA, b: originalB } = getGaussEliminationMatrix();
+                const size = originalA.length;
+                const usePivoting = document.getElementById('ge-pivoting').checked;
+                
+                // Make copies to avoid modifying the original data
+                const A = originalA.map(row => [...row]);
+                const b = [...originalB];
+                
+                const steps = [];
+                
+                // Forward elimination
+                for (let k = 0; k < size - 1; k++) {
+                    // Partial pivoting if enabled
+                    if (usePivoting) {
+                        let maxRow = k;
+                        let maxVal = Math.abs(A[k][k]);
+                        
+                        for (let i = k + 1; i < size; i++) {
+                            if (Math.abs(A[i][k]) > maxVal) {
+                                maxVal = Math.abs(A[i][k]);
+                                maxRow = i;
+                            }
+                        }
+                        
+                        // Swap rows if necessary
+                        if (maxRow !== k) {
+                            [A[k], A[maxRow]] = [A[maxRow], A[k]];
+                            [b[k], b[maxRow]] = [b[maxRow], b[k]];
+                            
+                            steps.push({
+                                type: 'swap',
+                                row1: k,
+                                row2: maxRow,
+                                A: A.map(row => [...row]),
+                                b: [...b]
+                            });
+                        }
+                    }
+                    
+                    // Check for zero pivot
+                    if (Math.abs(A[k][k]) < 1e-10) {
+                        throw new Error("Matrix is singular or nearly singular. Try using pivoting.");
+                    }
+                    
+                    for (let i = k + 1; i < size; i++) {
+                        const factor = A[i][k] / A[k][k];
+                        
+                        for (let j = k; j < size; j++) {
+                            A[i][j] -= factor * A[k][j];
+                        }
+                        
+                        b[i] -= factor * b[k];
+                        
+                        steps.push({
+                            type: 'elimination',
+                            targetRow: i,
+                            sourceRow: k,
+                            factor: factor,
+                            A: A.map(row => [...row]),
+                            b: [...b]
+                        });
+                    }
+                }
+                
+                // Back substitution
+                const x = Array(size).fill(0);
+                const backSteps = [];
+                
+                for (let i = size - 1; i >= 0; i--) {
+                    let sum = 0;
+                    for (let j = i + 1; j < size; j++) {
+                        sum += A[i][j] * x[j];
+                    }
+                    
+                    x[i] = (b[i] - sum) / A[i][i];
+                    
+                    backSteps.push({
+                        row: i,
+                        equation: `x_${i+1} = (${b[i].toFixed(4)} - ${sum.toFixed(4)}) / ${A[i][i].toFixed(4)} = ${x[i].toFixed(4)}`,
+                        value: x[i]
+                    });
+                }
+                
+                steps.push({
+                    type: 'backsubstitution',
+                    steps: backSteps,
+                    x: [...x]
+                });
+                
+                // Display results
+                const resultDiv = document.getElementById('ge-result');
+                const stepsDiv = document.getElementById('ge-steps');
+                const stepsContent = document.getElementById('ge-steps-content');
+                
+                resultDiv.style.display = 'block';
+                stepsDiv.style.display = 'block';
+                
+                // Create result summary
+                let resultHtml = '<h3>Solution</h3><ul>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += `<li>x<sub>${i+1}</sub> = ${x[i].toFixed(6)}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                resultDiv.innerHTML = resultHtml;
+                
+                // Create steps display
+                let stepsHtml = '';
+                
+                stepsHtml += `<h4>Method: Gaussian Elimination ${usePivoting ? 'with Partial Pivoting' : 'without Pivoting'}</h4>`;
+                
+                for (let i = 0; i < steps.length; i++) {
+                    const step = steps[i];
+                    
+                    if (step.type === 'swap') {
+                        stepsHtml += `<h4>Step ${i+1}: Swap rows ${step.row1+1} and ${step.row2+1}</h4>`;
+                        stepsHtml += '<p>This improves numerical stability by placing larger pivots on the diagonal.</p>';
+                    } else if (step.type === 'elimination') {
+                        stepsHtml += `<h4>Step ${i+1}: R${step.targetRow+1} = R${step.targetRow+1} - (${step.factor.toFixed(4)}) × R${step.sourceRow+1}</h4>`;
+                    } else if (step.type === 'backsubstitution') {
+                        stepsHtml += `<h4>Back Substitution</h4>`;
+                        stepsHtml += '<p>Solve for unknowns from the bottom up:</p>';
+                        stepsHtml += '<ul>';
+                        for (let j = 0; j < step.steps.length; j++) {
+                            const backstep = step.steps[j];
+                            stepsHtml += `<li>Solve for x<sub>${backstep.row+1}</sub>: ${backstep.equation}</li>`;
+                        }
+                        stepsHtml += '</ul>';
+                        continue; // Skip matrix display for back substitution
+                    }
+                    
+                    // Display the augmented matrix [A|b]
+                    stepsHtml += '<div style="overflow-x: auto;"><table>';
+                    for (let r = 0; r < size; r++) {
+                        stepsHtml += '<tr>';
+                        for (let c = 0; c < size; c++) {
+                            stepsHtml += `<td>${step.A[r][c].toFixed(4)}</td>`;
+                        }
+                        stepsHtml += `<td style="border-left: 2px solid var(--table-border);">${step.b[r].toFixed(4)}</td>`;
+                        stepsHtml += '</tr>';
+                    }
+                    stepsHtml += '</table></div>';
+                }
+                
+                stepsContent.innerHTML = stepsHtml;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // ----------------- LU DECOMPOSITION -----------------
+        
+        function createLUMatrix() {
+            const size = parseInt(document.getElementById('lu-rows').value);
+            if (size < 2) {
+                alert("Matrix size must be at least 2");
+                return;
+            }
+            
+            const container = document.getElementById('lu-matrix-container');
+            container.innerHTML = '';
+            
+            // Create matrix A
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.placeholder = `a${i+1}${j+1}`;
+                    input.id = `lu-a-${i}-${j}`;
+                    input.className = 'matrix-input';
+                    row.appendChild(input);
+                }
+                
+                container.appendChild(row);
+            }
+            
+            // Update b vector field placeholder
+            document.getElementById('lu-vector-b').placeholder = `e.g., ${Array(size).fill('0').join(',')}`;
+        }
+        
+        function resetLUDecomposition() {
+            const size = parseInt(document.getElementById('lu-rows').value);
+            
+            // Clear inputs
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    document.getElementById(`lu-a-${i}-${j}`).value = '';
+                }
+            }
+            
+            document.getElementById('lu-vector-b').value = '';
+            
+            // Clear results
+            document.getElementById('lu-result').style.display = 'none';
+        }
+        
+        function getLUMatrix() {
+            const size = parseInt(document.getElementById('lu-rows').value);
+            const A = [];
+            
+            // Read A matrix
+            for (let i = 0; i < size; i++) {
+                const row = [];
+                for (let j = 0; j < size; j++) {
+                    const value = parseFloat(document.getElementById(`lu-a-${i}-${j}`).value);
+                    if (isNaN(value)) {
+                        throw new Error(`Missing or invalid value at position (${i+1},${j+1})`);
+                    }
+                    row.push(value);
+                }
+                A.push(row);
+            }
+            
+            // Read b vector
+            const bStr = document.getElementById('lu-vector-b').value.trim();
+            let b = [];
+            
+            if (bStr) {
+                b = bStr.split(',').map(val => parseFloat(val.trim()));
+                if (b.length !== size || b.some(isNaN)) {
+                    throw new Error("Invalid b vector. Please provide " + size + " comma-separated numbers.");
+                }
+            } else {
+                throw new Error("Vector b is required");
+            }
+            
+            return { A, b };
+        }
+        
+        function solveLUDecomposition() {
+            try {
+                const { A: originalA, b: originalB } = getLUMatrix();
+                const size = originalA.length;
+                
+                // Make copies to avoid modifying the original data
+                const A = originalA.map(row => [...row]);
+                const b = [...originalB];
+                
+                // Initialize L and U matrices
+                const L = Array(size).fill().map(() => Array(size).fill(0));
+                const U = Array(size).fill().map(() => Array(size).fill(0));
+                
+                // LU decomposition (Doolittle's method)
+                for (let i = 0; i < size; i++) {
+                    // Upper triangular matrix (U)
+                    for (let k = i; k < size; k++) {
+                        let sum = 0;
+                        for (let j = 0; j < i; j++) {
+                            sum += L[i][j] * U[j][k];
+                        }
+                        U[i][k] = A[i][k] - sum;
+                    }
+                    
+                    // Lower triangular matrix (L)
+                    L[i][i] = 1; // Diagonal elements of L are 1
+                    for (let k = i + 1; k < size; k++) {
+                        let sum = 0;
+                        for (let j = 0; j < i; j++) {
+                            sum += L[k][j] * U[j][i];
+                        }
+                        if (Math.abs(U[i][i]) < 1e-10) {
+                            throw new Error("Matrix cannot be decomposed using Doolittle's method");
+                        }
+                        L[k][i] = (A[k][i] - sum) / U[i][i];
+                    }
+                }
+                
+                // Forward substitution (Ly = b)
+                const y = Array(size).fill(0);
+                const forwardSteps = [];
+                for (let i = 0; i < size; i++) {
+                    let sum = 0;
+                    for (let j = 0; j < i; j++) {
+                        sum += L[i][j] * y[j];
+                    }
+                    y[i] = b[i] - sum;
+                    forwardSteps.push({
+                        row: i,
+                        equation: `y_${i+1} = ${b[i].toFixed(4)} - ${sum.toFixed(4)} = ${y[i].toFixed(4)}`,
+                        value: y[i]
+                    });
+                }
+                
+                // Back substitution (Ux = y)
+                const x = Array(size).fill(0);
+                const backwardSteps = [];
+                for (let i = size - 1; i >= 0; i--) {
+                    let sum = 0;
+                    for (let j = i + 1; j < size; j++) {
+                        sum += U[i][j] * x[j];
+                    }
+                    x[i] = (y[i] - sum) / U[i][i];
+                    backwardSteps.push({
+                        row: i,
+                        equation: `x_${i+1} = (${y[i].toFixed(4)} - ${sum.toFixed(4)}) / ${U[i][i].toFixed(4)} = ${x[i].toFixed(4)}`,
+                        value: x[i]
+                    });
+                }
+                
+                // Display results
+                const resultDiv = document.getElementById('lu-result');
+                resultDiv.style.display = 'block';
+                
+                let resultHtml = '<h3>LU Decomposition</h3>';
+                
+                // Display L matrix
+                resultHtml += '<h4>Lower Triangular Matrix (L)</h4>';
+                resultHtml += '<div style="overflow-x: auto;"><table>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += '<tr>';
+                    for (let j = 0; j < size; j++) {
+                        resultHtml += `<td>${L[i][j].toFixed(4)}</td>`;
+                    }
+                    resultHtml += '</tr>';
+                }
+                resultHtml += '</table></div>';
+                
+                // Display U matrix
+                resultHtml += '<h4>Upper Triangular Matrix (U)</h4>';
+                resultHtml += '<div style="overflow-x: auto;"><table>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += '<tr>';
+                    for (let j = 0; j < size; j++) {
+                        resultHtml += `<td>${U[i][j].toFixed(4)}</td>`;
+                    }
+                    resultHtml += '</tr>';
+                }
+                resultHtml += '</table></div>';
+                
+                // Display forward substitution steps
+                resultHtml += '<h4>Forward Substitution Steps (Ly = b)</h4>';
+                resultHtml += '<ul>';
+                for (const step of forwardSteps) {
+                    resultHtml += `<li>Solve for y<sub>${step.row+1}</sub>: ${step.equation}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                // Display backward substitution steps
+                resultHtml += '<h4>Backward Substitution Steps (Ux = y)</h4>';
+                resultHtml += '<ul>';
+                for (const step of backwardSteps) {
+                    resultHtml += `<li>Solve for x<sub>${step.row+1}</sub>: ${step.equation}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                // Display final solution x (Ux = y)
+                resultHtml += '<h3>Solution</h3><ul>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += `<li>x<sub>${i+1}</sub> = ${x[i].toFixed(6)}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                // Verify the solution by computing A*x
+                const Ax = Array(size).fill(0);
+                for (let i = 0; i < size; i++) {
+                    for (let j = 0; j < size; j++) {
+                        Ax[i] += A[i][j] * x[j];
+                    }
+                }
+                
+                // Calculate the error
+                let maxError = 0;
+                for (let i = 0; i < size; i++) {
+                    const error = Math.abs(Ax[i] - b[i]);
+                    maxError = Math.max(maxError, error);
+                }
+                
+                resultHtml += `<p>Maximum residual error: ${maxError.toExponential(4)}</p>`;
+                
+                resultDiv.innerHTML = resultHtml;
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // ----------------- BISECTION METHOD -----------------
+        
+        function resetBisection() {
+            document.getElementById('bisection-equation').value = '';
+            document.getElementById('lower-bound').value = '';
+            document.getElementById('upper-bound').value = '';
+            document.getElementById('tolerance').value = '0.1';
+            document.getElementById('max-iterations').value = '50';
+            document.getElementById('bisection-equation-preview').innerHTML = '';
+            document.getElementById('bisection-result').style.display = 'none';
+            document.getElementById('bisection-iterations').style.display = 'none';
+        }
+
+        function solveBisection() {
+            try {
+                // Get inputs
+                const equationStr = document.getElementById('bisection-equation').value.trim();
+                if (!equationStr) {
+                    throw new Error("Please enter an equation");
+                }
+                
+                const a = parseFloat(document.getElementById('lower-bound').value);
+                const b = parseFloat(document.getElementById('upper-bound').value);
+                const tolerance = parseFloat(document.getElementById('tolerance').value) / 100; // Convert percent to decimal
+                const maxIterations = parseInt(document.getElementById('max-iterations').value);
+                
+                if (isNaN(a) || isNaN(b)) {
+                    throw new Error("Please enter valid lower and upper bounds");
+                }
+                
+                if (a >= b) {
+                    throw new Error("Lower bound must be less than upper bound");
+                }
+                
+                // Create function from string using math.js
+                // Since math.js requires string in the format "x^2-4" for compilation
+                let f;
+                try {
+                    // Parse the equation using math.js
+                    const node = math.parse(equationStr);
+                    // Compile the expression to a function
+                    f = node.compile().evaluate;
+                } catch (e) {
+                    throw new Error("Invalid equation format: " + e.message);
+                }
+                
+                // Evaluate function at bounds
+                const fa = f({x: a});
+                const fb = f({x: b});
+                
+                if (fa * fb > 0) {
+                    throw new Error("Function must have opposite signs at the bounds");
+                }
+                
+                // Perform bisection method
+                let left = a;
+                let right = b;
+                let mid = (left + right) / 2;
+                let fmid = f({x: mid});
+                let error = 100; // 100%
+                let iteration = 0;
+                
+                const iterations = [];
+                iterations.push({
+                    iteration,
+                    a: left,
+                    b: right,
+                    c: mid,
+                    fc: fmid,
+                    error: '-'
+                });
+                
+                let previousMid = null;
+                
+                while (error > tolerance && iteration < maxIterations && Math.abs(fmid) > 1e-10) {
+                    iteration++;
+                    previousMid = mid;
+                    
+                    // Update interval
+                    if (f({x: left}) * fmid < 0) {
+                        right = mid;
+                    } else {
+                        left = mid;
+                    }
+                    
+                    // Calculate new midpoint
+                    mid = (left + right) / 2;
+                    fmid = f({x: mid});
+                    
+                    // Calculate relative error
+                    if (previousMid !== null) {
+                        error = Math.abs((mid - previousMid) / mid);
+                    }
+                    
+                    // Store iteration data
+                    iterations.push({
+                        iteration,
+                        a: left,
+                        b: right,
+                        c: mid,
+                        fc: fmid,
+                        error: error * 100 // Convert to percentage
+                    });
+                }
+                
+                // Display results
+                const resultDiv = document.getElementById('bisection-result');
+                const iterationsDiv = document.getElementById('bisection-iterations');
+                const iterationsTable = document.getElementById('bisection-iterations-table');
+                
+                resultDiv.style.display = 'block';
+                iterationsDiv.style.display = 'block';
+                
+                // Create result summary
+                let resultHtml = '<h3>Result</h3>';
+                
+                if (iteration < maxIterations && Math.abs(fmid) < 1e-10) {
+                    resultHtml += `<p style="color: var(--success-color);">✓ Root found at x = ${mid.toFixed(8)}</p>`;
+                } else if (error <= tolerance) {
+                    resultHtml += `<p style="color: var(--success-color);">✓ Converged to x = ${mid.toFixed(8)} with tolerance ${tolerance * 100}%</p>`;
+                } else {
+                    resultHtml += `<p style="color: var(--accent-color);">⚠ Did not converge within ${maxIterations} iterations</p>`;
+                    resultHtml += `<p>Best approximation: x = ${mid.toFixed(8)}</p>`;
+                }
+                
+                resultHtml += `<p>Function value at x: f(${mid.toFixed(8)}) = ${fmid.toFixed(8)}</p>`;
+                resultHtml += `<p>Number of iterations: ${iteration}</p>`;
+                resultHtml += `<p>Final relative error: ${(error * 100).toFixed(8)}%</p>`;
+                
+                resultDiv.innerHTML = resultHtml;
+                
+                // Create iterations table
+                let tableHtml = '';
+                const tbody = document.createElement('tbody');
+                
+                for (const iter of iterations) {
+                    const row = document.createElement('tr');
+                    
+                    const createCell = (value) => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        return cell;
+                    };
+                    
+                    row.appendChild(createCell(iter.iteration));
+                    row.appendChild(createCell(iter.a.toFixed(6)));
+                    row.appendChild(createCell(iter.b.toFixed(6)));
+                    row.appendChild(createCell(iter.c.toFixed(6)));
+                    row.appendChild(createCell(iter.fc.toFixed(6)));
+                    row.appendChild(createCell(iter.error === '-' ? '-' : iter.error.toFixed(6)));
+                    
+                    tbody.appendChild(row);
+                }
+                
+                // Clear existing table body
+                const oldTbody = iterationsTable.querySelector('tbody');
+                if (oldTbody) {
+                    oldTbody.remove();
+                }
+                
+                iterationsTable.appendChild(tbody);
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // ----------------- CRAMER'S RULE -----------------
+        
+        function createCramersMatrix() {
+            const size = parseInt(document.getElementById('cr-rows').value);
+            if (size < 2) {
+                alert("Matrix size must be at least 2");
+                return;
+            }
+            
+            const container = document.getElementById('cr-matrix-container');
+            container.innerHTML = '';
+            
+            // Create augmented matrix [A|b]
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                // Coefficients (A)
+                for (let j = 0; j < size; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.placeholder = `a${i+1}${j+1}`;
+                    input.id = `cr-a-${i}-${j}`;
+                    input.className = 'matrix-input';
+                    row.appendChild(input);
+                }
+                
+                // Add equals sign
+                const equalsSpan = document.createElement('span');
+                equalsSpan.textContent = '=';
+                equalsSpan.style.margin = '0 10px';
+                equalsSpan.style.fontWeight = 'bold';
+                row.appendChild(equalsSpan);
+                
+                // Result (b)
+                const bInput = document.createElement('input');
+                bInput.type = 'number';
+                bInput.step = 'any';
+                bInput.placeholder = `b${i+1}`;
+                bInput.id = `cr-b-${i}`;
+                bInput.className = 'matrix-input';
+                row.appendChild(bInput);
+                
+                container.appendChild(row);
+            }
+        }
+        
+        function resetCramers() {
+            const size = parseInt(document.getElementById('cr-rows').value);
+            
+            // Clear inputs
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    document.getElementById(`cr-a-${i}-${j}`).value = '';
+                }
+                document.getElementById(`cr-b-${i}`).value = '';
+            }
+            
+            // Clear results
+            document.getElementById('cr-result').style.display = 'none';
+            document.getElementById('cr-steps').style.display = 'none';
+            document.getElementById('cr-steps-content').innerHTML = '';
+        }
+        
+        function getCramersMatrix() {
+            const size = parseInt(document.getElementById('cr-rows').value);
+            const A = [];
+            const b = [];
+            
+            // Read A matrix
+            for (let i = 0; i < size; i++) {
+                const row = [];
+                for (let j = 0; j < size; j++) {
+                    const value = parseFloat(document.getElementById(`cr-a-${i}-${j}`).value);
+                    if (isNaN(value)) {
+                        throw new Error(`Missing or invalid value at position (${i+1},${j+1})`);
+                    }
+                    row.push(value);
+                }
+                A.push(row);
+                
+                // Read b vector
+                const bValue = parseFloat(document.getElementById(`cr-b-${i}`).value);
+                if (isNaN(bValue)) {
+                    throw new Error(`Missing or invalid value in right side at row ${i+1}`);
+                }
+                b.push(bValue);
+            }
+            
+            return { A, b };
+        }
+        
+        function formatMatrix(matrix) {
+            let html = '<div style="overflow-x: auto;"><table>';
+            for (let i = 0; i < matrix.length; i++) {
+                html += '<tr>';
+                for (let j = 0; j < matrix[i].length; j++) {
+                    html += `<td>${matrix[i][j].toFixed(4)}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table></div>';
+            return html;
+        }
+        
+        function solveCramers() {
+            try {
+                const { A, b } = getCramersMatrix();
+                const size = A.length;
+                
+                // Calculate the determinant of the coefficient matrix
+                const detA = determinant(A);
+                
+                if (Math.abs(detA) < 1e-10) {
+                    throw new Error("The coefficient matrix is singular. Cramer's rule cannot be applied.");
+                }
+                
+                const x = [];
+                const stepsInfo = [];
+                
+                // For each variable, replace the corresponding column with the b vector
+                for (let j = 0; j < size; j++) {
+                    // Create a copy of A for this variable
+                    const Aj = A.map(row => [...row]);
+                    
+                    // Replace the j-th column with b
+                    for (let i = 0; i < size; i++) {
+                        Aj[i][j] = b[i];
+                    }
+                    
+                    // Calculate determinant
+                    const detAj = determinant(Aj);
+                    
+                    // Calculate the value of x_j
+                    x[j] = detAj / detA;
+                    
+                    stepsInfo.push({
+                        variable: j,
+                        Aj: Aj,
+                        detAj: detAj,
+                        value: x[j]
+                    });
+                }
+                
+                // Display results
+                const resultDiv = document.getElementById('cr-result');
+                const stepsDiv = document.getElementById('cr-steps');
+                const stepsContent = document.getElementById('cr-steps-content');
+                
+                resultDiv.style.display = 'block';
+                stepsDiv.style.display = 'block';
+                
+                // Create result summary
+                let resultHtml = '<h3>Solution</h3><ul>';
+                for (let i = 0; i < size; i++) {
+                    resultHtml += `<li>x<sub>${i+1}</sub> = ${x[i].toFixed(6)}</li>`;
+                }
+                resultHtml += '</ul>';
+                
+                resultDiv.innerHTML = resultHtml;
+                
+                // Create steps display
+                let stepsHtml = '<h4>Steps for Cramer\'s Rule</h4>';
+                
+                // Show original system
+                stepsHtml += '<h4>Original System: Ax = b</h4>';
+                stepsHtml += '<p>Coefficient matrix A:</p>';
+                stepsHtml += formatMatrix(A);
+                
+                stepsHtml += '<p>Vector b:</p>';
+                stepsHtml += formatMatrix([b]);
+                
+                // Show the formula
+                stepsHtml += `<h4>Cramer's Rule Formula</h4>`;
+                stepsHtml += `<p>x<sub>i</sub> = det(A<sub>i</sub>) / det(A)</p>`;
+                stepsHtml += `<p>where A<sub>i</sub> is A with the i-th column replaced by b</p>`;
+                
+                // Calculate det(A)
+                stepsHtml += '<h4>Calculate det(A)</h4>';
+                stepsHtml += `<p>det(A) = ${detA.toFixed(6)}</p>`;
+                
+                // Calculate each variable
+                for (let i = 0; i < size; i++) {
+                    const step = stepsInfo[i];
+                    
+                    stepsHtml += `<h4>Calculate x<sub>${i+1}</sub></h4>`;
+                    stepsHtml += `<p>Matrix A<sub>${i+1}</sub> (matrix A with column ${i+1} replaced by b):</p>`;
+                    stepsHtml += formatMatrix(step.Aj);
+                    
+                    stepsHtml += `<p>det(A<sub>${i+1}</sub>) = ${step.detAj.toFixed(6)}</p>`;
+                    stepsHtml += `<p>x<sub>${i+1}</sub> = det(A<sub>${i+1}</sub>) / det(A) = ${step.detAj.toFixed(6)} / ${detA.toFixed(6)} = ${step.value.toFixed(6)}</p>`;
+                }
+                
+                stepsContent.innerHTML = stepsHtml;
+                
+                // Verify the solution
+                let maxResidual = 0;
+                for (let i = 0; i < size; i++) {
+                    let sum = 0;
+                    for (let j = 0; j < size; j++) {
+                        sum += A[i][j] * x[j];
+                    }
+                    maxResidual = Math.max(maxResidual, Math.abs(sum - b[i]));
+                }
+                
+                if (maxResidual > 1e-10) {
+                    stepsContent.innerHTML += `<p style="color: var(--accent-color);">Note: Maximum residual is ${maxResidual.toExponential(4)}, which indicates numerical instability in the solution. Consider using Gaussian elimination for better accuracy.</p>`;
+                }
+                
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+        
+        // Initialize the app
+        window.onload = function() {
+            // Initialize each tab's content
+            document.getElementById('newton-equation-check').innerHTML = 'Enter an equation to see preview';
+            document.getElementById('newton-derivative-check').innerHTML = 'Enter an equation to see preview';
+            
+            createGaussSeidelMatrix();
+            createGaussEliminationMatrix();
+            createLUMatrix();
+            createCramersMatrix();
+        };
+    </script>
+</body>
+</html>
