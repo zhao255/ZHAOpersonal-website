@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Ordering System</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: #3a3a3a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #ff5252;
+        }
+        
+        input, select, textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Owner Panel Styles */
+        #owner-panel {
+            display: block;
+        }
+        
+        .owner-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .food-form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .food-list {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .food-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .food-img {
+            width: 100px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 4px;
+        }
+        
+        .food-details {
+            flex: 1;
+        }
+        
+        .food-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        /* Orders Panel */
+        .orders-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .order-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        /* Customer View Styles */
+        #customer-panel {
+            display: none;
+        }
+        
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .menu-item {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .menu-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .menu-item-details {
+            padding: 15px;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #ff6b6b;
+            font-size: 18px;
+        }
+        
+        .cart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .filter-container {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Receipt Styles */
+        .receipt {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .receipt-items {
+            margin-bottom: 15px;
+        }
+        
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .receipt-total {
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Preview iframe */
+        #preview-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        /* UI Customization panel */
+        .ui-customization {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .ui-customization h3 {
+            margin-bottom: 15px;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+        }
+        
+        /* Option price adjustments */
+        .option-price {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            gap: 10px;
+        }
+        
+        .option-price input {
+            width: 80px;
+        }
+        
+        /* Share receipt buttons */
+        .share-receipt {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .text-receipt {
+            width: 100%;
+            height: 200px;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre;
+        }
+
+        /* Order Creation Panel */
+        .create-order-form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .create-order-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .create-order-preview {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .manual-cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .owner-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .food-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .food-img {
+                margin-bottom: 10px;
+                width: 100%;
+                height: auto;
+            }
+            
+            .food-actions {
+                margin-top: 10px;
+            }
+
+            .create-order-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .menu-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Food Ordering System</h1>
+            <div style="margin-top: 10px;">
+                <button id="switch-to-owner">Shop Owner Panel</button>
+                <button id="switch-to-customer">Customer View</button>
+                <button id="generate-customer-link">Generate Customer-Only Link</button>
+            </div>
+        </header>
+
+        <!-- Shop Owner Panel -->
+        <div id="owner-panel">
+            <div class="tabs">
+                <div class="tab active" data-tab="menu-management">Menu Management</div>
+                <div class="tab" data-tab="orders">Orders</div>
+                <div class="tab" data-tab="create-order">Create Order</div>
+                <div class="tab" data-tab="ui-customization">UI Customization</div>
+                <div class="tab" data-tab="preview">Preview Customer View</div>
+                <div class="tab" data-tab="export">Export Data</div>
+            </div>
+
+            <!-- Menu Management Tab -->
+            <div class="tab-content active" id="menu-management">
+                <div class="owner-grid">
+                    <div class="food-form">
+                        <h2>Add/Edit Food Item</h2>
+                        <form id="food-form">
+                            <input type="hidden" id="edit-id">
+                            <label for="food-name">Food Name</label>
+                            <input type="text" id="food-name" required>
+                            
+                            <label for="food-price">Base Price ($)</label>
+                            <input type="number" id="food-price" step="0.01" min="0" required>
+                            
+                            <label for="food-description">Description</label>
+                            <textarea id="food-description" rows="3" required></textarea>
+                            
+                            <label for="food-image">Image URL (or upload)</label>
+                            <input type="text" id="food-image">
+                            <input type="file" id="food-image-upload" accept="image/*">
+                            
+                            <label for="food-category">Category</label>
+                            <select id="food-category">
+                                <option value="main">Main Course</option>
+                                <option value="appetizer">Appetizer</option>
+                                <option value="dessert">Dessert</option>
+                                <option value="beverage">Beverage</option>
+                            </select>
+                            
+                            <div id="options-container">
+                                <label>Options with Price Adjustments</label>
+                                <div class="option-item">
+                                    <input type="text" placeholder="Option name (e.g., Size)" class="option-name">
+                                    <div class="option-values-container">
+                                        <div class="option-value-item">
+                                            <input type="text" placeholder="Value (e.g., Small)" class="option-value">
+                                            <div class="option-price">
+                                                <span>Price Adjustment: $</span>
+                                                <input type="number" step="0.01" placeholder="0.00" class="option-price-adj" value="0.00">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="add-value">+ Add Value</button>
+                                    </div>
+                                    <button type="button" class="remove-option">Remove Option</button>
+                                </div>
+                            </div>
+                            <button type="button" id="add-option">Add Another Option</button>
+                            
+                            <label>Ingredients (for filtering)</label>
+                            <input type="text" id="food-ingredients" placeholder="Comma separated (e.g., tomato, cheese, beef)">
+                            
+                            <button type="submit" id="save-food">Save Food Item</button>
+                        </form>
+                    </div>
+                    
+                    <div class="food-list">
+                        <h2>Food Items</h2>
+                        <div id="food-items-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="tab-content" id="orders">
+                <div class="orders-container">
+                    <h2>Pending Orders</h2>
+                    <div id="pending-orders"></div>
+                    
+                    <h2>Completed Orders</h2>
+                    <div id="completed-orders"></div>
+                </div>
+            </div>
+
+            <!-- Create Order Tab -->
+            <div class="tab-content" id="create-order">
+                <div class="create-order-form">
+                    <h2>Create Order from Receipt</h2>
+                    <div class="create-order-container">
+                        <div>
+                            <label for="receipt-text">Paste Receipt Text or Enter Order Details:</label>
+                            <textarea id="receipt-text" rows="10" placeholder="Paste receipt text here or enter order details manually..."></textarea>
+                            <button id="parse-receipt">Parse Receipt</button>
+                            
+                            <div style="margin-top: 20px;">
+                                <h3>Manual Item Entry</h3>
+                                <div>
+                                    <label for="manual-item-name">Item Name:</label>
+                                    <input type="text" id="manual-item-name" placeholder="Enter item name">
+                                </div>
+                                <div>
+                                    <label for="manual-item-price">Price ($):</label>
+                                    <input type="number" id="manual-item-price" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div>
+                                    <label for="manual-item-quantity">Quantity:</label>
+                                    <input type="number" id="manual-item-quantity" min="1" value="1">
+                                </div>
+                                <div>
+                                    <label for="manual-item-notes">Notes/Customizations:</label>
+                                    <input type="text" id="manual-item-notes" placeholder="e.g., No onions, Extra cheese">
+                                </div>
+                                <button id="add-manual-item">Add Item</button>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <label for="customer-name-order">Customer Name:</label>
+                                <input type="text" id="customer-name-order" placeholder="Enter customer name">
+                            </div>
+                        </div>
+                        
+                        <div class="create-order-preview">
+                            <h3>Order Preview</h3>
+                            <div id="manual-cart-items"></div>
+                            <div style="margin-top: 15px; text-align: right; font-weight: bold;">
+                                Total: $<span id="manual-cart-total">0.00</span>
+                            </div>
+                            <button id="create-order-btn" style="margin-top: 15px; width: 100%;">Create Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI Customization Tab -->
+            <div class="tab-content" id="ui-customization">
+                <div class="ui-customization">
+                    <h2>Customer Interface Customization</h2>
+                    <div style="margin-bottom: 20px;">
+                        <h3>Color Theme</h3>
+                        <div>
+                            <label for="header-color">Header Color:</label>
+                            <input type="color" id="header-color" value="#3a3a3a">
+                            <span class="color-preview" id="header-color-preview" style="background-color: #3a3a3a;"></span>
+                        </div>
+                        <div>
+                            <label for="button-color">Button Color:</label>
+                            <input type="color" id="button-color" value="#ff6b6b">
+                            <span class="color-preview" id="button-color-preview" style="background-color: #ff6b6b;"></span>
+                        </div>
+                        <div>
+                            <label for="header-text-color">Header Text Color:</label>
+                            <input type="color" id="header-text-color" value="#ffffff">
+                            <span class="color-preview" id="header-text-color-preview" style="background-color: #ffffff;"></span>
+                        </div>
+                        <div>
+                            <label for="body-text-color">Body Text Color:</label>
+                            <input type="color" id="body-text-color" value="#333333">
+                            <span class="color-preview" id="body-text-color-preview" style="background-color: #333333;"></span>
+                        </div>
+                        
+                        <div>
+                            <label for="font-family">Font Style:</label>
+                            <select id="font-family">
+                                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default (Segoe UI)</option>
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Courier New', Courier, monospace">Courier New</option>
+                                <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                                <option value="Impact, Charcoal, sans-serif">Impact</option>
+                                <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+                            </select>
+                            <div style="margin-top: 5px; font-family: 'Segoe UI';" id="font-preview">
+                                Font Preview: The quick brown fox jumps over the lazy dog
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3>Background</h3>
+                        <div>
+                            <label for="bg-color">Background Color:</label>
+                            <input type="color" id="bg-color" value="#f5f5f5">
+                            <span class="color-preview" id="bg-color-preview" style="background-color: #f5f5f5;"></span>
+                        </div>
+                        <div>
+                            <label for="bg-image">Background Image URL:</label>
+                            <input type="text" id="bg-image" placeholder="Enter image URL">
+                            <input type="file" id="bg-image-upload" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3>Restaurant Info</h3>
+                        <div>
+                            <label for="restaurant-name">Restaurant Name:</label>
+                            <input type="text" id="restaurant-name" placeholder="Your Restaurant Name">
+                        </div>
+                        <div>
+                            <label for="restaurant-logo">Logo URL:</label>
+                            <input type="text" id="restaurant-logo" placeholder="Enter logo URL">
+                            <input type="file" id="restaurant-logo-upload" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <button id="save-ui-settings">Save UI Settings</button>
+                </div>
+            </div>
+
+            <!-- Preview Tab -->
+            <div class="tab-content" id="preview">
+                <h2>Customer View Preview</h2>
+                <iframe id="preview-frame" src="about:blank"></iframe>
+            </div>
+
+            <!-- Export Tab -->
+            <div class="tab-content" id="export">
+                <h2>Export Orders Data</h2>
+                <p>Download order data as an Excel file. This includes all orders, customer information, and revenue.</p>
+                <button id="export-excel">Export to Excel</button>
+                <div id="export-stats" style="margin-top: 20px;">
+                    <h3>Revenue Statistics</h3>
+                    <p>Total Orders: <span id="total-orders">0</span></p>
+                    <p>Total Revenue: $<span id="total-revenue">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Panel -->
+        <div id="customer-panel">
+            <div id="restaurant-header">
+                <!-- Restaurant logo and name will be inserted here -->
+            </div>
+            
+            <div class="filter-container">
+                <h3>Filter Menu</h3>
+                <div>
+                    <label for="category-filter">Category:</label>
+                    <select id="category-filter">
+                        <option value="all">All Categories</option>
+                        <option value="main">Main Course</option>
+                        <option value="appetizer">Appetizer</option>
+                        <option value="dessert">Dessert</option>
+                        <option value="beverage">Beverage</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ingredient-filter">Ingredient:</label>
+                    <input type="text" id="ingredient-filter" placeholder="Enter ingredient (e.g., cheese)">
+                    <button id="apply-filter">Apply Filter</button>
+                    <button id="clear-filter">Clear Filter</button>
+                </div>
+            </div>
+            
+            <div class="menu-container" id="menu-items"></div>
+            
+            <div class="cart-container">
+                <h2>Your Cart</h2>
+                <div class="cart-items" id="cart-items">
+                    <p>Your cart is empty.</p>
+                </div>
+                <div class="cart-total">
+                    Total: $<span id="cart-total">0.00</span>
+                </div>
+                <button id="checkout-btn">Checkout</button>
+            </div>
+        </div>
+
+        <!-- Customization Modal -->
+        <div id="customization-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modal-food-name"></h2>
+                <p id="modal-food-description"></p>
+                <div id="customization-options"></div>
+                <div id="price-display" style="margin: 15px 0; font-weight: bold; font-size: 18px;">
+                    Price: $<span id="current-price">0.00</span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" min="1" value="1">
+                </div>
+                <button id="add-to-cart" style="margin-top: 15px;">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- Checkout Modal -->
+        <div id="checkout-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Checkout</h2>
+                <label for="customer-name">Your Name (Optional):</label>
+                <input type="text" id="customer-name" placeholder="Enter your name">
+                <div id="checkout-items" style="margin: 15px 0;"></div>
+                <div style="text-align: right; font-weight: bold; margin-bottom: 15px;">
+                    Total: $<span id="checkout-total">0.00</span>
+                </div>
+                <button id="place-order-btn">Place Order</button>
+            </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="receipt-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2 id="receipt-restaurant-name">Order Receipt</h2>
+                        <p>Order #: <span id="receipt-order-number"></span></p>
+                        <p id="receipt-customer-name"></p>
+                        <p>Date: <span id="receipt-date"></span></p>
+                    </div>
+                    <div id="receipt-items" class="receipt-items">
+                        <!-- Receipt items will be inserted here -->
+                    </div>
+                    <div class="receipt-total">
+                        Total: $<span id="receipt-total"></span>
+                    </div>
+                    <div class="share-receipt">
+                        <button id="print-receipt">Print Receipt</button>
+                        <button id="copy-receipt">Copy as Text</button>
+                        <button id="send-to-owner">Send to Restaurant</button>
+                    </div>
+                    <textarea id="text-receipt" class="text-receipt" readonly style="display: none;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Order Modal -->
+        <div id="edit-order-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Edit Order #<span id="edit-order-id"></span></h2>
+                <div>
+                    <label for="edit-customer-name">Customer Name:</label>
+                    <input type="text" id="edit-customer-name">
+                </div>
+                <h3 style="margin-top: 15px;">Order Items</h3>
+                <div id="edit-order-items"></div>
+                <div style="margin-top: 15px;">
+                    <h4>Add New Item to Order</h4>
+                    <div>
+                        <label for="edit-new-item-name">Item Name:</label>
+                        <input type="text" id="edit-new-item-name">
+                    </div>
+                    <div>
+                        <label for="edit-new-item-price">Price ($):</label>
+                        <input type="number" id="edit-new-item-price" step="0.01" min="0">
+                    </div>
+                    <div>
+                        <label for="edit-new-item-quantity">Quantity:</label>
+                        <input type="number" id="edit-new-item-quantity" min="1" value="1">
+                    </div>
+                    <div>
+                        <label for="edit-new-item-notes">Notes/Customizations:</label>
+                        <input type="text" id="edit-new-item-notes">
+                    </div>
+                    <button id="add-item-to-order">Add Item</button>
+                </div>
+                <div style="text-align: right; margin-top: 20px; font-weight: bold;">
+                    Total: $<span id="edit-order-total">0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                    <button id="update-order">Update Order</button>
+                    <button id="cancel-order-edit" style="background-color: #999;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage (In a real app, this would be in a backend server)
+        let foods = [];
+        let cart = [];
+        let orders = [];
+        let manualCart = [];
+        let currentOrderId = 1;
+        let editingOrderId = null;
+        let uiSettings = {
+            headerColor: '#3a3a3a',
+            buttonColor: '#ff6b6b',
+            bgColor: '#f5f5f5',
+            bgImage: '',
+            restaurantName: 'Food Ordering System',
+            restaurantLogo: '',
+            headerTextColor: '#ffffff',
+            bodyTextColor: '#333333',
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        };
+
+        // Check URL parameters for customer-only mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerOnly = urlParams.get('customer') === 'true';
+        const storeId = urlParams.get('store');
+
+        // DOM Elements
+        const ownerPanel = document.getElementById('owner-panel');
+        const customerPanel = document.getElementById('customer-panel');
+        const switchToOwner = document.getElementById('switch-to-owner');
+        const switchToCustomer = document.getElementById('switch-to-customer');
+        const generateCustomerLink = document.getElementById('generate-customer-link');
+        const restaurantHeader = document.getElementById('restaurant-header');
+        
+        // Shop Owner Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const foodForm = document.getElementById('food-form');
+        const foodItemsContainer = document.getElementById('food-items-container');
+        const addOptionBtn = document.getElementById('add-option');
+        const optionsContainer = document.getElementById('options-container');
+        const pendingOrders = document.getElementById('pending-orders');
+        const completedOrders = document.getElementById('completed-orders');
+        const exportExcelBtn = document.getElementById('export-excel');
+        const previewFrame = document.getElementById('preview-frame');
+        
+        // UI Customization Elements
+        const headerColorInput = document.getElementById('header-color');
+        const buttonColorInput = document.getElementById('button-color');
+        const bgColorInput = document.getElementById('bg-color');
+        const bgImageInput = document.getElementById('bg-image');
+        const restaurantNameInput = document.getElementById('restaurant-name');
+        const restaurantLogoInput = document.getElementById('restaurant-logo');
+        const headerTextColorInput = document.getElementById('header-text-color');
+        const bodyTextColorInput = document.getElementById('body-text-color');
+        const fontFamilySelect = document.getElementById('font-family');
+        const fontPreview = document.getElementById('font-preview');
+        const saveUiSettingsBtn = document.getElementById('save-ui-settings');
+        
+        // Color Preview Elements - add new elements
+        const headerColorPreview = document.getElementById('header-color-preview');
+        const buttonColorPreview = document.getElementById('button-color-preview');
+        const bgColorPreview = document.getElementById('bg-color-preview');
+        const headerTextColorPreview = document.getElementById('header-text-color-preview');
+        const bodyTextColorPreview = document.getElementById('body-text-color-preview');
+        
+        // Customer Elements
+        const menuItems = document.getElementById('menu-items');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const customizationModal = document.getElementById('customization-modal');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const receiptModal = document.getElementById('receipt-modal');
+        const modalFoodName = document.getElementById('modal-food-name');
+        const modalFoodDescription = document.getElementById('modal-food-description');
+        const customizationOptions = document.getElementById('customization-options');
+        const currentPriceDisplay = document.getElementById('current-price');
+        const addToCartBtn = document.getElementById('add-to-cart');
+        const categoryFilter = document.getElementById('category-filter');
+        const ingredientFilter = document.getElementById('ingredient-filter');
+        const applyFilterBtn = document.getElementById('apply-filter');
+        const clearFilterBtn = document.getElementById('clear-filter');
+        const placeOrderBtn = document.getElementById('place-order-btn');
+        
+        // Receipt Elements
+        const receiptRestaurantName = document.getElementById('receipt-restaurant-name');
+        const receiptOrderNumber = document.getElementById('receipt-order-number');
+        const receiptCustomerName = document.getElementById('receipt-customer-name');
+        const receiptDate = document.getElementById('receipt-date');
+        const receiptItems = document.getElementById('receipt-items');
+        const receiptTotal = document.getElementById('receipt-total');
+        const printReceiptBtn = document.getElementById('print-receipt');
+        const copyReceiptBtn = document.getElementById('copy-receipt');
+        const sendToOwnerBtn = document.getElementById('send-to-owner');
+        const textReceipt = document.getElementById('text-receipt');
+        
+        // Stats Elements
+        const totalOrdersSpan = document.getElementById('total-orders');
+        const totalRevenueSpan = document.getElementById('total-revenue');
+
+        // Create Order Elements
+        const receiptTextArea = document.getElementById('receipt-text');
+        const parseReceiptBtn = document.getElementById('parse-receipt');
+        const manualItemName = document.getElementById('manual-item-name');
+        const manualItemPrice = document.getElementById('manual-item-price');
+        const manualItemQuantity = document.getElementById('manual-item-quantity');
+        const manualItemNotes = document.getElementById('manual-item-notes');
+        const addManualItemBtn = document.getElementById('add-manual-item');
+        const manualCartItemsDiv = document.getElementById('manual-cart-items');
+        const manualCartTotal = document.getElementById('manual-cart-total');
+        const createOrderBtn = document.getElementById('create-order-btn');
+        const customerNameOrderInput = document.getElementById('customer-name-order');
+
+        // Edit Order Modal Elements
+        const editOrderModal = document.getElementById('edit-order-modal');
+        const editOrderId = document.getElementById('edit-order-id');
+        const editCustomerName = document.getElementById('edit-customer-name');
+        const editOrderItems = document.getElementById('edit-order-items');
+        const editNewItemName = document.getElementById('edit-new-item-name');
+        const editNewItemPrice = document.getElementById('edit-new-item-price');
+        const editNewItemQuantity = document.getElementById('edit-new-item-quantity');
+        const editNewItemNotes = document.getElementById('edit-new-item-notes');
+        const addItemToOrderBtn = document.getElementById('add-item-to-order');
+        const editOrderTotal = document.getElementById('edit-order-total');
+        const updateOrderBtn = document.getElementById('update-order');
+        const cancelOrderEditBtn = document.getElementById('cancel-order-edit');
+
+        // Helper Functions
+        function formatCurrency(amount) {
+            return parseFloat(amount).toFixed(2);
+        }
+
+        function generateUniqueId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2);
+        }
+
+        // Apply UI settings
+        function applyUISettings() {
+            document.querySelector('header').style.backgroundColor = uiSettings.headerColor;
+            document.querySelector('header').style.color = uiSettings.headerTextColor || '#ffffff';
+            
+            // Apply button color to all buttons
+            const styleSheet = document.styleSheets[0];
+            for (let i = 0; i < styleSheet.cssRules.length; i++) {
+                const rule = styleSheet.cssRules[i];
+                if (rule.selectorText === 'button') {
+                    rule.style.backgroundColor = uiSettings.buttonColor;
+                }
+                if (rule.selectorText === 'button:hover') {
+                    // Make hover state slightly darker
+                    const darkerColor = adjustColor(uiSettings.buttonColor, -20);
+                    rule.style.backgroundColor = darkerColor;
+                }
+                if (rule.selectorText === '.tab.active') {
+                    rule.style.backgroundColor = uiSettings.buttonColor;
+                }
+                if (rule.selectorText === '.price') {
+                    rule.style.color = uiSettings.buttonColor;
+                }
+            }
+            
+            // Apply background and text color
+            if (uiSettings.bgImage) {
+                document.body.style.backgroundImage = `url('${uiSettings.bgImage}')`;
+            } else {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = uiSettings.bgColor;
+            }
+            
+            // Apply body text color
+            document.body.style.color = uiSettings.bodyTextColor || '#333333';
+            
+            // Apply font family to the entire document and customer panel specifically
+            if (uiSettings.fontFamily) {
+                document.body.style.fontFamily = uiSettings.fontFamily;
+                customerPanel.style.fontFamily = uiSettings.fontFamily;
+            }
+            
+            // Apply restaurant name to header
+            document.querySelector('header h1').textContent = uiSettings.restaurantName;
+            receiptRestaurantName.textContent = uiSettings.restaurantName;
+            
+            // Update restaurant header in customer view
+            updateRestaurantHeader();
+        }
+
+        // Function to adjust color brightness (for hover effects)
+        function adjustColor(color, amount) {
+            return '#' + color.replace(/^#/, '').replace(/../g, color => 
+                ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2)
+            );
+        }
+
+        // Update restaurant header in customer view
+        function updateRestaurantHeader() {
+            restaurantHeader.innerHTML = '';
+            
+            if (uiSettings.restaurantLogo) {
+                const logoImg = document.createElement('img');
+                logoImg.src = uiSettings.restaurantLogo;
+                logoImg.alt = uiSettings.restaurantName;
+                logoImg.style.maxHeight = '100px';
+                logoImg.style.marginBottom = '10px';
+                restaurantHeader.appendChild(logoImg);
+            }
+            
+            const nameDiv = document.createElement('h2');
+            nameDiv.textContent = uiSettings.restaurantName;
+            nameDiv.style.textAlign = 'center';
+            nameDiv.style.marginBottom = '20px';
+            nameDiv.style.fontFamily = uiSettings.fontFamily;
+            restaurantHeader.appendChild(nameDiv);
+        }
+
+        // Set up for customer-only mode
+        function setupCustomerOnlyMode() {
+            if (customerOnly) {
+                // Hide owner panel and switching buttons
+                document.querySelector('header div').style.display = 'none';
+                ownerPanel.style.display = 'none';
+                customerPanel.style.display = 'block';
+                
+                // If there's a store ID, we would load that specific store's data
+                // For this demo, we'll just use what's in local storage
+            }
+        }
+
+        // Load saved data if it exists
+        function loadSavedData() {
+            const savedFoods = localStorage.getItem('foods');
+            const savedOrders = localStorage.getItem('orders');
+            const savedOrderId = localStorage.getItem('currentOrderId');
+            const savedUiSettings = localStorage.getItem('uiSettings');
+            
+            if (savedFoods) foods = JSON.parse(savedFoods);
+            if (savedOrders) orders = JSON.parse(savedOrders);
+            if (savedOrderId) currentOrderId = parseInt(savedOrderId);
+            if (savedUiSettings) {
+                uiSettings = JSON.parse(savedUiSettings);
+                
+                // Update UI customization inputs with saved values
+                headerColorInput.value = uiSettings.headerColor;
+                buttonColorInput.value = uiSettings.buttonColor;
+                bgColorInput.value = uiSettings.bgColor;
+                bgImageInput.value = uiSettings.bgImage || '';
+                restaurantNameInput.value = uiSettings.restaurantName || '';
+                restaurantLogoInput.value = uiSettings.restaurantLogo || '';
+                headerTextColorInput.value = uiSettings.headerTextColor || '#ffffff';
+                bodyTextColorInput.value = uiSettings.bodyTextColor || '#333333';
+                
+                // Set font family if it exists
+                if (uiSettings.fontFamily) {
+                    fontFamilySelect.value = uiSettings.fontFamily;
+                    fontPreview.style.fontFamily = uiSettings.fontFamily;
+                }
+                
+                // Update color previews
+                headerColorPreview.style.backgroundColor = uiSettings.headerColor;
+                buttonColorPreview.style.backgroundColor = uiSettings.buttonColor;
+                bgColorPreview.style.backgroundColor = uiSettings.bgColor;
+                headerTextColorPreview.style.backgroundColor = uiSettings.headerTextColor || '#ffffff';
+                bodyTextColorPreview.style.backgroundColor = uiSettings.bodyTextColor || '#333333';
+            }
+            
+            // Apply UI settings
+            applyUISettings();
+            
+            renderFoodItems();
+            renderMenu();
+            renderOrders();
+            updateStats();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('foods', JSON.stringify(foods));
+            localStorage.setItem('orders', JSON.stringify(orders));
+            localStorage.setItem('currentOrderId', currentOrderId);
+            localStorage.setItem('uiSettings', JSON.stringify(uiSettings));
+        }
+
+        // Event Listeners for color previews
+        headerColorInput.addEventListener('input', function() {
+            headerColorPreview.style.backgroundColor = this.value;
+        });
+        
+        buttonColorInput.addEventListener('input', function() {
+            buttonColorPreview.style.backgroundColor = this.value;
+        });
+        
+        bgColorInput.addEventListener('input', function() {
+            bgColorPreview.style.backgroundColor = this.value;
+        });
+        
+        headerTextColorInput.addEventListener('input', function() {
+            headerTextColorPreview.style.backgroundColor = this.value;
+        });
+        
+        bodyTextColorInput.addEventListener('input', function() {
+            bodyTextColorPreview.style.backgroundColor = this.value;
+        });
+
+        // Font family preview
+        fontFamilySelect.addEventListener('change', function() {
+            fontPreview.style.fontFamily = this.value;
+        });
+
+        // Generate customer-only link
+        generateCustomerLink.addEventListener('click', () => {
+            const url = `${window.location.href.split('?')[0]}?customer=true`;
+            
+            // Create a temporary input to copy the URL
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            alert('Customer-only link copied to clipboard! You can share this link with customers.');
+        });
+
+        // Save UI settings
+        saveUiSettingsBtn.addEventListener('click', () => {
+            uiSettings.headerColor = headerColorInput.value;
+            uiSettings.buttonColor = buttonColorInput.value;
+            uiSettings.bgColor = bgColorInput.value;
+            uiSettings.bgImage = bgImageInput.value;
+            uiSettings.restaurantName = restaurantNameInput.value;
+            uiSettings.restaurantLogo = restaurantLogoInput.value;
+            uiSettings.headerTextColor = headerTextColorInput.value;
+            uiSettings.bodyTextColor = bodyTextColorInput.value;
+            uiSettings.fontFamily = fontFamilySelect.value;
+            
+            saveData();
+            applyUISettings();
+            
+            alert('UI settings saved successfully!');
+        });
+
+        // Handle file uploads
+        document.getElementById('bg-image-upload').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    bgImageInput.value = e.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        document.getElementById('restaurant-logo-upload').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    restaurantLogoInput.value = e.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        document.getElementById('food-image-upload').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('food-image').value = e.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // Tab switching and panel visibility
+        switchToOwner.addEventListener('click', () => {
+            ownerPanel.style.display = 'block';
+            customerPanel.style.display = 'none';
+        });
+
+        switchToCustomer.addEventListener('click', () => {
+            ownerPanel.style.display = 'none';
+            customerPanel.style.display = 'block';
+            renderMenu(); // Re-render to apply any changes
+        });
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to current tab and content
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+                
+                // If preview tab is selected, update the iframe
+                if (tabId === 'preview') {
+                    updatePreview();
+                }
+                
+                // If export tab is selected, update statistics
+                if (tabId === 'export') {
+                    updateStats();
+                }
+            });
+        });
+
+        // Add new option field
+        addOptionBtn.addEventListener('click', () => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option-item';
+            optionDiv.innerHTML = `
+                <input type="text" placeholder="Option name (e.g., Size)" class="option-name">
+                <div class="option-values-container">
+                    <div class="option-value-item">
+                        <input type="text" placeholder="Value (e.g., Small)" class="option-value">
+                        <div class="option-price">
+                            <span>Price Adjustment: $</span>
+                            <input type="number" step="0.01" placeholder="0.00" class="option-price-adj" value="0.00">
+                        </div>
+                    </div>
+                    <button type="button" class="add-value">+ Add Value</button>
+                </div>
+                <button type="button" class="remove-option">Remove Option</button>
+            `;
+            optionsContainer.appendChild(optionDiv);
+            
+            // Add event listener to the new remove button
+            optionDiv.querySelector('.remove-option').addEventListener('click', function() {
+                optionsContainer.removeChild(optionDiv);
+            });
+            
+            // Add event listener to the add value button
+            optionDiv.querySelector('.add-value').addEventListener('click', function() {
+                addOptionValue(this.parentNode);
+            });
+        });
+
+        // Add a new option value field
+        function addOptionValue(container) {
+            const valueItemDiv = document.createElement('div');
+            valueItemDiv.className = 'option-value-item';
+            valueItemDiv.innerHTML = `
+                <input type="text" placeholder="Value (e.g., Medium)" class="option-value">
+                <div class="option-price">
+                    <span>Price Adjustment: $</span>
+                    <input type="number" step="0.01" placeholder="0.00" class="option-price-adj" value="0.00">
+                </div>
+                <button type="button" class="remove-value">Remove</button>
+            `;
+            
+            // Insert before the add button
+            container.insertBefore(valueItemDiv, container.querySelector('.add-value'));
+            
+            // Add event listener to remove button
+            valueItemDiv.querySelector('.remove-value').addEventListener('click', function() {
+                container.removeChild(valueItemDiv);
+            });
+        }
+
+        // Add event listener to existing remove buttons
+        document.querySelectorAll('.remove-option').forEach(button => {
+            button.addEventListener('click', function() {
+                optionsContainer.removeChild(this.parentNode);
+            });
+        });
+
+        // Add event listener to existing add value buttons
+        document.querySelectorAll('.add-value').forEach(button => {
+            button.addEventListener('click', function() {
+                addOptionValue(this.parentNode);
+            });
+        });
+
+        // Handle food form submission
+        foodForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Collect options with price adjustments
+            const options = [];
+            document.querySelectorAll('.option-item').forEach(item => {
+                const name = item.querySelector('.option-name').value.trim();
+                if (!name) return;
+                
+                const values = [];
+                const valueItems = item.querySelectorAll('.option-value-item');
+                
+                valueItems.forEach(valueItem => {
+                    const value = valueItem.querySelector('.option-value').value.trim();
+                    const priceAdj = parseFloat(valueItem.querySelector('.option-price-adj').value) || 0;
+                    
+                    if (value) {
+                        values.push({ value, priceAdj });
+                    }
+                });
+                
+                if (values.length > 0) {
+                    options.push({ name, values });
+                }
+            });
+            
+            const editId = document.getElementById('edit-id').value;
+            const newFood = {
+                id: editId || generateUniqueId(),
+                name: document.getElementById('food-name').value,
+                price: parseFloat(document.getElementById('food-price').value),
+                description: document.getElementById('food-description').value,
+                image: document.getElementById('food-image').value,
+                category: document.getElementById('food-category').value,
+                options: options,
+                ingredients: document.getElementById('food-ingredients').value.split(',').map(i => i.trim())
+            };
+            
+            if (editId) {
+                // Update existing food
+                const index = foods.findIndex(f => f.id === editId);
+                if (index !== -1) {
+                    foods[index] = newFood;
+                }
+            } else {
+                // Add new food
+                foods.push(newFood);
+            }
+            
+            saveData();
+            renderFoodItems();
+            renderMenu();
+            foodForm.reset();
+            document.getElementById('edit-id').value = '';
+        });
+
+        // Export to Excel
+        exportExcelBtn.addEventListener('click', () => {
+            exportToExcel();
+        });
+
+        // Customer side filters
+        applyFilterBtn.addEventListener('click', () => {
+            renderMenu();
+        });
+
+        clearFilterBtn.addEventListener('click', () => {
+            categoryFilter.value = 'all';
+            ingredientFilter.value = '';
+            renderMenu();
+        });
+
+        // Close modals when clicking on X or outside the modal
+        document.querySelectorAll('.close-modal').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                customizationModal.style.display = 'none';
+                checkoutModal.style.display = 'none';
+                receiptModal.style.display = 'none';
+                editOrderModal.style.display = 'none';
+                textReceipt.style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === customizationModal) customizationModal.style.display = 'none';
+            if (e.target === checkoutModal) checkoutModal.style.display = 'none';
+            if (e.target === receiptModal) receiptModal.style.display = 'none';
+            if (e.target === editOrderModal) editOrderModal.style.display = 'none';
+        });
+
+        // Checkout button
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            const checkoutItems = document.getElementById('checkout-items');
+            const checkoutTotal = document.getElementById('checkout-total');
+            
+            checkoutItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.finalPrice * item.quantity;
+                total += itemTotal;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'checkout-item';
+                itemDiv.innerHTML = `
+                    <p><strong>${item.name}</strong> - $${formatCurrency(item.finalPrice)} x ${item.quantity} = $${formatCurrency(itemTotal)}</p>
+                    <p class="small">${item.customization.map(c => `${c.option}: ${c.value}`).join(', ')}</p>
+                `;
+                checkoutItems.appendChild(itemDiv);
+            });
+            
+            checkoutTotal.textContent = formatCurrency(total);
+            checkoutModal.style.display = 'block';
+        });
+
+        // Place order button
+        placeOrderBtn.addEventListener('click', () => {
+            const customerName = document.getElementById('customer-name').value || 'Guest';
+            
+            const order = {
+                id: currentOrderId++,
+                customerName: customerName,
+                items: [...cart],
+                total: cart.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0),
+                status: 'pending',
+                date: new Date()
+            };
+            
+            orders.push(order);
+            saveData();
+            renderOrders();
+            
+            // Show receipt
+            showReceipt(order);
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+            checkoutModal.style.display = 'none';
+        });
+
+        // Print receipt button
+        printReceiptBtn.addEventListener('click', () => {
+            const receiptDiv = document.querySelector('.receipt');
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Receipt</title>');
+            printWindow.document.write('<style>body{font-family: Arial; max-width: 300px; margin: 0 auto; padding: 20px;} .receipt-header{text-align: center; border-bottom: 1px dashed #000; padding-bottom: 10px; margin-bottom: 15px;} .receipt-items{margin-bottom: 15px;} .receipt-row{display: flex; justify-content: space-between; margin-bottom: 5px;} .receipt-total{border-top: 1px dashed #000; padding-top: 10px; text-align: right; font-weight: bold;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(receiptDiv.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        });
+
+        // Copy receipt as text
+        copyReceiptBtn.addEventListener('click', () => {
+            if (textReceipt.style.display === 'none') {
+                // Generate and show the text receipt
+                textReceipt.style.display = 'block';
+                generateTextReceipt();
+            } else {
+                // Copy the text receipt
+                textReceipt.select();
+                document.execCommand('copy');
+                alert('Receipt copied to clipboard!');
+            }
+        });
+
+        // Send receipt to restaurant
+        sendToOwnerBtn.addEventListener('click', () => {
+            // In a real app, this would send the receipt to the restaurant (email, SMS, etc.)
+            // For this demo, we'll just show an alert
+            alert('Receipt sent to the restaurant!');
+            
+            // Also add a notification in the pending orders (for demo purposes)
+            const latestOrder = orders[orders.length - 1];
+            if (latestOrder) {
+                latestOrder.notified = true;
+                saveData();
+                renderOrders();
+            }
+        });
+
+        // Parse receipt button
+        parseReceiptBtn.addEventListener('click', () => {
+            const receiptText = receiptTextArea.value.trim();
+            if (!receiptText) {
+                alert('Please paste receipt text first!');
+                return;
+            }
+            
+            try {
+                // Parse receipt text
+                parseReceiptText(receiptText);
+            } catch (e) {
+                alert('Error parsing receipt. Please check the format and try again.');
+                console.error(e);
+            }
+        });
+
+        // Add manual item button
+        addManualItemBtn.addEventListener('click', () => {
+            const name = manualItemName.value.trim();
+            const price = parseFloat(manualItemPrice.value) || 0;
+            const quantity = parseInt(manualItemQuantity.value) || 1;
+            const notes = manualItemNotes.value.trim();
+            
+            if (!name) {
+                alert('Please enter item name!');
+                return;
+            }
+            
+            addToManualCart({
+                name,
+                price,
+                quantity,
+                notes
+            });
+            
+            // Clear fields
+            manualItemName.value = '';
+            manualItemPrice.value = '';
+            manualItemQuantity.value = '1';
+            manualItemNotes.value = '';
+            
+            // Focus on item name for next entry
+            manualItemName.focus();
+        });
+
+        // Create order button
+        createOrderBtn.addEventListener('click', () => {
+            if (manualCart.length === 0) {
+                alert('Please add items to the order first!');
+                return;
+            }
+            
+            const customerName = customerNameOrderInput.value.trim() || 'Guest';
+            
+            // Create order
+            const order = {
+                id: currentOrderId++,
+                customerName: customerName,
+                items: manualCart.map(item => ({
+                    id: generateUniqueId(),
+                    name: item.name,
+                    price: item.price,
+                    finalPrice: item.price,
+                    quantity: item.quantity,
+                    customization: item.notes ? [{ option: 'Notes', value: item.notes }] : []
+                })),
+                total: calculateManualCartTotal(),
+                status: 'pending',
+                date: new Date()
+            };
+            
+            orders.push(order);
+            saveData();
+            renderOrders();
+            
+            // Clear manual cart
+            manualCart = [];
+            updateManualCart();
+            customerNameOrderInput.value = '';
+            receiptTextArea.value = '';
+            
+            alert('Order created successfully!');
+            
+            // Switch to orders tab
+            document.querySelector('.tab[data-tab="orders"]').click();
+        });
+
+        // Add item to order (in edit mode)
+        addItemToOrderBtn.addEventListener('click', () => {
+            const name = editNewItemName.value.trim();
+            const price = parseFloat(editNewItemPrice.value) || 0;
+            const quantity = parseInt(editNewItemQuantity.value) || 1;
+            const notes = editNewItemNotes.value.trim();
+            
+            if (!name) {
+                alert('Please enter item name!');
+                return;
+            }
+            
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            // Add new item to order
+            orders[orderIndex].items.push({
+                id: generateUniqueId(),
+                name: name,
+                price: price,
+                finalPrice: price,
+                quantity: quantity,
+                customization: notes ? [{ option: 'Notes', value: notes }] : []
+            });
+            
+            // Recalculate total
+            orders[orderIndex].total = orders[orderIndex].items.reduce(
+                (sum, item) => sum + (item.finalPrice * item.quantity), 0
+            );
+            
+            // Update UI
+            renderEditOrderItems();
+            
+            // Clear input fields
+            editNewItemName.value = '';
+            editNewItemPrice.value = '';
+            editNewItemQuantity.value = '1';
+            editNewItemNotes.value = '';
+        });
+
+        // Update order button
+        updateOrderBtn.addEventListener('click', () => {
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            // Update customer name
+            orders[orderIndex].customerName = editCustomerName.value.trim() || 'Guest';
+            
+            saveData();
+            renderOrders();
+            editOrderModal.style.display = 'none';
+            alert('Order updated successfully!');
+        });
+
+        // Cancel order edit button
+        cancelOrderEditBtn.addEventListener('click', () => {
+            editOrderModal.style.display = 'none';
+        });
+
+        // Generate text version of receipt
+        function generateTextReceipt() {
+            const latestOrder = orders[orders.length - 1];
+            if (!latestOrder) return;
+            
+            let textContent = '';
+            textContent += `${uiSettings.restaurantName}\n`;
+            textContent += `================================\n`;
+            textContent += `Order #: ${latestOrder.id}\n`;
+            textContent += `Customer: ${latestOrder.customerName}\n`;
+            textContent += `Date: ${new Date(latestOrder.date).toLocaleString()}\n`;
+            textContent += `================================\n\n`;
+            
+            // Items
+            latestOrder.items.forEach(item => {
+                const itemTotal = item.finalPrice * item.quantity;
+                textContent += `${item.name} x ${item.quantity} = $${formatCurrency(itemTotal)}\n`;
+                
+                // Customizations
+                if (item.customization.length > 0) {
+                    textContent += `  ${item.customization.map(c => `${c.option}: ${c.value}`).join(', ')}\n`;
+                }
+            });
+            
+            textContent += `\n================================\n`;
+            textContent += `Total: $${formatCurrency(latestOrder.total)}\n`;
+            textContent += `================================\n`;
+            textContent += `Thank you for your order!`;
+            
+            textReceipt.value = textContent;
+        }
+
+        // Parse receipt text
+        function parseReceiptText(text) {
+            // Clear existing manual cart
+            manualCart = [];
+            
+            // Basic parsing logic - this should be customized based on your receipt format
+            // This is a simple example that looks for item names and prices
+            
+            // Split by lines
+            const lines = text.split('\n');
+            let customerName = 'Guest';
+            
+            // Find customer name if present (format: "Customer: Name")
+            const customerLine = lines.find(line => line.toLowerCase().includes('customer:'));
+            if (customerLine) {
+                const parts = customerLine.split(':');
+                if (parts.length > 1) {
+                    customerName = parts[1].trim();
+                    customerNameOrderInput.value = customerName;
+                }
+            }
+            
+            // Regular expressions to match items
+            // Format: "Item name x Quantity = $Price" or "Item name - $Price x Quantity"
+            const itemRegex1 = /(.+)\s*x\s*(\d+)\s*=\s*\$?(\d+\.?\d*)/i;
+            const itemRegex2 = /(.+)\s*-\s*\$?(\d+\.?\d*)\s*x\s*(\d+)/i;
+            const simpleItemRegex = /(.+?)\s*\$?(\d+\.?\d*)/;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                
+                // Skip header/footer lines
+                if (line.includes('====') || 
+                    line.toLowerCase().includes('order #:') || 
+                    line.toLowerCase().includes('date:') || 
+                    line.toLowerCase().includes('total:') ||
+                    line.toLowerCase().includes('thank you')) {
+                    continue;
+                }
+                
+                // Try to match format 1: "Item x Quantity = $Price"
+                let match = line.match(itemRegex1);
+                if (match) {
+                    const [_, name, quantity, price] = match;
+                    addToManualCart({
+                        name: name.trim(),
+                        quantity: parseInt(quantity),
+                        price: parseFloat(price),
+                        notes: ''
+                    });
+                    continue;
+                }
+                
+                // Try to match format 2: "Item - $Price x Quantity"
+                match = line.match(itemRegex2);
+                if (match) {
+                    const [_, name, price, quantity] = match;
+                    addToManualCart({
+                        name: name.trim(),
+                        quantity: parseInt(quantity),
+                        price: parseFloat(price),
+                        notes: ''
+                    });
+                    continue;
+                }
+                
+                // Try simple format: "Item $Price" (assume quantity 1)
+                match = line.match(simpleItemRegex);
+                if (match && !line.toLowerCase().includes('total:')) {
+                    const [_, name, price] = match;
+                    addToManualCart({
+                        name: name.trim(),
+                        quantity: 1,
+                        price: parseFloat(price),
+                        notes: ''
+                    });
+                }
+            }
+            
+            // Look for customizations/notes in the lines after items
+            // This would need more sophisticated logic based on your receipt format
+            
+            updateManualCart();
+        }
+
+        // Add item to manual cart
+        function addToManualCart(item) {
+            manualCart.push(item);
+            updateManualCart();
+        }
+
+        // Update manual cart display
+        function updateManualCart() {
+            if (manualCart.length === 0) {
+                manualCartItemsDiv.innerHTML = '<p>No items added yet</p>';
+                manualCartTotal.textContent = '0.00';
+                return;
+            }
+            
+            manualCartItemsDiv.innerHTML = '';
+            let total = 0;
+            
+            manualCart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'manual-cart-item';
+                itemDiv.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong> - $${formatCurrency(item.price)} x ${item.quantity}
+                        ${item.notes ? `<br><small>${item.notes}</small>` : ''}
+                    </div>
+                    <div>
+                        <span>$${formatCurrency(itemTotal)}</span>
+                        <button class="remove-manual-item" data-index="${index}" style="margin-left: 5px;">Remove</button>
+                    </div>
+                `;
+                
+                manualCartItemsDiv.appendChild(itemDiv);
+            });
+            
+            manualCartTotal.textContent = formatCurrency(total);
+            
+            // Add event listeners for remove buttons
+            document.querySelectorAll('.remove-manual-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFromManualCart(index);
+                });
+            });
+        }
+
+        // Remove item from manual cart
+        function removeFromManualCart(index) {
+            manualCart.splice(index, 1);
+            updateManualCart();
+        }
+
+        // Calculate manual cart total
+        function calculateManualCartTotal() {
+            return manualCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
+
+        // Edit order function
+        function editOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            editingOrderId = orderId;
+            editOrderId.textContent = orderId;
+            editCustomerName.value = order.customerName;
+            
+            renderEditOrderItems();
+            
+            // Clear add new item fields
+            editNewItemName.value = '';
+            editNewItemPrice.value = '';
+            editNewItemQuantity.value = '1';
+            editNewItemNotes.value = '';
+            
+            editOrderModal.style.display = 'block';
+        }
+
+        // Render edit order items
+        function renderEditOrderItems() {
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            const order = orders[orderIndex];
+            editOrderItems.innerHTML = '';
+            
+            order.items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.style.padding = '10px';
+                itemDiv.style.margin = '5px 0';
+                itemDiv.style.backgroundColor = '#f9f9f9';
+                itemDiv.style.borderRadius = '4px';
+                
+                itemDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${item.name}</strong> - $${formatCurrency(item.finalPrice)} x 
+                            <input type="number" min="1" value="${item.quantity}" class="edit-item-quantity" data-index="${index}" style="width: 50px;">
+                            = $${formatCurrency(item.finalPrice * item.quantity)}
+                        </div>
+                        <div>
+                            <button class="remove-edit-item" data-index="${index}">Remove</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 5px;">
+                        <label>Notes:</label>
+                        <input type="text" class="edit-item-notes" data-index="${index}" value="${item.customization.length > 0 ? item.customization[0].value : ''}" style="width: 100%;">
+                    </div>
+                `;
+                
+                editOrderItems.appendChild(itemDiv);
+            });
+            
+            // Update total
+            editOrderTotal.textContent = formatCurrency(order.total);
+            
+            // Add event listeners
+            document.querySelectorAll('.remove-edit-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeOrderItem(index);
+                });
+            });
+            
+            document.querySelectorAll('.edit-item-quantity').forEach(input => {
+                input.addEventListener('change', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    updateOrderItemQuantity(index, parseInt(this.value) || 1);
+                });
+            });
+            
+            document.querySelectorAll('.edit-item-notes').forEach(input => {
+                input.addEventListener('change', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    updateOrderItemNotes(index, this.value);
+                });
+            });
+        }
+
+        // Remove item from order being edited
+        function removeOrderItem(itemIndex) {
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            const confirmed = confirm('Are you sure you want to remove this item?');
+            if (!confirmed) return;
+            
+            orders[orderIndex].items.splice(itemIndex, 1);
+            
+            // Recalculate total
+            orders[orderIndex].total = orders[orderIndex].items.reduce(
+                (sum, item) => sum + (item.finalPrice * item.quantity), 0
+            );
+            
+            renderEditOrderItems();
+        }
+
+        // Update order item quantity
+        function updateOrderItemQuantity(itemIndex, newQuantity) {
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            // Ensure quantity is at least 1
+            newQuantity = Math.max(1, newQuantity);
+            
+            orders[orderIndex].items[itemIndex].quantity = newQuantity;
+            
+            // Recalculate total
+            orders[orderIndex].total = orders[orderIndex].items.reduce(
+                (sum, item) => sum + (item.finalPrice * item.quantity), 0
+            );
+            
+            renderEditOrderItems();
+        }
+
+        // Update order item notes
+        function updateOrderItemNotes(itemIndex, notes) {
+            const orderIndex = orders.findIndex(o => o.id === editingOrderId);
+            if (orderIndex === -1) return;
+            
+            const item = orders[orderIndex].items[itemIndex];
+            
+            // Update or add notes
+            if (item.customization.length > 0) {
+                item.customization[0].value = notes;
+            } else if (notes) {
+                item.customization = [{ option: 'Notes', value: notes }];
+            }
+        }
+
+        // Render Functions
+        function renderFoodItems() {
+            foodItemsContainer.innerHTML = '';
+            
+            foods.forEach(food => {
+                const foodDiv = document.createElement('div');
+                foodDiv.className = 'food-item';
+                
+                // Display options and price adjustments
+                let optionsHtml = '';
+                if (food.options && food.options.length > 0) {
+                    optionsHtml = '<div style="margin-top: 5px; font-size: 0.9em;">';
+                    food.options.forEach(option => {
+                        optionsHtml += `<div><strong>${option.name}:</strong> `;
+                        option.values.forEach((val, i) => {
+                            optionsHtml += `${val.value}${val.priceAdj > 0 ? ` (+$${formatCurrency(val.priceAdj)})` : 
+                                           val.priceAdj < 0 ? ` (-$${formatCurrency(Math.abs(val.priceAdj))})` : ''}`;
+                            if (i < option.values.length - 1) optionsHtml += ', ';
+                        });
+                        optionsHtml += '</div>';
+                    });
+                    optionsHtml += '</div>';
+                }
+                
+                foodDiv.innerHTML = `
+                    <img src="${food.image || 'https://via.placeholder.com/100x80?text=Food'}" alt="${food.name}" class="food-img">
+                    <div class="food-details">
+                        <h3>${food.name} - $${formatCurrency(food.price)}</h3>
+                        <p class="category">${food.category}</p>
+                        <p>${food.description}</p>
+                        ${optionsHtml}
+                    </div>
+                    <div class="food-actions">
+                        <button class="edit-food" data-id="${food.id}">Edit</button>
+                        <button class="delete-food" data-id="${food.id}">Delete</button>
+                    </div>
+                `;
+                
+                foodItemsContainer.appendChild(foodDiv);
+            });
+            
+            // Add event listeners to the edit and delete buttons
+            document.querySelectorAll('.edit-food').forEach(button => {
+                button.addEventListener('click', function() {
+                    const foodId = this.getAttribute('data-id');
+                    editFood(foodId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-food').forEach(button => {
+                button.addEventListener('click', function() {
+                    const foodId = this.getAttribute('data-id');
+                    deleteFood(foodId);
+                });
+            });
+        }
+
+        function renderMenu() {
+            menuItems.innerHTML = '';
+            
+            let filteredFoods = [...foods];
+            
+            // Apply category filter
+            if (categoryFilter.value !== 'all') {
+                filteredFoods = filteredFoods.filter(food => food.category === categoryFilter.value);
+            }
+            
+            // Apply ingredient filter
+            const ingredient = ingredientFilter.value.trim().toLowerCase();
+            if (ingredient) {
+                filteredFoods = filteredFoods.filter(food => 
+                    food.ingredients.some(ing => ing.toLowerCase().includes(ingredient))
+                );
+            }
+            
+            filteredFoods.forEach(food => {
+                const menuItemDiv = document.createElement('div');
+                menuItemDiv.className = 'menu-item';
+                
+                menuItemDiv.innerHTML = `
+                    <img src="${food.image || 'https://via.placeholder.com/250x180?text=Food'}" alt="${food.name}">
+                    <div class="menu-item-details">
+                        <h3>${food.name}</h3>
+                        <p>${food.description}</p>
+                        <p class="price">$${formatCurrency(food.price)}</p>
+                        <button class="customize-btn" data-id="${food.id}">Add to Cart</button>
+                    </div>
+                `;
+                
+                menuItems.appendChild(menuItemDiv);
+            });
+            
+            // Add event listeners to the customize buttons
+            document.querySelectorAll('.customize-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const foodId = this.getAttribute('data-id');
+                    openCustomizationModal(foodId);
+                });
+            });
+        }
+
+        function renderOrders() {
+            pendingOrders.innerHTML = '';
+            completedOrders.innerHTML = '';
+            
+            orders.forEach(order => {
+                const orderDiv = document.createElement('div');
+                orderDiv.className = 'order-item';
+                
+                // Highlight new orders from customer interface
+                if (order.notified) {
+                    orderDiv.style.borderLeftColor = '#4CAF50';
+                    orderDiv.style.borderLeftWidth = '6px';
+                }
+                
+                const orderDate = new Date(order.date);
+                
+                orderDiv.innerHTML = `
+                    <h3>Order #${order.id} - ${order.customerName}</h3>
+                    <p>${orderDate.toLocaleString()}</p>
+                    <p><strong>Total:</strong> $${formatCurrency(order.total)}</p>
+                    <h4>Items:</h4>
+                    <ul>
+                        ${order.items.map(item => `
+                            <li>
+                                ${item.name} - $${formatCurrency(item.finalPrice)} x ${item.quantity}
+                                ${item.customization.length > 0 ? 
+                                    `<br><small>${item.customization.map(c => `${c.option}: ${c.value}`).join(', ')}</small>` 
+                                    : ''}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    ${order.status === 'pending' ? `
+                        <div style="margin-top: 10px;">
+                            <button class="edit-order" data-id="${order.id}">Edit Order</button>
+                            <button class="complete-order" data-id="${order.id}">Complete Order</button>
+                            <button class="cancel-order" data-id="${order.id}">Cancel Order</button>
+                        </div>
+                    ` : ''}
+                `;
+                
+                if (order.status === 'pending') {
+                    pendingOrders.appendChild(orderDiv);
+                } else {
+                    completedOrders.appendChild(orderDiv);
+                }
+            });
+            
+            // Add event listeners to the order buttons
+            document.querySelectorAll('.complete-order').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-id'));
+                    completeOrder(orderId);
+                });
+            });
+            
+            document.querySelectorAll('.cancel-order').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-id'));
+                    cancelOrder(orderId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-order').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = parseInt(this.getAttribute('data-id'));
+                    editOrder(orderId);
+                });
+            });
+        }
+
+        function updateCart() {
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty.</p>';
+                cartTotal.textContent = '0.00';
+                return;
+            }
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.finalPrice * item.quantity;
+                total += itemTotal;
+                
+                const cartItemDiv = document.createElement('div');
+                cartItemDiv.className = 'cart-item';
+                
+                cartItemDiv.innerHTML = `
+                    <div>
+                        <h4>${item.name} - $${formatCurrency(item.finalPrice)} x ${item.quantity}</h4>
+                        <p class="small">${item.customization.map(c => `${c.option}: ${c.value}`).join(', ')}</p>
+                    </div>
+                    <div class="cart-item-actions">
+                        <button class="remove-from-cart" data-index="${index}">Remove</button>
+                        <button class="edit-cart-item" data-index="${index}">Edit</button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItemDiv);
+            });
+            
+            cartTotal.textContent = formatCurrency(total);
+            
+            // Add event listeners to cart buttons
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFromCart(index);
+                });
+            });
+            
+            document.querySelectorAll('.edit-cart-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    editCartItem(index);
+                });
+            });
+        }
+
+        function updatePreview() {
+            const iframe = document.getElementById('preview-frame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            // Create a clone of the customer panel
+            const previewContent = customerPanel.cloneNode(true);
+            
+            // Create a style element for the iframe
+            const style = iframeDoc.createElement('style');
+            style.textContent = `
+                body {
+                    font-family: ${uiSettings.fontFamily};
+                    color: ${uiSettings.bodyTextColor};
+                    background-color: ${uiSettings.bgColor};
+                    background-image: ${uiSettings.bgImage ? `url('${uiSettings.bgImage}')` : 'none'};
+                    margin: 0;
+                    padding: 20px;
+                }
+                button {
+                    background-color: ${uiSettings.buttonColor};
+                    color: white;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+                .price {
+                    color: ${uiSettings.buttonColor};
+                }
+            `;
+            
+            // Write to the iframe
+            iframeDoc.open();
+            iframeDoc.write('<!DOCTYPE html><html><head><title>Preview</title></head><body></body></html>');
+            iframeDoc.close();
+            
+            // Add the style and content
+            iframeDoc.head.appendChild(style);
+            iframeDoc.body.appendChild(previewContent);
+        }
+
+        function updateStats() {
+            const totalOrders = orders.length;
+            const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+            
+            totalOrdersSpan.textContent = totalOrders;
+            totalRevenueSpan.textContent = formatCurrency(totalRevenue);
+        }
+        
+        // Shop Owner Functions
+        function editFood(foodId) {
+            const food = foods.find(f => f.id === foodId);
+            if (!food) return;
+            
+            document.getElementById('edit-id').value = food.id;
+            document.getElementById('food-name').value = food.name;
+            document.getElementById('food-price').value = food.price;
+            document.getElementById('food-description').value = food.description;
+            document.getElementById('food-image').value = food.image || '';
+            document.getElementById('food-category').value = food.category;
+            document.getElementById('food-ingredients').value = food.ingredients.join(', ');
+            
+            // Clear existing options
+            while (optionsContainer.childElementCount > 1) {
+                optionsContainer.removeChild(optionsContainer.lastChild);
+            }
+            
+            // Remove the default option item
+            if (optionsContainer.children.length > 0) {
+                optionsContainer.removeChild(optionsContainer.firstChild);
+            }
+            
+            // Add options with price adjustments
+            if (food.options && food.options.length > 0) {
+                food.options.forEach(option => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-item';
+                    
+                    // Create option name input
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.className = 'option-name';
+                    nameInput.placeholder = 'Option name (e.g., Size)';
+                    nameInput.value = option.name;
+                    optionDiv.appendChild(nameInput);
+                    
+                    // Create values container
+                    const valuesContainer = document.createElement('div');
+                    valuesContainer.className = 'option-values-container';
+                    
+                    // Add each value with price adjustment
+                    option.values.forEach(val => {
+                        const valueItemDiv = document.createElement('div');
+                        valueItemDiv.className = 'option-value-item';
+                        
+                        valueItemDiv.innerHTML = `
+                            <input type="text" placeholder="Value (e.g., Small)" class="option-value" value="${val.value}">
+                            <div class="option-price">
+                                <span>Price Adjustment: $</span>
+                                <input type="number" step="0.01" placeholder="0.00" class="option-price-adj" value="${val.priceAdj}">
+                            </div>
+                            <button type="button" class="remove-value">Remove</button>
+                        `;
+                        
+                        valuesContainer.appendChild(valueItemDiv);
+                        
+                        // Add event listener to remove button
+                        valueItemDiv.querySelector('.remove-value').addEventListener('click', function() {
+                            valuesContainer.removeChild(valueItemDiv);
+                        });
+                    });
+                    
+                    // Add button to add more values
+                    const addValueBtn = document.createElement('button');
+                    addValueBtn.type = 'button';
+                    addValueBtn.className = 'add-value';
+                    addValueBtn.textContent = '+ Add Value';
+                    addValueBtn.addEventListener('click', function() {
+                        addOptionValue(valuesContainer);
+                    });
+                    
+                    valuesContainer.appendChild(addValueBtn);
+                    optionDiv.appendChild(valuesContainer);
+                    
+                    // Add remove option button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'remove-option';
+                    removeBtn.textContent = 'Remove Option';
+                    removeBtn.addEventListener('click', function() {
+                        optionsContainer.removeChild(optionDiv);
+                    });
+                    
+                    optionDiv.appendChild(removeBtn);
+                    optionsContainer.appendChild(optionDiv);
+                });
+            } else {
+                // Add a default empty option
+                addOptionBtn.click();
+            }
+        }
+
+        function deleteFood(foodId) {
+            if (confirm('Are you sure you want to delete this food item?')) {
+                foods = foods.filter(f => f.id !== foodId);
+                saveData();
+                renderFoodItems();
+                renderMenu();
+            }
+        }
+
+        function completeOrder(orderId) {
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = 'completed';
+                saveData();
+                renderOrders();
+                updateStats();
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                const orderIndex = orders.findIndex(o => o.id === orderId);
+                if (orderIndex !== -1) {
+                    orders[orderIndex].status = 'cancelled';
+                    saveData();
+                    renderOrders();
+                    updateStats();
+                }
+            }
+        }
+
+        function exportToExcel() {
+            // Create a CSV for order data
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Order ID,Customer,Date,Status,Items,Total\n";
+            
+            orders.forEach(order => {
+                const itemsList = order.items.map(item => 
+                    `${item.name} (${item.quantity})`
+                ).join('; ');
+                
+                const orderDate = new Date(order.date).toLocaleString();
+                
+                csvContent += `${order.id},${order.customerName},${orderDate},${order.status},"${itemsList}",$${order.total}\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "orders_export.csv");
+            document.body.appendChild(link);
+            
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Customer Functions
+        function openCustomizationModal(foodId) {
+            const food = foods.find(f => f.id === foodId);
+            if (!food) return;
+            
+            modalFoodName.textContent = food.name;
+            modalFoodDescription.textContent = food.description;
+            customizationOptions.innerHTML = '';
+            
+            // Keep track of selected options for price calculation
+            const selectedOptions = {};
+            
+            // Calculate initial price (base price)
+            let currentPrice = food.price;
+            
+            // Function to update displayed price based on selections
+            function updatePrice() {
+                currentPrice = food.price;
+                
+                // Add price adjustments from selected options
+                Object.keys(selectedOptions).forEach(optionName => {
+                    const optionValue = selectedOptions[optionName];
+                    const option = food.options.find(o => o.name === optionName);
+                    if (option) {
+                        const valueObj = option.values.find(v => v.value === optionValue);
+                        if (valueObj && valueObj.priceAdj) {
+                            currentPrice += parseFloat(valueObj.priceAdj);
+                        }
+                    }
+                });
+                
+                // Update display
+                currentPriceDisplay.textContent = formatCurrency(currentPrice);
+            }
+            
+            // Add food options for customization with price adjustments
+            if (food.options && food.options.length > 0) {
+                food.options.forEach(option => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.style.marginBottom = '10px';
+                    
+                    const select = document.createElement('select');
+                    select.id = `option-${option.name}`;
+                    select.className = 'customization-select';
+                    select.setAttribute('data-option', option.name);
+                    
+                    // Add options with price adjustments in the label
+                    option.values.forEach(val => {
+                        const optEl = document.createElement('option');
+                        optEl.value = val.value;
+                        optEl.textContent = val.value;
+                        
+                        // Add price adjustment to the label if not zero
+                        if (val.priceAdj > 0) {
+                            optEl.textContent += ` (+$${formatCurrency(val.priceAdj)})`;
+                        } else if (val.priceAdj < 0) {
+                            optEl.textContent += ` (-$${formatCurrency(Math.abs(val.priceAdj))})`;
+                        }
+                        
+                        select.appendChild(optEl);
+                    });
+                    
+                    // Initialize selected option
+                    selectedOptions[option.name] = option.values[0].value;
+                    
+                    // Add change event to update price
+                    select.addEventListener('change', function() {
+                        selectedOptions[option.name] = this.value;
+                        updatePrice();
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.setAttribute('for', `option-${option.name}`);
+                    label.textContent = `${option.name}:`;
+                    
+                    optionDiv.appendChild(label);
+                    optionDiv.appendChild(select);
+                    
+                    customizationOptions.appendChild(optionDiv);
+                });
+            } else {
+                customizationOptions.innerHTML = '<p>No customization options available for this item.</p>';
+            }
+            
+            // Store the selected food for adding to cart
+            addToCartBtn.setAttribute('data-food-id', foodId);
+            
+            // Initialize price display
+            updatePrice();
+            
+            customizationModal.style.display = 'block';
+        }
+
+        // Add to cart button handler
+        addToCartBtn.addEventListener('click', () => {
+            const foodId = addToCartBtn.getAttribute('data-food-id');
+            const food = foods.find(f => f.id === foodId);
+            if (!food) return;
+            
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            
+            // Collect customization options
+            const customization = [];
+            let finalPrice = food.price;
+            
+            document.querySelectorAll('.customization-select').forEach(select => {
+                const optionName = select.getAttribute('data-option');
+                const optionValue = select.value;
+                
+                // Add to customization array
+                customization.push({
+                    option: optionName,
+                    value: optionValue
+                });
+                
+                // Calculate price adjustment
+                const option = food.options.find(o => o.name === optionName);
+                if (option) {
+                    const valueObj = option.values.find(v => v.value === optionValue);
+                    if (valueObj && valueObj.priceAdj) {
+                        finalPrice += parseFloat(valueObj.priceAdj);
+                    }
+                }
+            });
+            
+            // Add to cart
+            cart.push({
+                id: foodId,
+                name: food.name,
+                price: food.price,
+                finalPrice: finalPrice,
+                quantity: quantity,
+                customization: customization
+            });
+            
+            updateCart();
+            customizationModal.style.display = 'none';
+        });
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function editCartItem(index) {
+            const item = cart[index];
+            const food = foods.find(f => f.id === item.id);
+            if (!food) return;
+            
+            openCustomizationModal(item.id);
+            
+            // Set existing quantity
+            document.getElementById('quantity').value = item.quantity;
+            
+            // Set existing customization options
+            item.customization.forEach(c => {
+                const select = document.querySelector(`.customization-select[data-option="${c.option}"]`);
+                if (select) select.value = c.value;
+                
+                // Trigger change event to update price
+                if (select) {
+                    const event = new Event('change');
+                    select.dispatchEvent(event);
+                }
+            });
+            
+            // Override the add to cart function to update instead of add
+            const originalHandler = addToCartBtn.onclick;
+            addToCartBtn.onclick = function() {
+                const quantity = parseInt(document.getElementById('quantity').value) || 1;
+                
+                // Collect customization options and calculate final price
+                const customization = [];
+                let finalPrice = food.price;
+                
+                document.querySelectorAll('.customization-select').forEach(select => {
+                    const optionName = select.getAttribute('data-option');
+                    const optionValue = select.value;
+                    
+                    // Add to customization array
+                    customization.push({
+                        option: optionName,
+                        value: optionValue
+                    });
+                    
+                    // Calculate price adjustment
+                    const option = food.options.find(o => o.name === optionName);
+                    if (option) {
+                        const valueObj = option.values.find(v => v.value === optionValue);
+                        if (valueObj && valueObj.priceAdj) {
+                            finalPrice += parseFloat(valueObj.priceAdj);
+                        }
+                    }
+                });
+                
+                // Update the cart item
+                cart[index].quantity = quantity;
+                cart[index].customization = customization;
+                cart[index].finalPrice = finalPrice;
+                
+                updateCart();
+                customizationModal.style.display = 'none';
+                
+                // Restore original handler
+                addToCartBtn.onclick = originalHandler;
+            };
+        }
+
+        function showReceipt(order) {
+            receiptRestaurantName.textContent = uiSettings.restaurantName;
+            receiptOrderNumber.textContent = order.id;
+            receiptCustomerName.textContent = order.customerName !== 'Guest' ? `Customer: ${order.customerName}` : '';
+            receiptDate.textContent = new Date(order.date).toLocaleString();
+            
+            receiptItems.innerHTML = '';
+            order.items.forEach(item => {
+                const itemTotal = item.finalPrice * item.quantity;
+                
+                const receiptRow = document.createElement('div');
+                receiptRow.className = 'receipt-row';
+                receiptRow.innerHTML = `
+                    <div>${item.name} x ${item.quantity}</div>
+                    <div>$${formatCurrency(itemTotal)}</div>
+                `;
+                
+                // Add customization details if any
+                if (item.customization.length > 0) {
+                    const customRow = document.createElement('div');
+                    customRow.style.fontSize = '0.85em';
+                    customRow.style.color = '#666';
+                    customRow.style.marginBottom = '5px';
+                    customRow.textContent = item.customization.map(c => `${c.option}: ${c.value}`).join(', ');
+                    receiptItems.appendChild(customRow);
+                }
+                
+                receiptItems.appendChild(receiptRow);
+            });
+            
+            receiptTotal.textContent = formatCurrency(order.total);
+            
+            // Reset text receipt
+            textReceipt.style.display = 'none';
+            
+            receiptModal.style.display = 'block';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedData();
+            
+            // Setup customer-only mode if the URL parameter is present
+            setupCustomerOnlyMode();
+            
+            // Add a default option item with a default value
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option-item';
+            optionDiv.innerHTML = `
+                <input type="text" placeholder="Option name (e.g., Size)" class="option-name">
+                <div class="option-values-container">
+                    <div class="option-value-item">
+                        <input type="text" placeholder="Value (e.g., Small)" class="option-value">
+                        <div class="option-price">
+                            <span>Price Adjustment: $</span>
+                            <input type="number" step="0.01" placeholder="0.00" class="option-price-adj" value="0.00">
+                        </div>
+                    </div>
+                    <button type="button" class="add-value">+ Add Value</button>
+                </div>
+                <button type="button" class="remove-option">Remove Option</button>
+            `;
+            
+            optionsContainer.appendChild(optionDiv);
+            
+            // Add event listeners
+            optionDiv.querySelector('.remove-option').addEventListener('click', function() {
+                optionsContainer.removeChild(optionDiv);
+            });
+            
+            optionDiv.querySelector('.add-value').addEventListener('click', function() {
+                addOptionValue(this.parentNode);
+            });
+        });
+    </script>
+</body>
+</html>
