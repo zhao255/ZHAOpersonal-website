@@ -34,6 +34,9 @@
         <!-- LaTeX Editor Section -->
         <section id="latex-editor" class="section active">
             <h2>LaTeX Editor</h2>
+            <div class="section-header">
+                <button class="clear-btn" id="clear-latex">Clear All</button>
+            </div>
 
             <div class="shortcuts">
                 <button class="shortcut-btn" data-latex="\frac{a}{b}">Fraction (a/b)</button>
@@ -73,6 +76,9 @@
         <!-- Document Analysis Section -->
         <section id="document-analysis" class="section">
             <h2>Document Analysis & Citation Counter</h2>
+            <div class="section-header">
+                <button class="clear-btn" id="clear-document">Clear All</button>
+            </div>
             
             <div class="document-analysis-container">
                 <div>
@@ -141,6 +147,7 @@
                     <input type="file" id="image-to-pdf-input" class="file-input" accept="image/*" multiple>
                     <label for="image-to-pdf-input" class="file-label">Select Images</label>
                     <button class="process-btn" id="convert-image-to-pdf">Convert</button>
+                    <button class="clear-btn" id="clear-image-to-pdf">Clear</button>
                     <div class="preview-area" id="image-to-pdf-preview">
                         <p>Select images to preview</p>
                     </div>
@@ -153,6 +160,7 @@
                     <input type="file" id="append-image-input" class="file-input" accept="image/*" multiple>
                     <label for="append-image-input" class="file-label">Select Images</label>
                     <button class="process-btn" id="append-image-to-pdf">Append</button>
+                    <button class="clear-btn" id="clear-append-pdf">Clear</button>
                     <div class="preview-area" id="append-preview">
                         <p>Select files to preview</p>
                     </div>
@@ -164,6 +172,7 @@
                     <label for="split-pdf-input" class="file-label">Select PDF</label>
                     <input type="text" id="split-pages" placeholder="Pages (e.g. 1-3,5,7-9)" style="width: 100%; padding: 8px; margin-top: 10px; border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color);">
                     <button class="process-btn" id="split-pdf">Split</button>
+                    <button class="clear-btn" id="clear-split-pdf">Clear</button>
                     <div class="preview-area" id="split-preview">
                         <p>Select a PDF to preview</p>
                     </div>
@@ -174,6 +183,7 @@
                     <input type="file" id="merge-pdf-input" class="file-input" accept=".pdf" multiple>
                     <label for="merge-pdf-input" class="file-label">Select PDFs</label>
                     <button class="process-btn" id="merge-pdfs">Merge</button>
+                    <button class="clear-btn" id="clear-merge-pdf">Clear</button>
                     <div class="preview-area" id="merge-preview">
                         <p>Select PDFs to preview</p>
                     </div>
@@ -184,7 +194,7 @@
                     <input type="file" id="sign-pdf-input" class="file-input" accept=".pdf">
                     <label for="sign-pdf-input" class="file-label">Select PDF</label>
                     <canvas id="signature-pad" style="border: 1px solid var(--border-color); margin-top: 10px; width: 100%; height: 100px; background-color: white;"></canvas>
-                    <button class="process-btn" id="clear-signature" style="margin-right: 5px;">Clear</button>
+                    <button class="process-btn" id="clear-signature" style="margin-right: 5px;">Clear Signature</button>
                     <button class="process-btn" id="sign-pdf">Apply Signature</button>
                     <div class="preview-area" id="sign-preview">
                         <p>Select a PDF to preview</p>
@@ -196,6 +206,7 @@
                     <input type="file" id="extract-pdf-input" class="file-input" accept=".pdf">
                     <label for="extract-pdf-input" class="file-label">Select PDF</label>
                     <button class="process-btn" id="extract-text">Extract</button>
+                    <button class="clear-btn" id="clear-extract-pdf">Clear</button>
                     <div class="preview-area" id="extract-preview">
                         <p>Select a PDF to extract text</p>
                     </div>
