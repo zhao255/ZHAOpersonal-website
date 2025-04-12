@@ -62,6 +62,13 @@ function updateLatexPreview() {
 
 latexInput.addEventListener('input', updateLatexPreview);
 
+// Clear LaTeX editor inputs
+document.getElementById('clear-latex').addEventListener('click', () => {
+    latexInput.value = '';
+    document.getElementById('equation-input').value = '';
+    updateLatexPreview();
+});
+
 // LaTeX shortcuts
 const shortcutButtons = document.querySelectorAll('.shortcut-btn');
 shortcutButtons.forEach(button => {
@@ -239,6 +246,16 @@ document.getElementById('analyze-document').addEventListener('click', () => {
     `;
 });
 
+// Clear document analysis inputs
+document.getElementById('clear-document').addEventListener('click', () => {
+    document.getElementById('document-text').value = '';
+    document.getElementById('include-equations').checked = false;
+    document.getElementById('include-citations').checked = false;
+    document.getElementById('analysis-results').innerHTML = '<p>Analysis results will appear here...</p>';
+    document.getElementById('analysis-chart').innerHTML = '<p>Analysis chart will appear here...</p>';
+    document.getElementById('equations-content').innerHTML = '<p>No equations found yet.</p>';
+});
+
 // Handle file upload for document analysis
 document.getElementById('document-file').addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -339,6 +356,12 @@ document.getElementById('image-to-pdf-input').addEventListener('change', (e) => 
     }
 });
 
+// Clear image to PDF inputs
+document.getElementById('clear-image-to-pdf').addEventListener('click', () => {
+    document.getElementById('image-to-pdf-input').value = '';
+    document.getElementById('image-to-pdf-preview').innerHTML = '<p>Select images to preview</p>';
+});
+
 // Convert images to PDF
 document.getElementById('convert-image-to-pdf').addEventListener('click', async () => {
     const files = document.getElementById('image-to-pdf-input').files;
@@ -428,6 +451,13 @@ document.getElementById('pdf-input').addEventListener('change', (e) => {
 
 document.getElementById('append-image-input').addEventListener('change', (e) => {
     updateAppendPreview();
+});
+
+// Clear append PDF inputs
+document.getElementById('clear-append-pdf').addEventListener('click', () => {
+    document.getElementById('pdf-input').value = '';
+    document.getElementById('append-image-input').value = '';
+    document.getElementById('append-preview').innerHTML = '<p>Select files to preview</p>';
 });
 
 function updateAppendPreview() {
@@ -583,6 +613,13 @@ document.getElementById('split-pdf-input').addEventListener('change', async (e) 
     }
 });
 
+// Clear split PDF inputs
+document.getElementById('clear-split-pdf').addEventListener('click', () => {
+    document.getElementById('split-pdf-input').value = '';
+    document.getElementById('split-pages').value = '';
+    document.getElementById('split-preview').innerHTML = '<p>Select a PDF to preview</p>';
+});
+
 // Split PDF functionality
 document.getElementById('split-pdf').addEventListener('click', async () => {
     const file = document.getElementById('split-pdf-input').files[0];
@@ -687,6 +724,12 @@ document.getElementById('merge-pdf-input').addEventListener('change', (e) => {
     } else {
         preview.innerHTML = '<p>Select PDFs to preview</p>';
     }
+});
+
+// Clear merge PDFs inputs
+document.getElementById('clear-merge-pdf').addEventListener('click', () => {
+    document.getElementById('merge-pdf-input').value = '';
+    document.getElementById('merge-preview').innerHTML = '<p>Select PDFs to preview</p>';
 });
 
 // Merge PDFs functionality
@@ -887,6 +930,12 @@ document.getElementById('extract-pdf-input').addEventListener('change', (e) => {
     } else {
         preview.innerHTML = '<p>Select a PDF to extract text</p>';
     }
+});
+
+// Clear extract PDF inputs
+document.getElementById('clear-extract-pdf').addEventListener('click', () => {
+    document.getElementById('extract-pdf-input').value = '';
+    document.getElementById('extract-preview').innerHTML = '<p>Select a PDF to extract text</p>';
 });
 
 // Extract text from PDF
