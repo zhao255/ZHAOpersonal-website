@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-fuel Solution Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2a3259 0%;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .reference-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .reference-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .reference-box p {
+            color: #555;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .unit {
+            color: #666;
+            font-weight: 500;
+            min-width: 50px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .result-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .result-formula {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .result-value {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prof. An FYP E-fuel Solution Calculator</h1>
+        <p class="subtitle">Calculate the required amounts for e-fuel solution preparation</p>
+
+        <div class="reference-box">
+            <h3>Reference Values (1000 mL solution):</h3>
+            <p>
+                <strong>1.0 M VOSO₄ + 3.0 M H₂SO₄</strong><br>
+                • Vanadium sulfate (VOSO₄): 246.416 g<br>
+                • Sulfuric acid (98% H₂SO₄): 160 mL
+            </p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="volume">Solution Volume</label>
+                <div class="input-wrapper">
+                    <input type="number" id="volume" value="1000" min="0" step="1">
+                    <span class="unit">mL</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="voso4-conc">VOSO₄ Concentration</label>
+                <div class="input-wrapper">
+                    <input type="number" id="voso4-conc" value="1.0" min="0" step="0.1">
+                    <span class="unit">M</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="h2so4-conc">H₂SO₄ Concentration</label>
+                <div class="input-wrapper">
+                    <input type="number" id="h2so4-conc" value="3.0" min="0" step="0.1">
+                    <span class="unit">M</span>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">Calculate</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Required Amounts</h2>
+            
+            <div class="result-item">
+                <div class="result-label">Vanadium Sulfate (VOSO₄)</div>
+                <div class="result-value" id="voso4-result">0 g</div>
+                <div class="result-formula" id="voso4-formula"></div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Sulfuric Acid (98% H₂SO₄)</div>
+                <div class="result-value" id="h2so4-result">0 mL</div>
+                <div class="result-formula" id="h2so4-formula"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Molecular Weight: VOSO₄·xH₂O ≈ 246.416 g/mol | H₂SO₄ = 98 g/mol | 98% H₂SO₄ density ≈ 1.84 g/mL</p>
+            <p>Created by: ZHAO XUECEN</p>
+        </div>
+    </div>
+
+    <script>
+        // Constants based on reference values
+        const VOSO4_MW = 246.416; // g/mol (based on given reference)
+        const H2SO4_MW = 98; // g/mol
+        const H2SO4_98_DENSITY = 1.84; // g/mL
+        const H2SO4_98_CONCENTRATION = 0.98; // 98%
+        const H2SO4_CONCENTRATION_IN_98_PERCENT = H2SO4_98_DENSITY * H2SO4_98_CONCENTRATION; // g/mL of pure H2SO4
+
+        function calculate() {
+            // Get input values
+            const volumeML = parseFloat(document.getElementById('volume').value);
+            const voso4Conc = parseFloat(document.getElementById('voso4-conc').value);
+            const h2so4Conc = parseFloat(document.getElementById('h2so4-conc').value);
+
+            // Validate inputs
+            if (isNaN(volumeML) || isNaN(voso4Conc) || isNaN(h2so4Conc)) {
+                alert('Please enter valid numbers for all fields');
+                return;
+            }
+
+            if (volumeML <= 0 || voso4Conc < 0 || h2so4Conc < 0) {
+                alert('Please enter positive values');
+                return;
+            }
+
+            // Convert mL to L
+            const volumeL = volumeML / 1000;
+
+            // Calculate VOSO4 mass (g)
+            // Mass = Volume (L) × Concentration (M) × Molecular Weight (g/mol)
+            const voso4Mass = volumeL * voso4Conc * VOSO4_MW;
+
+            // Calculate H2SO4 volume (mL)
+            // Moles needed = Volume (L) × Concentration (M)
+            // Mass needed = Moles × Molecular Weight (g)
+            // Volume of 98% H2SO4 = Mass / (density × concentration)
+            const h2so4MolesNeeded = volumeL * h2so4Conc;
+            const h2so4MassNeeded = h2so4MolesNeeded * H2SO4_MW;
+            const h2so4Volume = h2so4MassNeeded / H2SO4_CONCENTRATION_IN_98_PERCENT;
+
+            // Display results
+            document.getElementById('voso4-result').textContent = voso4Mass.toFixed(3) + ' g';
+            document.getElementById('h2so4-result').textContent = h2so4Volume.toFixed(2) + ' mL';
+
+            // Display formulas
+            document.getElementById('voso4-formula').textContent = 
+                `${volumeML} mL × ${voso4Conc} M × ${VOSO4_MW} g/mol = ${voso4Mass.toFixed(3)} g`;
+            document.getElementById('h2so4-formula').textContent = 
+                `${volumeML} mL × ${h2so4Conc} M × ${H2SO4_MW} g/mol ÷ ${H2SO4_CONCENTRATION_IN_98_PERCENT.toFixed(3)} g/mL = ${h2so4Volume.toFixed(2)} mL`;
+
+            // Show results section
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.add('show');
+
+            // Smooth scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculate();
+            }
+        });
+
+        // Calculate on page load with default values
+        window.addEventListener('load', function() {
+            calculate();
+        });
+    </script>
+</body>
+</html>
