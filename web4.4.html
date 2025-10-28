@@ -2387,6 +2387,11 @@ document.querySelectorAll('.skill-link, .project-link').forEach(link => {
         document.getElementById('main-content').style.display = 'none';
         document.getElementById('contact').style.display = 'none';
         
+        // Hide all detail pages first
+        document.querySelectorAll('.detail-page').forEach(page => {
+            page.classList.remove('active');
+        });
+        
         // Show target detail page
         targetPage.classList.add('active');
         
@@ -2402,12 +2407,19 @@ document.querySelectorAll('.skill-link, .project-link').forEach(link => {
         
         // Initialize tabs if this is the technical skills page
         if (targetId === 'python-detail') {
+            // Clear all tech tab active states first
+            document.querySelectorAll('.tech-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Set python tab as active
             document.querySelector('.tech-tab[data-tab="python"]').classList.add('active');
+            
+            // Clear all tech content active states first
+            document.querySelectorAll('.tech-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Set python content as active
             document.getElementById('python-content').classList.add('active');
-            document.getElementById('html-content').classList.remove('active');
-            document.getElementById('otherc-content').classList.remove('active');
-            document.getElementById('cad-content').classList.remove('active');
-            document.getElementById('other-content').classList.remove('active');
         }
         
         // Scroll to top
