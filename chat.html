@@ -127,6 +127,87 @@
             line-height: 1.5;
         }
         
+        /* Markdown styling */
+        .message strong {
+            font-weight: 600;
+        }
+        
+        .message em {
+            font-style: italic;
+        }
+        
+        .message code {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+        
+        [data-theme="dark"] .message code {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .message pre {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        [data-theme="dark"] .message pre {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .message pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .message h1, .message h2, .message h3 {
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .message h1 {
+            font-size: 1.5em;
+        }
+        
+        .message h2 {
+            font-size: 1.3em;
+        }
+        
+        .message h3 {
+            font-size: 1.1em;
+        }
+        
+        .message del {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .message a {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        .message a:hover {
+            opacity: 0.8;
+        }
+        
+        .message p {
+            margin: 8px 0;
+        }
+        
+        .message p:first-child {
+            margin-top: 0;
+        }
+        
+        .message p:last-child {
+            margin-bottom: 0;
+        }
+        
         @media (max-width: 768px) {
             .message {
                 max-width: 85%;
@@ -500,11 +581,139 @@
                 }
             }
             
-            // Add message to chat with improved scrolling
+            // Markdown to HTML converter
+            function markdownToHtml(text) {
+                if (!text) return '';
+                
+                // Escape HTML first to prevent XSS
+                const tempDiv = document.createElement('div');
+                tempDiv.textContent = text;
+                let html = tempDiv.innerHTML;
+                
+                // Split by code blocks first to preserve code
+                const codeBlockRegex = /```([\s\S]*?)```/g;
+                const codeBlocks = [];
+                let codeBlockIndex = 0;
+                
+                html = html.replace(codeBlockRegex, (match, code) => {
+                    const placeholder = `__CODEBLOCK_${codeBlockIndex}__`;
+                    codeBlocks.push(code);
+                    codeBlockIndex++;
+                    return placeholder;
+                });
+                
+                // Process inline code
+                const inlineCodeRegex = /`([^`]+)`/g;
+                const inlineCodes = [];
+                let inlineIndex = 0;
+                
+                html = html.replace(inlineCodeRegex, (match, code) => {
+                    const placeholder = `__INLINECODE_${inlineIndex}__`;
+                    inlineCodes.push(code);
+                    inlineIndex++;
+                    return placeholder;
+                });
+                
+                // Headers (process from most specific to least)
+                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                
+                // Bold (**text** or __text__) - must be before italic
+                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+                
+                // Strike-through (~~text~~)
+                html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+                
+                // Italic (*text* or _text_) - after bold to avoid conflicts
+                // Match single asterisk (not already part of strong tag)
+                html = html.replace(/\*([^*\n]+)\*/g, (match, content) => {
+                    // Check if it's inside a strong tag (already processed)
+                    if (match.includes('<strong>') || match.includes('</strong>')) {
+                        return match;
+                    }
+                    return '<em>' + content + '</em>';
+                });
+                
+                // Match single underscore (not already part of strong tag)
+                html = html.replace(/_([^_\n]+)_/g, (match, content) => {
+                    // Check if it's inside a strong tag (already processed)
+                    if (match.includes('<strong>') || match.includes('</strong>')) {
+                        return match;
+                    }
+                    // Check if content doesn't have underscores that would make it bold
+                    if (match.startsWith('__') || match.endsWith('__')) {
+                        return match;
+                    }
+                    return '<em>' + content + '</em>';
+                });
+                
+                // Links [text](url)
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+                
+                // Restore inline code
+                inlineCodes.forEach((code, index) => {
+                    html = html.replace(`__INLINECODE_${index}__`, `<code>${code}</code>`);
+                });
+                
+                // Restore code blocks
+                codeBlocks.forEach((code, index) => {
+                    html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${code}</code></pre>`);
+                });
+                
+                // Line breaks - double newline creates new paragraph
+                const lines = html.split('\n');
+                const processedLines = [];
+                let inParagraph = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    
+                    // Check if it's a header or code block
+                    if (line.startsWith('<h') || line.startsWith('<pre')) {
+                        if (inParagraph) {
+                            processedLines.push('</p>');
+                            inParagraph = false;
+                        }
+                        processedLines.push(line);
+                    } else if (line === '') {
+                        // Empty line - close paragraph if open
+                        if (inParagraph) {
+                            processedLines.push('</p>');
+                            inParagraph = false;
+                        }
+                    } else {
+                        // Regular line
+                        if (!inParagraph) {
+                            processedLines.push('<p>');
+                            inParagraph = true;
+                        }
+                        processedLines.push(line);
+                        // Add line break if not last line and next line is not empty
+                        if (i < lines.length - 1 && lines[i + 1].trim() !== '') {
+                            processedLines.push('<br>');
+                        }
+                    }
+                }
+                
+                // Close any open paragraph
+                if (inParagraph) {
+                    processedLines.push('</p>');
+                }
+                
+                html = processedLines.join('');
+                
+                return html;
+            }
+            
+            // Add message to chat with improved scrolling and markdown support
             function appendMessage(text, type) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}-message`;
-                messageDiv.textContent = text;
+                
+                // Convert markdown to HTML and set innerHTML
+                messageDiv.innerHTML = markdownToHtml(text);
                 chatMessages.appendChild(messageDiv);
                 
                 // Force scroll multiple times to ensure it works
@@ -547,5 +756,4 @@
     </script>
 </body>
 </html>
-
 
