@@ -12,6 +12,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script src="chat.js"></script>
 
     <style>
 
@@ -1696,8 +1697,7 @@
 
         }
 
-        
-        /* Markdown formatting styles for chat messages */
+        /* Markdown formatting styles */
         .message strong {
             font-weight: bold;
         }
@@ -1738,6 +1738,8 @@
         .message pre code {
             background-color: transparent;
             padding: 0;
+            font-size: 0.85em;
+            line-height: 1.5;
         }
 
         .message a {
@@ -1746,11 +1748,17 @@
         }
 
         .message a:hover {
-            opacity: 0.8;
+            text-decoration: none;
         }
 
-        [data-theme="dark"] .message a {
-            color: #3498db;
+        .user-message code,
+        .user-message pre {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-message a {
+            color: #fff;
+            text-decoration: underline;
         }
 
         
@@ -3528,11 +3536,11 @@
 
             <ul class="tech-tabs">
 
-                <li><a href="javascript:void(0)" class="tech-tab active" data-tab="coding">Coding</a></li>
+                <li><a href="#" class="tech-tab active" data-tab="coding">Coding</a></li>
 
-                <li><a href="javascript:void(0)" class="tech-tab" data-tab="cad">CAD</a></li>
+                <li><a href="#" class="tech-tab" data-tab="cad">CAD</a></li>
 
-                <li><a href="javascript:void(0)" class="tech-tab" data-tab="other">Other Tools</a></li>
+                <li><a href="#" class="tech-tab" data-tab="other">Other Tools</a></li>
 
             </ul>
 
@@ -4353,6 +4361,64 @@
     
     <script>
 
+        // Markdown parser function
+        function parseMarkdown(text) {
+            if (!text) return '';
+            
+            // Escape HTML to prevent XSS attacks first
+            let html = text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            
+            // Store code blocks temporarily to prevent markdown processing inside them
+            const codeBlocks = [];
+            html = html.replace(/```([\s\S]*?)```/g, (match, code) => {
+                const id = `__CODEBLOCK_${codeBlocks.length}__`;
+                codeBlocks.push(code);
+                return id;
+            });
+            
+            // Store inline code temporarily
+            const inlineCodes = [];
+            html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+                const id = `__INLINECODE_${inlineCodes.length}__`;
+                inlineCodes.push(code);
+                return id;
+            });
+            
+            // Process markdown formatting (order matters)
+            // Bold (**text** or __text__) - must come before italic
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+            
+            // Italic (*text* or _text_) - single asterisk/underscore
+            // Process after bold to avoid conflicts
+            html = html.replace(/([^*]|^)\*([^*\n]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
+            html = html.replace(/([^_]|^)_([^_\n]+?)_([^_]|$)/g, '$1<em>$2</em>$3');
+            
+            // Strikethrough (~~text~~)
+            html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+            
+            // Links [text](url)
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            // Restore inline code
+            inlineCodes.forEach((code, index) => {
+                html = html.replace(`__INLINECODE_${index}__`, `<code>${code}</code>`);
+            });
+            
+            // Restore code blocks
+            codeBlocks.forEach((code, index) => {
+                html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${code}</code></pre>`);
+            });
+            
+            // Line breaks (convert \n to <br>, but not inside pre tags)
+            html = html.replace(/\n/g, '<br>');
+            
+            return html;
+        }
+
         // Dark mode toggle
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -4520,130 +4586,83 @@
 
         
         
-        // Smooth scrolling for navigation links (exclude tabs)
+        // Smooth scrolling for navigation links
+
         document.querySelectorAll('nav a, .main-menu a').forEach(anchor => {
-            // Skip tabs - they have their own handler
-            if (anchor.classList.contains('tech-tab') || anchor.classList.contains('detail-skill-tab')) {
-                return;
-            }
 
             anchor.addEventListener('click', function(e) {
+
                 e.preventDefault();
 
-                const targetId = this.getAttribute('href');
                 
-                // Only scroll if href is not just "#"
-                if (targetId && targetId !== '#') {
-                    const targetElement = document.querySelector(targetId);
-                    
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 70,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
+                
+                const targetId = this.getAttribute('href');
+
+                const targetElement = document.querySelector(targetId);
+
+                
+                
+                window.scrollTo({
+
+                    top: targetElement.offsetTop - 70,
+
+                    behavior: 'smooth'
+
+                });
+
             });
+
         });
 
         
         
         // Technical skills tabs navigation
-        function handleTechTabClick(tabElement, e) {
-            // Prevent default and stop propagation
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-            }
 
-            const targetTab = tabElement.getAttribute('data-tab');
-            
-            if (!targetTab) {
-                console.warn('No data-tab attribute found on tab');
-                return;
-            }
-
-            // Remove active class from all tabs
-            document.querySelectorAll('.tech-tab, .detail-skill-tab').forEach(t => t.classList.remove('active'));
-
-            // Add active class to clicked tab
-            tabElement.classList.add('active');
-
-            // Also activate the corresponding tab of the other type (sync both tab areas)
-            if (tabElement.classList.contains('tech-tab')) {
-                // If clicked tab is .tech-tab, activate corresponding .detail-skill-tab
-                const detailTab = document.querySelector(`.detail-skill-tab[data-tab="${targetTab}"]`);
-                if (detailTab) {
-                    detailTab.classList.add('active');
-                }
-            } else if (tabElement.classList.contains('detail-skill-tab')) {
-                // If clicked tab is .detail-skill-tab, activate corresponding .tech-tab
-                const techTab = document.querySelector(`.tech-tab[data-tab="${targetTab}"]`);
-                if (techTab) {
-                    techTab.classList.add('active');
-                }
-            }
-
-            // Hide all content sections
-            document.querySelectorAll('.tech-content').forEach(section => section.classList.remove('active'));
-
-            // Show the corresponding content section
-            const targetContent = document.getElementById(targetTab + '-content');
-            
-            if (targetContent) {
-                targetContent.classList.add('active');
-            } else {
-                console.warn('Content section not found:', targetTab + '-content');
-            }
-        }
-
-        // Function to attach tab event listeners
-        function attachTabListeners() {
-            // Attach listeners to tech-tabs (only if not already attached)
-            document.querySelectorAll('.tech-tab').forEach(tab => {
-                // Check if listener is already attached by checking for a data attribute
-                if (!tab.hasAttribute('data-listener-attached')) {
-                    tab.setAttribute('data-listener-attached', 'true');
-                    tab.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        handleTechTabClick(this, e);
-                    });
-                }
-            });
-
-            // Also attach to detail-skill-tabs
-            document.querySelectorAll('.detail-skill-tab').forEach(tab => {
-                if (!tab.hasAttribute('data-listener-attached')) {
-                    tab.setAttribute('data-listener-attached', 'true');
-                    tab.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        handleTechTabClick(this, e);
-                    });
-                }
-            });
-        }
-
-        // Attach listeners on page load
         document.addEventListener('DOMContentLoaded', function() {
-            attachTabListeners();
-        });
 
-        // Also use event delegation as backup
-        document.addEventListener('click', function(e) {
-            const clickedTab = e.target.closest('.tech-tab, .detail-skill-tab');
+            const techTabs = document.querySelectorAll('.tech-tab');
+
             
-            if (clickedTab) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                handleTechTabClick(clickedTab, e);
-            }
-        }, true); // Use capture phase
+            
+            techTabs.forEach(tab => {
+
+                tab.addEventListener('click', function(e) {
+
+                    e.preventDefault();
+
+                    
+                    
+                    // Remove active class from all tabs
+
+                    techTabs.forEach(t => t.classList.remove('active'));
+
+                    
+                    
+                    // Add active class to clicked tab
+
+                    this.classList.add('active');
+
+                    
+                    
+                    // Hide all content sections
+
+                    const contentSections = document.querySelectorAll('.tech-content');
+
+                    contentSections.forEach(section => section.classList.remove('active'));
+
+                    
+                    
+                    // Show the corresponding content section
+
+                    const target = this.getAttribute('data-tab');
+
+                    document.getElementById(target + '-content').classList.add('active');
+
+                });
+
+            });
+
+        });
 
         
         
@@ -4702,68 +4721,16 @@
                 
                 
                 // Initialize tabs if this is the technical skills page
-                // Use setTimeout to ensure DOM is ready after createDetailMenu
 
                 if (targetId === 'python-detail') {
 
-                    setTimeout(() => {
+                    document.querySelector('.tech-tab[data-tab="coding"]').classList.add('active');
 
-                        // Re-attach tab listeners after detail menu is created
-                        attachTabListeners();
+                    document.getElementById('coding-content').classList.add('active');
 
-                        // Remove active class from all tabs
+                    document.getElementById('cad-content').classList.remove('active');
 
-                        document.querySelectorAll('.tech-tab, .detail-skill-tab').forEach(tab => {
-
-                            tab.classList.remove('active');
-
-                        });
-
-                        
-                        
-                        // Remove active class from all content sections
-
-                        document.querySelectorAll('.tech-content').forEach(content => {
-
-                            content.classList.remove('active');
-
-                        });
-
-                        
-                        
-                        // Set coding tab and content as active
-
-                        const codingTab = document.querySelector('.tech-tab[data-tab="coding"]');
-
-                        if (codingTab) {
-
-                            codingTab.classList.add('active');
-
-                        }
-
-                        
-                        
-                        const codingContent = document.getElementById('coding-content');
-
-                        if (codingContent) {
-
-                            codingContent.classList.add('active');
-
-                        }
-
-                        
-                        
-                        // Also activate the corresponding detail menu tab if it exists
-
-                        const detailCodingTab = document.querySelector('.detail-skill-tab[data-tab="coding"]');
-
-                        if (detailCodingTab) {
-
-                            detailCodingTab.classList.add('active');
-
-                        }
-
-                    }, 50);
+                    document.getElementById('other-content').classList.remove('active');
 
                 }
 
@@ -4817,7 +4784,7 @@
 
                     const menuLink = document.createElement('a');
 
-                    menuLink.href = 'javascript:void(0)';
+                    menuLink.href = '#';
 
                     menuLink.textContent = option.name;
 
@@ -4827,13 +4794,36 @@
 
                     
                     
-                    // Mark as having listener attached and attach click event directly to the new tab
-                    menuLink.setAttribute('data-listener-attached', 'true');
+                    // Add click event to show the corresponding tab
+
                     menuLink.addEventListener('click', function(e) {
+
                         e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        handleTechTabClick(this, e);
+
+                        
+                        
+                        // Update tab navigation
+
+                        document.querySelectorAll('.tech-tab').forEach(tab => {
+
+                            tab.classList.remove('active');
+
+                        });
+
+                        document.querySelector(`.tech-tab[data-tab="${option.tab}"]`).classList.add('active');
+
+                        
+                        
+                        // Show corresponding content
+
+                        document.querySelectorAll('.tech-content').forEach(content => {
+
+                            content.classList.remove('active');
+
+                        });
+
+                        document.getElementById(`${option.tab}-content`).classList.add('active');
+
                     });
 
                     
@@ -4870,7 +4860,7 @@
 
                     const menuLink = document.createElement('a');
 
-                    menuLink.href = 'javascript:void(0)';
+                    menuLink.href = '#';
 
                     menuLink.textContent = header.textContent;
 
@@ -6773,7 +6763,7 @@
 
             
             
-            userMessage.textContent = question;
+            userMessage.innerHTML = parseMarkdown(question);
 
             chatMessages.appendChild(userMessage);
             
@@ -6781,10 +6771,10 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
-            // Show thinking indicator with animated dots
+            // Show thinking indicator
             const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'message bot-message thinking-indicator';
-            typingIndicator.innerHTML = '<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span> Thinking...';
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.textContent = 'Thinking...';
             chatMessages.appendChild(typingIndicator);
             
             // Immediately scroll to show thinking indicator
@@ -6803,7 +6793,7 @@
 
                 botMessage.className = 'message bot-message';
 
-                botMessage.textContent = answer;
+                botMessage.innerHTML = parseMarkdown(answer);
 
                 chatMessages.appendChild(botMessage);
                 
@@ -6820,7 +6810,20 @@
 
         }
         
-        // Allow Enter key to send message (handled by main chat functionality)
+        // Allow Enter key to send message
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const sendButton = document.getElementById('send-button') || chatInput.nextElementSibling;
+                        if (sendButton && sendButton.onclick) {
+                            sendButton.click();
+                        }
+                    }
+                });
+            }
+        });
         
         
         // Scroll to top button
@@ -6829,7 +6832,7 @@
 
             const scrollBtn = document.getElementById('scroll-top');
 
-            if (!scrollBtn) return;
+            
             
             window.addEventListener('scroll', function() {
 
@@ -6862,21 +6865,20 @@
         });
 
         // Image to PDF Converter
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('fileInput');
-            const preview = document.getElementById('preview');
-            const convertBtn = document.getElementById('convertBtn');
-            const canvas = document.getElementById('canvas');
-            
-            // Only proceed if all required elements exist
-            if (!fileInput || !preview || !convertBtn || !canvas) {
-                // Elements don't exist, skip this functionality
-                return;
-            }
 
-            const ctx = canvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
 
-            let currentImage = null;
+        const preview = document.getElementById('preview');
+
+        const convertBtn = document.getElementById('convertBtn');
+
+        const canvas = document.getElementById('canvas');
+
+        const ctx = canvas.getContext('2d');
+
+
+
+        let currentImage = null;
 
 
 
@@ -7006,8 +7008,9 @@
 
         }
 
-        convertBtn.addEventListener('click', convertToPDF);
-        });
+
+
+        let currentColor = 'black';
 
         
         
@@ -7224,7 +7227,7 @@
             // Add user message to chat
             const userMessageDiv = document.createElement('div');
             userMessageDiv.className = 'message user-message';
-            userMessageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(message) : message;
+            userMessageDiv.innerHTML = parseMarkdown(message);
             chatMessages.appendChild(userMessageDiv);
 
             // Clear input
@@ -7247,14 +7250,14 @@
                 // Add AI response to chat
                 const aiMessageDiv = document.createElement('div');
                 aiMessageDiv.className = 'message ai-message';
-                aiMessageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(data.response) : data.response;
+                aiMessageDiv.innerHTML = parseMarkdown(data.response);
                 chatMessages.appendChild(aiMessageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
                 console.error('Error:', error);
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'message ai-message error';
-                errorDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown('Sorry, there was an error connecting to the AI server.') : 'Sorry, there was an error connecting to the AI server.';
+                errorDiv.innerHTML = parseMarkdown('Sorry, there was an error connecting to the AI server.');
                 chatMessages.appendChild(errorDiv);
             }
         }
@@ -7273,7 +7276,7 @@
             const chatBox = document.getElementById('chat-box');
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
-            const sendButton = document.getElementById('send-message') || document.getElementById('chat-send');
+            const sendButton = document.getElementById('chat-send');
             const closeButton = document.getElementById('chat-close');
             const chatHeader = document.getElementById('chat-header');
             const resizeHandle = document.getElementById('chat-resize-handle');
@@ -7294,18 +7297,16 @@
             }
 
             // Resize functionality
-            if (resizeHandle) {
-                resizeHandle.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                    startWidth = chatBox.offsetWidth;
-                    startX = e.clientX;
-                    document.addEventListener('mousemove', handleMouseMove);
-                    document.addEventListener('mouseup', () => {
-                        isDragging = false;
-                        document.removeEventListener('mousemove', handleMouseMove);
-                    });
+            resizeHandle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startWidth = chatBox.offsetWidth;
+                startX = e.clientX;
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    document.removeEventListener('mousemove', handleMouseMove);
                 });
-            }
+            });
 
             function handleMouseMove(e) {
                 if (!isDragging) return;
@@ -7317,7 +7318,6 @@
 
             // Send message functionality
             async function sendMessage() {
-                if (!chatInput) return;
                 const message = chatInput.value.trim();
                 if (!message) return;
 
@@ -7360,65 +7360,58 @@
             }
 
             function appendMessage(text, type) {
-                if (!chatMessages) return;
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}-message`;
-                messageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(text) : text;
+                messageDiv.innerHTML = parseMarkdown(text);
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
             // Event listeners for sending messages
-            if (sendButton) {
-                sendButton.addEventListener('click', sendMessage);
-            }
-            if (chatInput) {
-                chatInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-            }
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
 
             // Make chat box draggable by header
-            if (chatHeader) {
-                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-                chatHeader.style.cursor = 'move';
-                
-                function dragMouseDown(e) {
-                    e.preventDefault();
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    document.onmouseup = closeDragElement;
-                    document.onmousemove = elementDrag;
-                }
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            chatHeader.style.cursor = 'move';
+            
+            chatHeader.onmousedown = dragMouseDown;
 
-                function elementDrag(e) {
-                    e.preventDefault();
-                    pos1 = pos3 - e.clientX;
-                    pos2 = pos4 - e.clientY;
-                    pos3 = e.clientX;
-                    pos4 = e.clientY;
-                    
-                    const newTop = chatBox.offsetTop - pos2;
-                    const newLeft = chatBox.offsetLeft - pos1;
-                    
-                    // Prevent dragging outside viewport
-                    if (newTop > 0 && newTop < window.innerHeight - chatBox.offsetHeight) {
-                        chatBox.style.top = newTop + "px";
-                    }
-                    if (newLeft > 0 && newLeft < window.innerWidth - chatBox.offsetWidth) {
-                        chatBox.style.left = newLeft + "px";
-                    }
-                }
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
 
-                function closeDragElement() {
-                    document.onmouseup = null;
-                    document.onmousemove = null;
-                }
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
                 
-                chatHeader.onmousedown = dragMouseDown;
+                const newTop = chatBox.offsetTop - pos2;
+                const newLeft = chatBox.offsetLeft - pos1;
+                
+                // Prevent dragging outside viewport
+                if (newTop > 0 && newTop < window.innerHeight - chatBox.offsetHeight) {
+                    chatBox.style.top = newTop + "px";
+                }
+                if (newLeft > 0 && newLeft < window.innerWidth - chatBox.offsetWidth) {
+                    chatBox.style.left = newLeft + "px";
+                }
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
             }
         });
     </script>
@@ -7429,45 +7422,24 @@
             // ============================================
             // SERVER CONFIGURATION
             // ============================================
-            // Auto-detect environment: localhost or GitHub Pages
-            // Set your deployed backend URL below for GitHub Pages
+            // For local development: use 'http://localhost:5000'
+            // For online deployment: change to your server URL
+            // Examples:
+            //   - 'http://your-server-ip:5000'
+            //   - 'https://api.yourdomain.com'
+            //   - 'https://your-app.railway.app'
+            //   - 'https://your-app.render.com'
             // ============================================
-            
-            // Your deployed backend URL (set this after deploying your Flask server)
-            const DEPLOYED_SERVER_URL = 'https://karl-unharrowed-communally.ngrok-free.dev'; // ngrok tunnel to your local server
-            
-            // Auto-detect: if on localhost, use localhost; otherwise use deployed URL
-            function getServerURL() {
-                // Check if running on localhost
-                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                    return 'http://localhost:5000';
-                }
-                
-                // If deployed URL is set, use it
-                if (DEPLOYED_SERVER_URL) {
-                    return DEPLOYED_SERVER_URL;
-                }
-                
-                // Otherwise, show error (user needs to set DEPLOYED_SERVER_URL)
-                console.error('DEPLOYED_SERVER_URL not set! Please set your backend server URL.');
-                return null; // Will cause connection errors until set
-            }
-            
-            const CHAT_SERVER_URL = getServerURL();
+            const CHAT_SERVER_URL = 'http://localhost:5000';
+            // const CHAT_SERVER_URL = 'https://your-server-url.com'; // Uncomment and set for online deployment
             // ============================================
             
             const chatBox = document.getElementById('chat-box');
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
-            const sendButton = document.getElementById('send-message') || document.getElementById('chat-send');
+            const sendButton = document.getElementById('send-message');
             const chatHeader = document.getElementById('chat-header');
             const resizeHandle = document.getElementById('chat-resize-handle');
-            
-            // Check if required chat elements exist
-            if (!chatBox || !chatMessages || !chatInput) {
-                console.warn('Chat elements not found, skipping chat initialization');
-                return;
-            }
             
             // Initialize chat state - sync with actual DOM state
             let isOpen = chatBox.classList.contains('open');
@@ -7503,12 +7475,6 @@
 
             // Check if server is running
             async function checkServer() {
-                if (!CHAT_SERVER_URL) {
-                    isChatServerAvailable = false;
-                    appendMessage('⚠️ Backend server URL not configured. Please set DEPLOYED_SERVER_URL in the code for online deployment.', 'error');
-                    return;
-                }
-                
                 try {
                     const response = await fetch(CHAT_SERVER_URL);
                     if (response.ok) {
@@ -7518,11 +7484,7 @@
                 } catch (error) {
                     console.log('Chat server is not available');
                     isChatServerAvailable = false;
-                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                        appendMessage('⚠️ Chat server is not connected. Please make sure the Python server is running locally.', 'error');
-                    } else {
-                        appendMessage('⚠️ Cannot connect to backend server. Please check if the server is deployed and DEPLOYED_SERVER_URL is set correctly.', 'error');
-                    }
+                    appendMessage('⚠️ Chat server is not connected. Please make sure the Python server is running.', 'error');
                 }
             }
 
@@ -7566,77 +7528,14 @@
                 }
             }
 
-            // Parse markdown text to HTML (global function for all chat implementations)
-            window.parseMarkdown = function(text) {
-                if (!text) return '';
-                
-                // Escape HTML to prevent XSS attacks first
-                let html = text
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;');
-                
-                // Store code blocks temporarily to prevent markdown processing inside them
-                const codeBlocks = [];
-                html = html.replace(/```([\s\S]*?)```/g, (match, code) => {
-                    const id = `__CODEBLOCK_${codeBlocks.length}__`;
-                    codeBlocks.push(code);
-                    return id;
-                });
-                
-                // Store inline code temporarily
-                const inlineCodes = [];
-                html = html.replace(/`([^`\n]+)`/g, (match, code) => {
-                    const id = `__INLINECODE_${inlineCodes.length}__`;
-                    inlineCodes.push(code);
-                    return id;
-                });
-                
-                // Process markdown formatting (order matters)
-                // Bold (**text** or __text__) - must come before italic
-                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-                
-                // Italic (*text* or _text_) - single asterisk/underscore
-                // Process after bold to avoid conflicts
-                html = html.replace(/([^*]|^)\*([^*\n]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
-                html = html.replace(/([^_]|^)_([^_\n]+?)_([^_]|$)/g, '$1<em>$2</em>$3');
-                
-                // Strikethrough (~~text~~)
-                html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-                
-                // Links [text](url)
-                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-                
-                // Restore inline code
-                inlineCodes.forEach((code, index) => {
-                    html = html.replace(`__INLINECODE_${index}__`, `<code>${code}</code>`);
-                });
-                
-                // Restore code blocks
-                codeBlocks.forEach((code, index) => {
-                    html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${code}</code></pre>`);
-                });
-                
-                // Line breaks (convert \n to <br>, but not inside pre tags)
-                html = html.replace(/\n/g, '<br>');
-                
-                return html;
-            }
-
             // Show thinking indicator
             function showThinking() {
-                if (!chatMessages) {
-                    console.warn('chatMessages is null in showThinking');
-                    return null;
-                }
                 const thinkingDiv = document.createElement('div');
                 thinkingDiv.id = 'thinking-indicator';
                 thinkingDiv.className = 'message bot-message thinking-indicator';
                 thinkingDiv.innerHTML = '<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span> Thinking...';
                 chatMessages.appendChild(thinkingDiv);
                 scrollToBottom();
-                console.log('Thinking indicator added:', thinkingDiv);
                 return thinkingDiv;
             }
 
@@ -7667,10 +7566,6 @@
 
                 // Show thinking indicator
                 const thinkingDiv = showThinking();
-                if (!thinkingDiv) {
-                    console.error('Failed to show thinking indicator');
-                    return;
-                }
 
                 try {
                     const response = await fetch(CHAT_SERVER_URL + '/chat', {
@@ -7704,7 +7599,7 @@
             function appendMessage(text, type) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}-message`;
-                messageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(text) : text;
+                messageDiv.innerHTML = parseMarkdown(text);
                 chatMessages.appendChild(messageDiv);
                 
                 // Force scroll multiple times to ensure it works
