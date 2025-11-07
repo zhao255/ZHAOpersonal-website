@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navicane - Smart Cane Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            border: 12px solid #1a1a1a;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            overflow-y: auto;
+            padding-top: 30px;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 20px 20px;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .battery-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+        }
+
+        .battery-level {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .battery-icon {
+            width: 40px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 3px;
+            position: relative;
+            padding: 2px;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 10px;
+            background: #333;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .battery-fill {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 1px;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .battery-fill.low {
+            background: #f44336;
+        }
+
+        .battery-fill.medium {
+            background: #ff9800;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            padding-left: 5px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .card-icon.blue {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .card-icon.green {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .card-icon.orange {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .card-icon.red {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .card-icon.purple {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .emergency-contacts {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .contact-details h4 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .contact-details p {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .add-contact-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .add-contact-btn:active {
+            opacity: 0.8;
+        }
+
+        .location-info {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .location-text {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .location-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .view-map-btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: background 0.2s;
+        }
+
+        .view-map-btn:active {
+            background: #1565c0;
+        }
+
+        .navigation-bar {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border: 12px solid #1a1a1a;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .nav-item:active {
+            background: #f0f0f0;
+        }
+
+        .nav-item.active {
+            background: #e3f2fd;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #1976d2;
+        }
+
+        .preference-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .preference-label {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: #ccc;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4caf50;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 25px;
+        }
+
+        /* Scrollbar styling */
+        .screen::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .screen::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .screen::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .screen::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Screen content containers */
+        .screen-content {
+            display: none;
+        }
+
+        .screen-content.active {
+            display: block;
+        }
+
+        /* Map Screen Styles */
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .map-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            width: 32px;
+            height: 42px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+
+        .map-pin svg {
+            width: 100%;
+            height: 100%;
+            fill: #dc3545;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .map-btn {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .map-btn:active {
+            transform: scale(0.95);
+        }
+
+        .address-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .navigation-input {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 15px;
+            width: 100%;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .navigation-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .start-navigation-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .start-navigation-btn:active {
+            opacity: 0.8;
+        }
+
+        /* Contact Card Styles */
+        .contact-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 12px;
+        }
+
+        .contact-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .contact-large-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .contact-card-info h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .contact-card-info p {
+            font-size: 14px;
+            color: #757575;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:active {
+            opacity: 0.8;
+        }
+
+        .action-btn.call {
+            background: #4caf50;
+            color: white;
+        }
+
+        .action-btn.message {
+            background: #2196f3;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        /* Settings Styles */
+        .settings-group {
+            margin-bottom: 25px;
+        }
+
+        .settings-group-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            padding-left: 5px;
+        }
+
+        .settings-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-item:active {
+            transform: scale(0.98);
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .settings-info h4 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .settings-info p {
+            font-size: 12px;
+            color: #757575;
+        }
+
+        .settings-arrow {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .logout-btn:active {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="notch"></div>
+        <div class="screen">
+            <div class="app-header">
+                <div class="app-title"> Navicane Caregiver App</div>
+                <div class="app-subtitle">Smart Cane Assistant</div>
+            </div>
+
+            <div class="status-bar">
+                <div class="battery-status">
+                    <span style="font-weight: 600; color: #333;">Cane Battery</span>
+                    <div class="battery-level">
+                        <span style="font-weight: 600; color: #4caf50;">85%</span>
+                        <div class="battery-icon">
+                            <div class="battery-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- HOME SCREEN -->
+                <div id="home-screen" class="screen-content active">
+                    <!-- Quick Actions -->
+                    <div class="section">
+                        <div class="section-title">Quick Actions</div>
+                        
+                        <div class="card" onclick="navigateToLocation()">
+                            <div class="card-header">
+                                <div class="card-icon blue">📍</div>
+                                <div class="card-content">
+                                    <div class="card-title">Navigate</div>
+                                    <div class="card-description">Start navigation to destination</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" onclick="viewCurrentLocation()">
+                            <div class="card-header">
+                                <div class="card-icon green">🗺️</div>
+                                <div class="card-content">
+                                    <div class="card-title">Current Location</div>
+                                    <div class="card-description">View where you are now</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" onclick="viewHistory()">
+                            <div class="card-header">
+                                <div class="card-icon orange">📊</div>
+                                <div class="card-content">
+                                    <div class="card-title">Location History</div>
+                                    <div class="card-description">See past locations & routes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contacts -->
+                    <div class="section">
+                        <div class="section-title">Emergency Contacts</div>
+                        <div class="emergency-contacts">
+                            <div class="contact-item">
+                                <div class="contact-info">
+                                    <div class="contact-avatar">JD</div>
+                                    <div class="contact-details">
+                                        <h4>John Doe</h4>
+                                        <p>Son • +1 (555) 123-4567</p>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-info">
+                                    <div class="contact-avatar">MS</div>
+                                    <div class="contact-details">
+                                        <h4>Mary Smith</h4>
+                                        <p>Caregiver • +1 (555) 987-6543</p>
+                                    </div>
+                                </div>
+            
+                            </div>
+                        </div>
+                        <button class="add-contact-btn" onclick="addContact()">+ Add Contact</button>
+                    </div>
+
+                    <!-- Current Location -->
+                    <div class="section">
+                        <div class="section-title">Current Location</div>
+                        <div class="location-info">
+                            <div class="location-label">📍 Address</div>
+                            <div class="location-text">Telecom House, 3 Gloucester Rd, Wan Chai</div>
+                            <div class="location-label" style="margin-top: 12px;">🕐 Last Updated</div>
+                            <div class="location-text">Today at 2:45 PM</div>
+                            <button class="view-map-btn" onclick="viewMap()">View on Map</button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Preferences -->
+                    <div class="section">
+                        <div class="section-title">Navigation Preferences</div>
+                        <div class="preference-item">
+                            <div class="preference-label">Avoid Stairs</div>
+                            <div class="toggle-switch active" onclick="togglePreference(this)"></div>
+                        </div>
+                        <div class="preference-item">
+                            <div class="preference-label">Prefer Sidewalks</div>
+                            <div class="toggle-switch active" onclick="togglePreference(this)"></div>
+                        </div>
+                        <div class="preference-item">
+                            <div class="preference-label">Avoid Busy Streets</div>
+                            <div class="toggle-switch active" onclick="togglePreference(this)"></div>
+                        </div>
+                        <div class="preference-item">
+                            <div class="preference-label">Voice Guidance</div>
+                            <div class="toggle-switch active" onclick="togglePreference(this)"></div>
+                        </div>
+                    </div>
+
+                    <!-- Spacer for bottom navigation -->
+                    <div style="height: 100px;"></div>
+                </div>
+
+                <!-- MAP SCREEN -->
+                <div id="map-screen" class="screen-content">
+                    <div class="section">
+                        <div class="section-title">Cane location</div>
+                        <div class="map-container">
+                            <!-- Map placeholder image with OpenStreetMap style -->
+                            <img src="https://zhao255.github.io/ELC/ELCMap2.JPG" 
+                                 alt="Map" class="map-image" 
+                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22375%22 height=%22500%22%3E%3Crect width=%22375%22 height=%22500%22 fill=%22%23e8f5e9%22/%3E%3Cpath d=%22M0 0 L375 500 M375 0 L0 500%22 stroke=%22%23c8e6c9%22 stroke-width=%222%22/%3E%3Ctext x=%22187.5%22 y=%22250%22 font-family=%22Arial%22 font-size=%2220%22 fill=%22%23666%22 text-anchor=%22middle%22%3EMap View%3C/text%3E%3C/svg%3E'">
+                            <div class="map-pin">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 128" id="location">
+                                    <g id="Layer_2">
+                                        <path id="Icons" d="M96 48c0 34.912-40.615 75.928-42.342 77.657a8.002 8.002 0 0 1-11.314 0C40.615 123.927 0 82.912 0 48a48 48 0 0 1 96 0zM48 72a24 24 0 1 0-24-24 23.999 23.999 0 0 0 24 24z"></path>
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            <div class="map-controls">
+                                <button class="map-btn" onclick="alert('Zoom in')">+</button>
+                                <button class="map-btn" onclick="alert('Zoom out')">-</button>
+                                <button class="map-btn" onclick="alert('Center location')">🎯</button>
+                            </div>
+
+                            <div class="address-overlay">
+                                <div style="font-weight: 600; margin-bottom: 8px;">Current Location</div>
+                                <div style="font-size: 14px; color: #555; margin-bottom: 15px;">Telecom House, 3 Gloucester Rd, Wan Chai</div>
+                                <input type="text" class="navigation-input" placeholder="Enter destination address...">
+                                <button class="start-navigation-btn" onclick="alert('Starting navigation...')">Start Navigation</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Recent Places</div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon blue">🏠</div>
+                                <div class="card-content">
+                                    <div class="card-title">Home</div>
+                                    <div class="card-description">456 Oak Avenue, Wan Chai</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon green">🏥</div>
+                                <div class="card-content">
+                                    <div class="card-title">Medical Center</div>
+                                    <div class="card-description">789 Health Plaza, Wan Chai</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon orange">🛒</div>
+                                <div class="card-content">
+                                    <div class="card-title">Grocery Store</div>
+                                    <div class="card-description">321 Market Street, Wan Chai</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="height: 100px;"></div>
+                </div>
+
+                <!-- CONTACTS SCREEN -->
+                <div id="contacts-screen" class="screen-content">
+                    <div class="section">
+                        <div class="section-title">Emergency Contacts</div>
+                        
+                        <div class="contact-card">
+                            <div class="contact-card-header">
+                                <div class="contact-large-avatar">JD</div>
+                                <div class="contact-card-info">
+                                    <h3>John Doe</h3>
+                                    <p>Son</p>
+                                    <p style="margin-top: 4px;">+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            <div class="contact-actions">
+                                <button class="action-btn call" onclick="callContact('John Doe', '+1 (555) 123-4567')">
+                                    Edit
+                                </button>
+                                <button class="action-btn message" onclick="alert('Sending message to John Doe')">
+                                    💬 Message
+                                </button>
+                                <button class="action-btn delete" onclick="deleteContact('John Doe')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-card-header">
+                                <div class="contact-large-avatar">MS</div>
+                                <div class="contact-card-info">
+                                    <h3>Mary Smith</h3>
+                                    <p>Caregiver</p>
+                                    <p style="margin-top: 4px;">+1 (555) 987-6543</p>
+                                </div>
+                            </div>
+                            <div class="contact-actions">
+                                <button class="action-btn call" onclick="callContact('Mary Smith', '+1 (555) 987-6543')">
+                                    Edit
+                                </button>
+                                <button class="action-btn message" onclick="alert('Sending message to Mary Smith')">
+                                    💬 Message
+                                </button>
+                                <button class="action-btn delete" onclick="deleteContact('Mary Smith')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-card-header">
+                                <div class="contact-large-avatar">EM</div>
+                                <div class="contact-card-info">
+                                    <h3>Dr. Emily Martinez</h3>
+                                    <p>Primary Doctor</p>
+                                    <p style="margin-top: 4px;">+1 (555) 246-8135</p>
+                                </div>
+                            </div>
+                            <div class="contact-actions">
+                                <button class="action-btn call" onclick="callContact('Dr. Emily Martinez', '+1 (555) 246-8135')">
+                                    Edit
+                                </button>
+                                <button class="action-btn message" onclick="alert('Sending message to Dr. Emily Martinez')">
+                                    💬 Message
+                                </button>
+                                <button class="action-btn delete" onclick="deleteContact('Dr. Emily Martinez')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="add-contact-btn" onclick="addContact()">+ Add Emergency Contact</button>
+                    </div>
+
+                    <div style="height: 100px;"></div>
+                </div>
+
+                <!-- SETTINGS SCREEN -->
+                <div id="settings-screen" class="screen-content">
+                    <div class="section">
+                        <div class="settings-group">
+                            <div class="settings-group-title">Account</div>
+                            <div class="settings-item" onclick="alert('Edit Profile')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">👤</div>
+                                    <div class="settings-info">
+                                        <h4>Profile</h4>
+                                        <p>Edit your personal information</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Change Password')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🔐</div>
+                                    <div class="settings-info">
+                                        <h4>Security</h4>
+                                        <p>Change password and security settings</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-title">Cane Settings</div>
+                            <div class="settings-item" onclick="alert('Pair Cane')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🔗</div>
+                                    <div class="settings-info">
+                                        <h4>Pair Cane Device</h4>
+                                        <p>Connect to your Navicane</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Calibrate Sensors')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">⚙️</div>
+                                    <div class="settings-info">
+                                        <h4>Calibrate Sensors</h4>
+                                        <p>Adjust cane sensitivity</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Battery Settings')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🔋</div>
+                                    <div class="settings-info">
+                                        <h4>Battery Alerts</h4>
+                                        <p>Set low battery notifications</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-title">Notifications</div>
+                            <div class="settings-item" onclick="alert('Notification Settings')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🔔</div>
+                                    <div class="settings-info">
+                                        <h4>Push Notifications</h4>
+                                        <p>Manage app notifications</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Emergency Alerts')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🚨</div>
+                                    <div class="settings-info">
+                                        <h4>Emergency Alerts</h4>
+                                        <p>Configure emergency notifications</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-title">App Settings</div>
+                            <div class="settings-item" onclick="alert('Language Settings')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🌐</div>
+                                    <div class="settings-info">
+                                        <h4>Language</h4>
+                                        <p>English (US)</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Accessibility Settings')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">♿</div>
+                                    <div class="settings-info">
+                                        <h4>Accessibility</h4>
+                                        <p>Font size, voice settings</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Privacy Settings')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">🔒</div>
+                                    <div class="settings-info">
+                                        <h4>Privacy</h4>
+                                        <p>Location and data sharing</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <div class="settings-group-title">Support</div>
+                            <div class="settings-item" onclick="viewHelp()">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">❓</div>
+                                    <div class="settings-info">
+                                        <h4>Help & Support</h4>
+                                        <p>Get help and tutorials</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                            <div class="settings-item" onclick="alert('Version 1.2.3')">
+                                <div class="settings-item-left">
+                                    <div class="settings-icon">ℹ️</div>
+                                    <div class="settings-info">
+                                        <h4>About</h4>
+                                        <p>Version 1.2.3</p>
+                                    </div>
+                                </div>
+                                <div class="settings-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <button class="logout-btn" onclick="if(confirm('Are you sure you want to logout?')) alert('Logged out')">
+                            Logout
+                        </button>
+                    </div>
+
+                    <div style="height: 100px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation-bar">
+            <div class="nav-item active" data-screen="home">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item" data-screen="map">
+                <div class="nav-icon">🗺️</div>
+                <div class="nav-label">Map</div>
+            </div>
+            <div class="nav-item" data-screen="contacts">
+                <div class="nav-icon">📞</div>
+                <div class="nav-label">Contacts</div>
+            </div>
+            <div class="nav-item" data-screen="settings">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Screen management
+        let currentScreen = 'home';
+
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen-content').forEach(screen => {
+                screen.style.display = 'none';
+            });
+
+            // Show selected screen
+            document.getElementById(screenName + '-screen').style.display = 'block';
+            currentScreen = screenName;
+
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector(`[data-screen="${screenName}"]`).classList.add('active');
+
+            // Scroll to top
+            document.querySelector('.screen').scrollTop = 0;
+        }
+
+        // Toggle preference switches
+        function togglePreference(element) {
+            element.classList.toggle('active');
+        }
+
+        // Navigation functions
+        function navigateToLocation() {
+            showScreen('map');
+        }
+
+        function viewCurrentLocation() {
+            showScreen('map');
+        }
+
+        function viewHistory() {
+            alert('Showing location history');
+        }
+
+        function addContact() {
+            alert('Add Emergency Contact: Enter contact details');
+        }
+
+        function viewMap() {
+            showScreen('map');
+        }
+
+        function openSettings() {
+            showScreen('settings');
+        }
+
+        function viewHelp() {
+            alert('Opening help & support center');
+        }
+
+        function deleteContact(name) {
+            if(confirm(`Remove ${name} from emergency contacts?`)) {
+                alert(`${name} removed from contacts`);
+            }
+        }
+
+        function callContact(name, number) {
+            alert(`Calling ${name} at ${number}`);
+        }
+
+        // Update battery level dynamically (demo)
+        function updateBattery(level) {
+            const fill = document.querySelector('.battery-fill');
+            const percentage = document.querySelector('.battery-level span');
+            
+            fill.style.width = level + '%';
+            percentage.textContent = level + '%';
+            
+            fill.classList.remove('low', 'medium');
+            if (level <= 20) {
+                fill.classList.add('low');
+                percentage.style.color = '#f44336';
+            } else if (level <= 50) {
+                fill.classList.add('medium');
+                percentage.style.color = '#ff9800';
+            } else {
+                percentage.style.color = '#4caf50';
+            }
+        }
+
+        // Navigation bar interaction
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const screen = this.getAttribute('data-screen');
+                showScreen(screen);
+            });
+        });
+
+        // Demo: Simulate battery changes
+        // Uncomment to see battery animation
+        // setInterval(() => {
+        //     const randomLevel = Math.floor(Math.random() * 100);
+        //     updateBattery(randomLevel);
+        // }, 5000);
+    </script>
+</body>
+</html>
