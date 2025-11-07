@@ -12,7 +12,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-    <script src="chat.js"></script>
 
     <style>
 
@@ -1695,6 +1694,63 @@
 
             color: #ecf0f1;
 
+        }
+
+        
+        /* Markdown formatting styles for chat messages */
+        .message strong {
+            font-weight: bold;
+        }
+
+        .message em {
+            font-style: italic;
+        }
+
+        .message del {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .message code {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        [data-theme="dark"] .message code {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .message pre {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        [data-theme="dark"] .message pre {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .message pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .message a {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .message a:hover {
+            opacity: 0.8;
+        }
+
+        [data-theme="dark"] .message a {
+            color: #3498db;
         }
 
         
@@ -3472,11 +3528,11 @@
 
             <ul class="tech-tabs">
 
-                <li><a href="#" class="tech-tab active" data-tab="coding">Coding</a></li>
+                <li><a href="javascript:void(0)" class="tech-tab active" data-tab="coding">Coding</a></li>
 
-                <li><a href="#" class="tech-tab" data-tab="cad">CAD</a></li>
+                <li><a href="javascript:void(0)" class="tech-tab" data-tab="cad">CAD</a></li>
 
-                <li><a href="#" class="tech-tab" data-tab="other">Other Tools</a></li>
+                <li><a href="javascript:void(0)" class="tech-tab" data-tab="other">Other Tools</a></li>
 
             </ul>
 
@@ -4464,83 +4520,130 @@
 
         
         
-        // Smooth scrolling for navigation links
-
+        // Smooth scrolling for navigation links (exclude tabs)
         document.querySelectorAll('nav a, .main-menu a').forEach(anchor => {
+            // Skip tabs - they have their own handler
+            if (anchor.classList.contains('tech-tab') || anchor.classList.contains('detail-skill-tab')) {
+                return;
+            }
 
             anchor.addEventListener('click', function(e) {
-
                 e.preventDefault();
 
-                
-                
                 const targetId = this.getAttribute('href');
-
-                const targetElement = document.querySelector(targetId);
-
                 
-                
-                window.scrollTo({
-
-                    top: targetElement.offsetTop - 70,
-
-                    behavior: 'smooth'
-
-                });
-
+                // Only scroll if href is not just "#"
+                if (targetId && targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
             });
-
         });
 
         
         
         // Technical skills tabs navigation
+        function handleTechTabClick(tabElement, e) {
+            // Prevent default and stop propagation
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
 
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const techTabs = document.querySelectorAll('.tech-tab');
-
+            const targetTab = tabElement.getAttribute('data-tab');
             
+            if (!targetTab) {
+                console.warn('No data-tab attribute found on tab');
+                return;
+            }
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tech-tab, .detail-skill-tab').forEach(t => t.classList.remove('active'));
+
+            // Add active class to clicked tab
+            tabElement.classList.add('active');
+
+            // Also activate the corresponding tab of the other type (sync both tab areas)
+            if (tabElement.classList.contains('tech-tab')) {
+                // If clicked tab is .tech-tab, activate corresponding .detail-skill-tab
+                const detailTab = document.querySelector(`.detail-skill-tab[data-tab="${targetTab}"]`);
+                if (detailTab) {
+                    detailTab.classList.add('active');
+                }
+            } else if (tabElement.classList.contains('detail-skill-tab')) {
+                // If clicked tab is .detail-skill-tab, activate corresponding .tech-tab
+                const techTab = document.querySelector(`.tech-tab[data-tab="${targetTab}"]`);
+                if (techTab) {
+                    techTab.classList.add('active');
+                }
+            }
+
+            // Hide all content sections
+            document.querySelectorAll('.tech-content').forEach(section => section.classList.remove('active'));
+
+            // Show the corresponding content section
+            const targetContent = document.getElementById(targetTab + '-content');
             
-            techTabs.forEach(tab => {
+            if (targetContent) {
+                targetContent.classList.add('active');
+            } else {
+                console.warn('Content section not found:', targetTab + '-content');
+            }
+        }
 
-                tab.addEventListener('click', function(e) {
-
-                    e.preventDefault();
-
-                    
-                    
-                    // Remove active class from all tabs
-
-                    techTabs.forEach(t => t.classList.remove('active'));
-
-                    
-                    
-                    // Add active class to clicked tab
-
-                    this.classList.add('active');
-
-                    
-                    
-                    // Hide all content sections
-
-                    const contentSections = document.querySelectorAll('.tech-content');
-
-                    contentSections.forEach(section => section.classList.remove('active'));
-
-                    
-                    
-                    // Show the corresponding content section
-
-                    const target = this.getAttribute('data-tab');
-
-                    document.getElementById(target + '-content').classList.add('active');
-
-                });
-
+        // Function to attach tab event listeners
+        function attachTabListeners() {
+            // Attach listeners to tech-tabs (only if not already attached)
+            document.querySelectorAll('.tech-tab').forEach(tab => {
+                // Check if listener is already attached by checking for a data attribute
+                if (!tab.hasAttribute('data-listener-attached')) {
+                    tab.setAttribute('data-listener-attached', 'true');
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        handleTechTabClick(this, e);
+                    });
+                }
             });
 
+            // Also attach to detail-skill-tabs
+            document.querySelectorAll('.detail-skill-tab').forEach(tab => {
+                if (!tab.hasAttribute('data-listener-attached')) {
+                    tab.setAttribute('data-listener-attached', 'true');
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        handleTechTabClick(this, e);
+                    });
+                }
+            });
+        }
+
+        // Attach listeners on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            attachTabListeners();
         });
+
+        // Also use event delegation as backup
+        document.addEventListener('click', function(e) {
+            const clickedTab = e.target.closest('.tech-tab, .detail-skill-tab');
+            
+            if (clickedTab) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                handleTechTabClick(clickedTab, e);
+            }
+        }, true); // Use capture phase
 
         
         
@@ -4599,16 +4702,68 @@
                 
                 
                 // Initialize tabs if this is the technical skills page
+                // Use setTimeout to ensure DOM is ready after createDetailMenu
 
                 if (targetId === 'python-detail') {
 
-                    document.querySelector('.tech-tab[data-tab="coding"]').classList.add('active');
+                    setTimeout(() => {
 
-                    document.getElementById('coding-content').classList.add('active');
+                        // Re-attach tab listeners after detail menu is created
+                        attachTabListeners();
 
-                    document.getElementById('cad-content').classList.remove('active');
+                        // Remove active class from all tabs
 
-                    document.getElementById('other-content').classList.remove('active');
+                        document.querySelectorAll('.tech-tab, .detail-skill-tab').forEach(tab => {
+
+                            tab.classList.remove('active');
+
+                        });
+
+                        
+                        
+                        // Remove active class from all content sections
+
+                        document.querySelectorAll('.tech-content').forEach(content => {
+
+                            content.classList.remove('active');
+
+                        });
+
+                        
+                        
+                        // Set coding tab and content as active
+
+                        const codingTab = document.querySelector('.tech-tab[data-tab="coding"]');
+
+                        if (codingTab) {
+
+                            codingTab.classList.add('active');
+
+                        }
+
+                        
+                        
+                        const codingContent = document.getElementById('coding-content');
+
+                        if (codingContent) {
+
+                            codingContent.classList.add('active');
+
+                        }
+
+                        
+                        
+                        // Also activate the corresponding detail menu tab if it exists
+
+                        const detailCodingTab = document.querySelector('.detail-skill-tab[data-tab="coding"]');
+
+                        if (detailCodingTab) {
+
+                            detailCodingTab.classList.add('active');
+
+                        }
+
+                    }, 50);
 
                 }
 
@@ -4662,7 +4817,7 @@
 
                     const menuLink = document.createElement('a');
 
-                    menuLink.href = '#';
+                    menuLink.href = 'javascript:void(0)';
 
                     menuLink.textContent = option.name;
 
@@ -4672,36 +4827,13 @@
 
                     
                     
-                    // Add click event to show the corresponding tab
-
+                    // Mark as having listener attached and attach click event directly to the new tab
+                    menuLink.setAttribute('data-listener-attached', 'true');
                     menuLink.addEventListener('click', function(e) {
-
                         e.preventDefault();
-
-                        
-                        
-                        // Update tab navigation
-
-                        document.querySelectorAll('.tech-tab').forEach(tab => {
-
-                            tab.classList.remove('active');
-
-                        });
-
-                        document.querySelector(`.tech-tab[data-tab="${option.tab}"]`).classList.add('active');
-
-                        
-                        
-                        // Show corresponding content
-
-                        document.querySelectorAll('.tech-content').forEach(content => {
-
-                            content.classList.remove('active');
-
-                        });
-
-                        document.getElementById(`${option.tab}-content`).classList.add('active');
-
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        handleTechTabClick(this, e);
                     });
 
                     
@@ -4738,7 +4870,7 @@
 
                     const menuLink = document.createElement('a');
 
-                    menuLink.href = '#';
+                    menuLink.href = 'javascript:void(0)';
 
                     menuLink.textContent = header.textContent;
 
@@ -6649,10 +6781,10 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
-            // Show thinking indicator
+            // Show thinking indicator with animated dots
             const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'typing-indicator';
-            typingIndicator.textContent = 'Thinking...';
+            typingIndicator.className = 'message bot-message thinking-indicator';
+            typingIndicator.innerHTML = '<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span> Thinking...';
             chatMessages.appendChild(typingIndicator);
             
             // Immediately scroll to show thinking indicator
@@ -6688,73 +6820,7 @@
 
         }
         
-
-            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            
-            // Show thinking indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'typing-indicator';
-            typingIndicator.textContent = 'Thinking...';
-            chatMessages.appendChild(typingIndicator);
-            
-            // Immediately scroll to show thinking indicator
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            
-            // Generate response based on keywords (faster response)
-            setTimeout(function() {
-                // Remove typing indicator
-                typingIndicator.remove();
-                
-                const botMessage = document.createElement('div');
-                botMessage.className = 'message bot-message';
-                
-                const lowerMessage = message.toLowerCase();
-                let response = '';
-                
-                if (lowerMessage.includes('education') || lowerMessage.includes('study') || lowerMessage.includes('university') || lowerMessage.includes('school')) {
-                    response = 'I have a Bachelor of Engineering in Mechanical Engineering from The Hong Kong Polytechnic University (expected graduation in 2026). Before that, I studied at Oxford International College from 2018-2022.';
-                } else if (lowerMessage.includes('skill') || lowerMessage.includes('programming') || lowerMessage.includes('software') || lowerMessage.includes('cad')) {
-                    response = 'My key skills include CAD design (SolidWorks, Revit, AutoCAD), programming (Python, MATLAB, Java, HTML), and project management. I also have cross-functional collaboration and problem-solving abilities.';
-                } else if (lowerMessage.includes('project') || lowerMessage.includes('work') || lowerMessage.includes('experience')) {
-                    response = 'My notable projects include leading a Robot Basketball Competition team, developing a Fuel Cell Powered Robot Car, designing a Smart Navigational Cane, and creating an AI-Powered Automation Program Plugin. These projects showcase my skills in robotics, sustainable energy, assistive technology, and software development.';
-                } else if (lowerMessage.includes('contact') || lowerMessage.includes('email') || lowerMessage.includes('phone') || lowerMessage.includes('reach')) {
-                    response = 'You can reach me via email at zhaoj6332@gmail.com or by phone at +852 56170888. Feel free to also use the contact form on this website to send me a message.';
-                } else if (lowerMessage.includes('hi') || lowerMessage.includes('hello') || lowerMessage.includes('hey')) {
-                    response = 'Hello! How can I help you today? Feel free to ask me about education, skills, projects, or contact information.';
-                } else if (lowerMessage.includes('thank') || lowerMessage.includes('thanks')) {
-                    response = 'You\'re welcome! Is there anything else you\'d like to know?';
-                } else if (lowerMessage.includes('name')) {
-                    response = 'My owner\'s name is ZHAO XUECEN, a Mechanical Engineering student at The Hong Kong Polytechnic University.';
-                } else if (lowerMessage.includes('interest') || lowerMessage.includes('hobby') || lowerMessage.includes('passion')) {
-                    response = 'My owner is passionate about AI in Construction, Sustainable Materials, and BIM Innovation. He\'s particularly interested in how technology can transform the construction industry.';
-                } else {
-                    response = 'I\'m not sure I understand that question. Try asking about education, skills, projects, or contact information. Or use the quick buttons above!';
-                }
-                
-                botMessage.textContent = response;
-                chatMessages.appendChild(botMessage);
-                
-                // Scroll to bottom after bot response
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 50);
-            }, 300);
-        }
-        
-        // Allow Enter key to send message
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatInput = document.getElementById('chat-input');
-            if (chatInput) {
-                chatInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        sendCustomMessage();
-                    }
-                });
-            }
-        });
+        // Allow Enter key to send message (handled by main chat functionality)
         
         
         // Scroll to top button
@@ -6763,7 +6829,7 @@
 
             const scrollBtn = document.getElementById('scroll-top');
 
-            
+            if (!scrollBtn) return;
             
             window.addEventListener('scroll', function() {
 
@@ -6796,20 +6862,21 @@
         });
 
         // Image to PDF Converter
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const preview = document.getElementById('preview');
+            const convertBtn = document.getElementById('convertBtn');
+            const canvas = document.getElementById('canvas');
+            
+            // Only proceed if all required elements exist
+            if (!fileInput || !preview || !convertBtn || !canvas) {
+                // Elements don't exist, skip this functionality
+                return;
+            }
 
-        const fileInput = document.getElementById('fileInput');
+            const ctx = canvas.getContext('2d');
 
-        const preview = document.getElementById('preview');
-
-        const convertBtn = document.getElementById('convertBtn');
-
-        const canvas = document.getElementById('canvas');
-
-        const ctx = canvas.getContext('2d');
-
-
-
-        let currentImage = null;
+            let currentImage = null;
 
 
 
@@ -6939,9 +7006,8 @@
 
         }
 
-
-
-        let currentColor = 'black';
+        convertBtn.addEventListener('click', convertToPDF);
+        });
 
         
         
@@ -7158,7 +7224,7 @@
             // Add user message to chat
             const userMessageDiv = document.createElement('div');
             userMessageDiv.className = 'message user-message';
-            userMessageDiv.textContent = message;
+            userMessageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(message) : message;
             chatMessages.appendChild(userMessageDiv);
 
             // Clear input
@@ -7181,14 +7247,14 @@
                 // Add AI response to chat
                 const aiMessageDiv = document.createElement('div');
                 aiMessageDiv.className = 'message ai-message';
-                aiMessageDiv.textContent = data.response;
+                aiMessageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(data.response) : data.response;
                 chatMessages.appendChild(aiMessageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
                 console.error('Error:', error);
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'message ai-message error';
-                errorDiv.textContent = 'Sorry, there was an error connecting to the AI server.';
+                errorDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown('Sorry, there was an error connecting to the AI server.') : 'Sorry, there was an error connecting to the AI server.';
                 chatMessages.appendChild(errorDiv);
             }
         }
@@ -7207,7 +7273,7 @@
             const chatBox = document.getElementById('chat-box');
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
-            const sendButton = document.getElementById('chat-send');
+            const sendButton = document.getElementById('send-message') || document.getElementById('chat-send');
             const closeButton = document.getElementById('chat-close');
             const chatHeader = document.getElementById('chat-header');
             const resizeHandle = document.getElementById('chat-resize-handle');
@@ -7228,16 +7294,18 @@
             }
 
             // Resize functionality
-            resizeHandle.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startWidth = chatBox.offsetWidth;
-                startX = e.clientX;
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    document.removeEventListener('mousemove', handleMouseMove);
+            if (resizeHandle) {
+                resizeHandle.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startWidth = chatBox.offsetWidth;
+                    startX = e.clientX;
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', () => {
+                        isDragging = false;
+                        document.removeEventListener('mousemove', handleMouseMove);
+                    });
                 });
-            });
+            }
 
             function handleMouseMove(e) {
                 if (!isDragging) return;
@@ -7249,6 +7317,7 @@
 
             // Send message functionality
             async function sendMessage() {
+                if (!chatInput) return;
                 const message = chatInput.value.trim();
                 if (!message) return;
 
@@ -7291,58 +7360,65 @@
             }
 
             function appendMessage(text, type) {
+                if (!chatMessages) return;
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}-message`;
-                messageDiv.textContent = text;
+                messageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(text) : text;
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
             // Event listeners for sending messages
-            sendButton.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
+            if (sendButton) {
+                sendButton.addEventListener('click', sendMessage);
+            }
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
 
             // Make chat box draggable by header
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            chatHeader.style.cursor = 'move';
-            
-            chatHeader.onmousedown = dragMouseDown;
-
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
+            if (chatHeader) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                chatHeader.style.cursor = 'move';
                 
-                const newTop = chatBox.offsetTop - pos2;
-                const newLeft = chatBox.offsetLeft - pos1;
-                
-                // Prevent dragging outside viewport
-                if (newTop > 0 && newTop < window.innerHeight - chatBox.offsetHeight) {
-                    chatBox.style.top = newTop + "px";
+                function dragMouseDown(e) {
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
                 }
-                if (newLeft > 0 && newLeft < window.innerWidth - chatBox.offsetWidth) {
-                    chatBox.style.left = newLeft + "px";
-                }
-            }
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
+                function elementDrag(e) {
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    const newTop = chatBox.offsetTop - pos2;
+                    const newLeft = chatBox.offsetLeft - pos1;
+                    
+                    // Prevent dragging outside viewport
+                    if (newTop > 0 && newTop < window.innerHeight - chatBox.offsetHeight) {
+                        chatBox.style.top = newTop + "px";
+                    }
+                    if (newLeft > 0 && newLeft < window.innerWidth - chatBox.offsetWidth) {
+                        chatBox.style.left = newLeft + "px";
+                    }
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+                
+                chatHeader.onmousedown = dragMouseDown;
             }
         });
     </script>
@@ -7383,9 +7459,15 @@
             const chatBox = document.getElementById('chat-box');
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
-            const sendButton = document.getElementById('send-message');
+            const sendButton = document.getElementById('send-message') || document.getElementById('chat-send');
             const chatHeader = document.getElementById('chat-header');
             const resizeHandle = document.getElementById('chat-resize-handle');
+            
+            // Check if required chat elements exist
+            if (!chatBox || !chatMessages || !chatInput) {
+                console.warn('Chat elements not found, skipping chat initialization');
+                return;
+            }
             
             // Initialize chat state - sync with actual DOM state
             let isOpen = chatBox.classList.contains('open');
@@ -7484,14 +7566,77 @@
                 }
             }
 
+            // Parse markdown text to HTML (global function for all chat implementations)
+            window.parseMarkdown = function(text) {
+                if (!text) return '';
+                
+                // Escape HTML to prevent XSS attacks first
+                let html = text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+                
+                // Store code blocks temporarily to prevent markdown processing inside them
+                const codeBlocks = [];
+                html = html.replace(/```([\s\S]*?)```/g, (match, code) => {
+                    const id = `__CODEBLOCK_${codeBlocks.length}__`;
+                    codeBlocks.push(code);
+                    return id;
+                });
+                
+                // Store inline code temporarily
+                const inlineCodes = [];
+                html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+                    const id = `__INLINECODE_${inlineCodes.length}__`;
+                    inlineCodes.push(code);
+                    return id;
+                });
+                
+                // Process markdown formatting (order matters)
+                // Bold (**text** or __text__) - must come before italic
+                html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+                
+                // Italic (*text* or _text_) - single asterisk/underscore
+                // Process after bold to avoid conflicts
+                html = html.replace(/([^*]|^)\*([^*\n]+?)\*([^*]|$)/g, '$1<em>$2</em>$3');
+                html = html.replace(/([^_]|^)_([^_\n]+?)_([^_]|$)/g, '$1<em>$2</em>$3');
+                
+                // Strikethrough (~~text~~)
+                html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+                
+                // Links [text](url)
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+                
+                // Restore inline code
+                inlineCodes.forEach((code, index) => {
+                    html = html.replace(`__INLINECODE_${index}__`, `<code>${code}</code>`);
+                });
+                
+                // Restore code blocks
+                codeBlocks.forEach((code, index) => {
+                    html = html.replace(`__CODEBLOCK_${index}__`, `<pre><code>${code}</code></pre>`);
+                });
+                
+                // Line breaks (convert \n to <br>, but not inside pre tags)
+                html = html.replace(/\n/g, '<br>');
+                
+                return html;
+            }
+
             // Show thinking indicator
             function showThinking() {
+                if (!chatMessages) {
+                    console.warn('chatMessages is null in showThinking');
+                    return null;
+                }
                 const thinkingDiv = document.createElement('div');
                 thinkingDiv.id = 'thinking-indicator';
                 thinkingDiv.className = 'message bot-message thinking-indicator';
                 thinkingDiv.innerHTML = '<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span> Thinking...';
                 chatMessages.appendChild(thinkingDiv);
                 scrollToBottom();
+                console.log('Thinking indicator added:', thinkingDiv);
                 return thinkingDiv;
             }
 
@@ -7522,6 +7667,10 @@
 
                 // Show thinking indicator
                 const thinkingDiv = showThinking();
+                if (!thinkingDiv) {
+                    console.error('Failed to show thinking indicator');
+                    return;
+                }
 
                 try {
                     const response = await fetch(CHAT_SERVER_URL + '/chat', {
@@ -7555,7 +7704,7 @@
             function appendMessage(text, type) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${type}-message`;
-                messageDiv.textContent = text;
+                messageDiv.innerHTML = window.parseMarkdown ? window.parseMarkdown(text) : text;
                 chatMessages.appendChild(messageDiv);
                 
                 // Force scroll multiple times to ensure it works
