@@ -2262,41 +2262,9 @@
 
         }
 
-        #colorPicker {
-
-            vertical-align: middle;
-
-            height: 30px;
-
-            width: 50px;
-
-            padding: 0;
-
-            border: none;
-
-        }
 
 
 
-        .fullscreen-overlay {
-
-            display: none;
-
-            position: fixed;
-
-            top: 0;
-
-            left: 0;
-
-            right: 0;
-
-            bottom: 0;
-
-            z-index: 1999;
-
-            cursor: none;
-
-        }
 
         /* Scroll to top button */
 
@@ -3705,24 +3673,6 @@
               
                 
 
-                <h4>Full screen app</h4>
-
-                <div class="interactive-project">
-
-                    <button2 onclick="changeColor('black')">Black</button2>
-
-                    <button2 onclick="changeColor('#0000ff')">Blue</button2>
-
-                    <input type="color" id="colorPicker" onchange="customColor(this.value)">
-
-                    <button2 onclick="toggleFullscreen()">Full Screen</button2>
-
-                </div>
-
-                <div class="fullscreen-overlay" id="overlay"></div>
-                
-                
-                
                 <h4>Interactive Snake Game</h4>
 
                 <p>Here's a mini Snake game that allows customization:</p>
@@ -7010,95 +6960,9 @@
 
 
 
-        let currentColor = 'black';
-
-        
-        
-        function changeColor(color) {
-
-            currentColor = color;
-
-        }
 
 
 
-        function customColor(color) {
-
-            currentColor = color;
-
-        }
-
-
-
-        function toggleFullscreen() {
-
-            const overlay = document.getElementById('overlay');
-
-            if (!document.fullscreenElement) {
-
-                overlay.style.display = 'block';
-
-                overlay.style.backgroundColor = currentColor;
-
-                document.body.style.overflow = 'hidden'; // Hide scrollbars
-
-                document.documentElement.requestFullscreen();
-
-            } else {
-
-                document.exitFullscreen();
-
-            }
-
-        }
-
-
-
-        document.addEventListener('fullscreenchange', () => {
-
-            const overlay = document.getElementById('overlay');
-
-            if (!document.fullscreenElement) {
-
-                overlay.style.display = 'none';
-
-                document.body.style.overflow = ''; // Restore scrollbars
-
-            }
-
-        });
-
-
-
-        // Right-click exit
-
-        const overlay = document.getElementById('overlay');
-
-        overlay.addEventListener('contextmenu', function(e) {
-
-            e.preventDefault();
-
-            if (document.fullscreenElement) {
-
-                document.exitFullscreen();
-
-            }
-
-        });
-
-
-
-        // ESC key exit
-
-        document.addEventListener('keydown', (e) => {
-
-            if (e.key === 'Escape' && document.fullscreenElement) {
-
-                document.exitFullscreen();
-
-            }
-
-        });
 
         // Chat functionality
         const chatBox = document.createElement('div');
