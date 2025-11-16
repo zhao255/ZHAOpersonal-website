@@ -243,6 +243,35 @@
             align-self: flex-start;
         }
         
+        .command-message {
+            background-color: #27ae60;
+            color: white;
+            align-self: flex-start;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .command-message.dangerous {
+            background-color: #c0392b;
+            border-left-color: #e74c3c;
+        }
+        
+        .command-message.unknown {
+            background-color: #f39c12;
+            border-left-color: #e67e22;
+        }
+        
+        [data-theme="dark"] .command-message {
+            background-color: #27ae60;
+        }
+        
+        [data-theme="dark"] .command-message.dangerous {
+            background-color: #c0392b;
+        }
+        
+        [data-theme="dark"] .command-message.unknown {
+            background-color: #f39c12;
+        }
+        
         .typing-indicator, .thinking-indicator {
             background-color: #f0f0f0;
             padding: 10px 15px;
@@ -363,6 +392,131 @@
             transform: scale(0.98);
         }
         
+        /* Voice Chat Controls */
+        .voice-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .voice-button {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .voice-button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        
+        .voice-button:active {
+            background-color: #1c6ea4;
+            transform: scale(0.98);
+        }
+        
+        .voice-button.recording {
+            background-color: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .voice-button.recording:hover {
+            background-color: #c0392b;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+        }
+        
+        .tts-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background-color: var(--background-color);
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: border-color 0.3s, background-color 0.3s;
+            user-select: none;
+        }
+        
+        [data-theme="dark"] .tts-toggle {
+            background-color: #2c3e50;
+            border-color: #1a2530;
+            color: #ecf0f1;
+        }
+        
+        .tts-toggle:hover {
+            border-color: var(--secondary-color);
+        }
+        
+        .tts-toggle.active {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .tts-toggle input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .voice-status {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .voice-status.show {
+            display: flex;
+        }
+        
+        .voice-status.recording {
+            background-color: rgba(231, 76, 60, 0.9);
+        }
+        
+        .voice-status .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: white;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
         @media (max-width: 768px) {
             .chat-input-container {
                 gap: 8px;
@@ -377,6 +531,21 @@
                 width: 50px;
                 height: 40px;
                 font-size: 14px;
+            }
+            
+            .voice-button {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            .tts-toggle {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .voice-controls {
+                gap: 6px;
             }
         }
     </style>
@@ -401,9 +570,23 @@
         
         <div class="chat-footer">
             <div class="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Type your message..." class="chat-input">
+                <div class="voice-controls">
+                    <button id="voice-input-btn" class="voice-button" title="Voice Input (Click to start/stop recording)">
+                        🎤
+                    </button>
+                    <label class="tts-toggle" id="tts-toggle" title="Enable/Disable Text-to-Speech">
+                        <input type="checkbox" id="tts-checkbox" checked>
+                        <span>🔊 TTS</span>
+                    </label>
+                </div>
+                <input type="text" id="chat-input" placeholder="Type your message or click mic to speak..." class="chat-input">
                 <button id="send-message" class="send-button">Send</button>
             </div>
+        </div>
+        
+        <div class="voice-status" id="voice-status">
+            <span class="status-dot"></span>
+            <span id="voice-status-text">Listening...</span>
         </div>
     </div>
     
@@ -429,6 +612,439 @@
         
         // Chat functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // ============================================
+            // VOICE CHAT FUNCTIONALITY (STT & TTS)
+            // ============================================
+            
+            // Check browser support for Web Speech API
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const SpeechSynthesis = window.speechSynthesis;
+            
+            let recognition = null;
+            let isRecording = false;
+            let ttsEnabled = true;
+            let currentUtterance = null;
+            
+            // Post-processing function to correct common misrecognitions
+            function correctVandiRecognition(text) {
+                if (!text) return text;
+                
+                // Common misrecognitions of "Vandi" - comprehensive list
+                const vandiVariations = [
+                    /\bvandy\b/gi,      // "vandy" -> "Vandi"
+                    /\bwendy\b/gi,      // "wendy" -> "Vandi"
+                    /\bvandie\b/gi,     // "vandie" -> "Vandi"
+                    /\bwandy\b/gi,      // "wandy" -> "Vandi"
+                    /\bvendi\b/gi,       // "vendi" -> "Vandi"
+                    /\bwendi\b/gi,       // "wendi" -> "Vandi"
+                    /\bvandee\b/gi,      // "vandee" -> "Vandi"
+                    /\bwandee\b/gi,      // "wandee" -> "Vandi"
+                    /\bvandey\b/gi,      // "vandey" -> "Vandi"
+                    /\bwendey\b/gi,      // "wendey" -> "Vandi"
+                    /\bvandii\b/gi,      // "vandii" -> "Vandi"
+                    /\bwendii\b/gi,      // "wendii" -> "Vandi"
+                ];
+                
+                let correctedText = text;
+                
+                // Replace all variations with "Vandi"
+                vandiVariations.forEach(pattern => {
+                    correctedText = correctedText.replace(pattern, 'Vandi');
+                });
+                
+                // Also normalize any existing "vandi" (lowercase) to "Vandi" (proper case)
+                // This ensures consistent capitalization for commands like "Vandi go to location A"
+                correctedText = correctedText.replace(/\b(vandi)\b/gi, (match, p1, offset, string) => {
+                    // Always capitalize "Vandi" - it's a proper noun (car name)
+                    return 'Vandi';
+                });
+                
+                return correctedText;
+            }
+            
+            // Initialize Speech Recognition (will be set up after chatInput is defined)
+            let setupSpeechRecognition = function() {
+                if (!SpeechRecognition) {
+                    console.warn('Speech Recognition API not supported in this browser');
+                    const voiceBtn = document.getElementById('voice-input-btn');
+                    if (voiceBtn) {
+                        voiceBtn.disabled = true;
+                        voiceBtn.title = 'Speech Recognition not supported in this browser';
+                        voiceBtn.style.opacity = '0.5';
+                    }
+                    return;
+                }
+                
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                // Try to improve recognition for "Vandi" using grammars (if supported)
+                // Note: SpeechGrammarList is deprecated but may still work in some browsers
+                // This helps the recognition engine understand variations of "Vandi"
+                try {
+                    const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+                    if (SpeechGrammarList) {
+                        // Include common misrecognitions in the grammar
+                        const grammar = '#JSGF V1.0; grammar vandi; public <vandi> = Vandi | vandy | wendy | vandie | wandy | vendi | wendi | vandee | wandee | vandey | Vendee | wendey;';
+                        const speechRecognitionList = new SpeechGrammarList();
+                        speechRecognitionList.addFromString(grammar, 1);
+                        recognition.grammars = speechRecognitionList;
+                        console.log('Vandi recognition grammar loaded');
+                    }
+                } catch (e) {
+                    // Grammar support may not be available, that's okay
+                    // Post-processing will handle corrections instead
+                    console.log('Grammar list not supported, using post-processing for Vandi recognition');
+                }
+                
+                recognition.onstart = function() {
+                    isRecording = true;
+                    updateVoiceButton(true);
+                    showVoiceStatus('Listening...', true);
+                };
+                
+                recognition.onresult = function(event) {
+                    let transcript = event.results[0][0].transcript;
+                    
+                    // Correct common misrecognitions of "Vandi"
+                    transcript = correctVandiRecognition(transcript);
+                    
+                    const chatInputEl = document.getElementById('chat-input');
+                    if (chatInputEl) {
+                        chatInputEl.value = transcript;
+                        showVoiceStatus('Transcribed! Sending...', false);
+                        // Auto-send the message after a short delay
+                        setTimeout(() => {
+                            if (typeof sendMessage === 'function') {
+                                sendMessage();
+                            }
+                        }, 500);
+                    }
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    let errorMsg = 'Speech recognition error';
+                    if (event.error === 'no-speech') {
+                        errorMsg = 'No speech detected. Please try again.';
+                    } else if (event.error === 'audio-capture') {
+                        errorMsg = 'No microphone found. Please check your microphone.';
+                    } else if (event.error === 'not-allowed') {
+                        errorMsg = 'Microphone permission denied. Please allow microphone access.';
+                    }
+                    showVoiceStatus(errorMsg, false);
+                    setTimeout(() => hideVoiceStatus(), 3000);
+                    stopRecording();
+                };
+                
+                recognition.onend = function() {
+                    stopRecording();
+                    setTimeout(() => hideVoiceStatus(), 1000);
+                };
+            };
+            
+            // Voice button click handler (will be set up after recognition is initialized)
+            let setupVoiceButton = function() {
+                const voiceInputBtn = document.getElementById('voice-input-btn');
+                if (voiceInputBtn) {
+                    voiceInputBtn.addEventListener('click', function() {
+                        if (!recognition) {
+                            showVoiceStatus('Speech recognition not available', false);
+                            setTimeout(() => hideVoiceStatus(), 2000);
+                            return;
+                        }
+                        if (isRecording) {
+                            stopRecording();
+                        } else {
+                            startRecording();
+                        }
+                    });
+                }
+            };
+            
+            function startRecording() {
+                if (!recognition) return;
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    if (error.message.includes('already started')) {
+                        stopRecording();
+                        setTimeout(() => startRecording(), 100);
+                    }
+                }
+            }
+            
+            function stopRecording() {
+                if (!recognition) return;
+                isRecording = false;
+                updateVoiceButton(false);
+                try {
+                    recognition.stop();
+                } catch (error) {
+                    console.error('Error stopping recognition:', error);
+                }
+            }
+            
+            function updateVoiceButton(recording) {
+                const voiceBtn = document.getElementById('voice-input-btn');
+                if (voiceBtn) {
+                    if (recording) {
+                        voiceBtn.classList.add('recording');
+                        voiceBtn.textContent = '⏹️';
+                    } else {
+                        voiceBtn.classList.remove('recording');
+                        voiceBtn.textContent = '🎤';
+                    }
+                }
+            }
+            
+            function showVoiceStatus(text, recording) {
+                const statusDiv = document.getElementById('voice-status');
+                const statusText = document.getElementById('voice-status-text');
+                if (statusDiv && statusText) {
+                    statusText.textContent = text;
+                    statusDiv.classList.add('show');
+                    if (recording) {
+                        statusDiv.classList.add('recording');
+                    } else {
+                        statusDiv.classList.remove('recording');
+                    }
+                }
+            }
+            
+            function hideVoiceStatus() {
+                const statusDiv = document.getElementById('voice-status');
+                if (statusDiv) {
+                    statusDiv.classList.remove('show');
+                }
+            }
+            
+            // Get the best available voice for natural-sounding speech
+            function getBestVoice() {
+                if (!SpeechSynthesis) return null;
+                
+                const voices = SpeechSynthesis.getVoices();
+                if (!voices || voices.length === 0) return null;
+                
+                // Priority list: prefer neural/premium voices that sound more human
+                const preferredVoices = [
+                    // Google Cloud voices (Chrome/Edge) - most natural
+                    'Google US English',
+                    'en-US-Neural2',
+                    'en-US-Wavenet',
+                    // Microsoft voices (Edge)
+                    'Microsoft Zira',
+                    'Microsoft David',
+                    'Microsoft Mark',
+                    'Microsoft Aria',
+                    // Apple voices (Safari) - high quality
+                    'Samantha',
+                    'Alex',
+                    'Victoria',
+                    'Daniel',
+                    // Fallback to any English voice
+                    'en-US',
+                    'en-GB',
+                    'en-AU'
+                ];
+                
+                // Try to find preferred voices first
+                for (const preferred of preferredVoices) {
+                    const voice = voices.find(v => 
+                        v.name.includes(preferred) || 
+                        (v.lang.startsWith('en') && v.name.toLowerCase().includes(preferred.toLowerCase()))
+                    );
+                    if (voice) {
+                        console.log('Using voice:', voice.name);
+                        return voice;
+                    }
+                }
+                
+                // Fallback: find any English voice
+                const englishVoice = voices.find(v => v.lang.startsWith('en'));
+                if (englishVoice) {
+                    console.log('Using fallback voice:', englishVoice.name);
+                    return englishVoice;
+                }
+                
+                // Last resort: use default
+                return voices[0];
+            }
+            
+            // Enhanced text preprocessing for natural speech
+            function preprocessTextForSpeech(text) {
+                if (!text) return '';
+                
+                // Remove markdown formatting
+                let cleanText = text
+                    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+                    .replace(/\*(.*?)\*/g, '$1') // Remove italic
+                    .replace(/`([^`]+)`/g, '$1') // Remove inline code
+                    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+                    .replace(/#{1,6}\s*(.*)/g, '$1') // Remove headers
+                    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links, keep text
+                    .replace(/~~([^~]+)~~/g, '$1') // Remove strikethrough
+                    .trim();
+                
+                // Handle special cases for better pronunciation
+                cleanText = cleanText
+                    // Expand abbreviations for better pronunciation
+                    .replace(/\bAI\b/gi, 'A I')
+                    .replace(/\bFYP\b/gi, 'F Y P')
+                    .replace(/\bBME\b/gi, 'B M E')
+                    .replace(/\bEEE\b/gi, 'E E E')
+                    .replace(/\bME\b/gi, 'M E')
+                    .replace(/\bOCV\b/gi, 'O C V')
+                    .replace(/\bCNN\b/gi, 'C N N')
+                    .replace(/\bYOLO\b/gi, 'Y O L O')
+                    .replace(/\bROS\b/gi, 'R O S')
+                    .replace(/\bLiDAR\b/gi, 'Lidar')
+                    // Handle numbers more naturally
+                    .replace(/(\d+)\s*cm/gi, '$1 centimeters')
+                    .replace(/(\d+)\s*V\b/gi, '$1 volts')
+                    .replace(/(\d+)\s*A\b/gi, '$1 amps')
+                    .replace(/(\d+)\s*W\b/gi, '$1 watts')
+                    .replace(/(\d+)\s*M\b/gi, '$1 molar')
+                    // Handle "Vandi" to ensure proper pronunciation
+                    .replace(/\bVandi\b/gi, 'Vandi')
+                    // Add natural pauses after punctuation
+                    .replace(/([.!?])\s+/g, '$1 ')
+                    .replace(/([:;])\s*/g, '$1 ')
+                    // Normalize multiple spaces
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                
+                return cleanText;
+            }
+            
+            // Split text into sentences for more natural speech delivery
+            function splitIntoSentences(text) {
+                // Split by sentence endings, but preserve them
+                const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+                if (sentences.length === 0) {
+                    // If no sentence endings, split by line breaks or long pauses
+                    return text.split(/\n\n+/).filter(s => s.trim().length > 0);
+                }
+                return sentences.map(s => s.trim()).filter(s => s.length > 0);
+            }
+            
+            // Text-to-Speech functionality with enhanced natural speech
+            function speakText(text) {
+                if (!ttsEnabled || !SpeechSynthesis) return;
+                
+                // Stop any current speech
+                SpeechSynthesis.cancel();
+                
+                // Preprocess text for natural speech
+                const cleanText = preprocessTextForSpeech(text);
+                if (!cleanText) return;
+                
+                // Split into sentences for more natural delivery
+                const sentences = splitIntoSentences(cleanText);
+                
+                // Wait for voices to be loaded (they load asynchronously)
+                const speakWithVoice = () => {
+                    const voice = getBestVoice();
+                    
+                    // Speak each sentence with a slight pause between them
+                    sentences.forEach((sentence, index) => {
+                        // Add a small delay between sentences for natural flow
+                        setTimeout(() => {
+                            const utterance = new SpeechSynthesisUtterance(sentence);
+                            
+                            // Set voice
+                            if (voice) {
+                                utterance.voice = voice;
+                                utterance.lang = voice.lang || 'en-US';
+                            } else {
+                                utterance.lang = 'en-US';
+                            }
+                            
+                            // Optimized parameters for natural, human-like speech
+                            // Slightly vary rate and pitch for more natural variation
+                            const rateVariation = 0.03; // Small random variation
+                            const pitchVariation = 0.05;
+                            
+                            utterance.rate = 0.95 + (Math.random() - 0.5) * rateVariation;  // 0.92-0.98 range (slightly slower = more natural)
+                            utterance.pitch = 1.0 + (Math.random() - 0.5) * pitchVariation;  // 0.975-1.025 range
+                            utterance.volume = 0.9; // Slightly lower volume for comfort
+                            
+                            utterance.onstart = function() {
+                                currentUtterance = utterance;
+                            };
+                            
+                            utterance.onend = function() {
+                                // Clear current utterance only if this is the last sentence
+                                if (index === sentences.length - 1) {
+                                    currentUtterance = null;
+                                }
+                            };
+                            
+                            utterance.onerror = function(event) {
+                                console.error('Speech synthesis error:', event.error);
+                                if (index === sentences.length - 1) {
+                                    currentUtterance = null;
+                                }
+                            };
+                            
+                            SpeechSynthesis.speak(utterance);
+                        }, index * 150); // 150ms pause between sentences for natural flow
+                    });
+                };
+                
+                // Ensure voices are loaded before speaking
+                const voices = SpeechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    speakWithVoice();
+                } else {
+                    // Wait for voices to load
+                    SpeechSynthesis.onvoiceschanged = () => {
+                        speakWithVoice();
+                        SpeechSynthesis.onvoiceschanged = null; // Remove listener after first use
+                    };
+                }
+            }
+            
+            // TTS Toggle
+            const ttsToggle = document.getElementById('tts-toggle');
+            const ttsCheckbox = document.getElementById('tts-checkbox');
+            
+            if (ttsToggle && ttsCheckbox) {
+                // Load saved preference
+                const savedTts = localStorage.getItem('ttsEnabled');
+                if (savedTts !== null) {
+                    ttsEnabled = savedTts === 'true';
+                    ttsCheckbox.checked = ttsEnabled;
+                    updateTtsToggle();
+                }
+                
+                ttsToggle.addEventListener('click', function(e) {
+                    if (e.target !== ttsCheckbox) {
+                        ttsCheckbox.checked = !ttsCheckbox.checked;
+                    }
+                    ttsEnabled = ttsCheckbox.checked;
+                    localStorage.setItem('ttsEnabled', ttsEnabled);
+                    updateTtsToggle();
+                    
+                    // Stop current speech if disabling
+                    if (!ttsEnabled) {
+                        SpeechSynthesis.cancel();
+                    }
+                });
+                
+                function updateTtsToggle() {
+                    if (ttsEnabled) {
+                        ttsToggle.classList.add('active');
+                    } else {
+                        ttsToggle.classList.remove('active');
+                    }
+                }
+                updateTtsToggle();
+            }
+            
             // ============================================
             // SERVER CONFIGURATION
             // ============================================
@@ -463,6 +1079,10 @@
             const chatInput = document.getElementById('chat-input');
             const sendButton = document.getElementById('send-message');
             const chatBody = document.getElementById('chat-body');
+            
+            // Initialize Speech Recognition now that chatInput is available
+            setupSpeechRecognition();
+            setupVoiceButton();
             
             // Initialize chat state
             let isChatServerAvailable = false;
@@ -570,7 +1190,23 @@
                     }
                     
                     const data = await response.json();
-                    appendMessage(data.response, 'bot');
+                    
+                    // Check if this is a command response
+                    if (data.is_command) {
+                        // Determine command message type for styling
+                        let commandType = 'command';
+                        if (data.command_type === 'dangerous') {
+                            commandType = 'command dangerous';
+                        } else if (data.command_type === 'unknown') {
+                            commandType = 'command unknown';
+                        }
+                        appendMessage(data.response, commandType);
+                        // Do not use TTS for command responses
+                    } else {
+                        appendMessage(data.response, 'bot');
+                        // Speak the bot response if TTS is enabled
+                        speakText(data.response);
+                    }
                 } catch (error) {
                     // Remove thinking indicator on error
                     removeThinking();
@@ -710,7 +1346,13 @@
             // Add message to chat with improved scrolling and markdown support
             function appendMessage(text, type) {
                 const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${type}-message`;
+                
+                // Handle command message types
+                if (type.startsWith('command')) {
+                    messageDiv.className = `message ${type}`;
+                } else {
+                    messageDiv.className = `message ${type}-message`;
+                }
                 
                 // Convert markdown to HTML and set innerHTML
                 messageDiv.innerHTML = markdownToHtml(text);
