@@ -3472,7 +3472,28 @@
 
                 <p>&nbsp </p>
 
-                <h3>HTML projects</h3>
+                <h3>Projects</h3>
+                <h4>AI Chat powered by API for fuel cell robot car demonstration</h4>
+
+                <div class="interactive-project">
+
+                    <p>I have made a interface that can chat with the fuel cell robot car:</p>
+
+                    <p><strong>This Chat interface can:</strong> </p>
+
+                    <ul class="bullet-list"></ul>
+
+                    <li>Anwser questions about the fuel cell robot car project</li>
+
+                    <li>Send commands to the fuel cell robot car when connected to the same network</li>
+
+                    <li>Dectect whether the command is safe to deploy</li>
+
+                    <li>Note the server is running on my machine so its usually off due to safety reason</li>
+
+                    <p><a href="https://zhao255.github.io/ZHAOpersonal-website/num1.html" target="_blank"class="web">Check it out</a></p>
+
+                </div>
 
                 <h4>Document Operator website</h4>
 
@@ -6611,22 +6632,19 @@
 
             chatMessages.appendChild(userMessage);
             
+            // Immediately scroll to bottom after user message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
-            // Scroll to bottom after user message
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 50);
-            
-            // Show typing indicator
+            // Show thinking indicator
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
             typingIndicator.textContent = 'Thinking...';
             chatMessages.appendChild(typingIndicator);
             
-            // Scroll to show typing indicator
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 100);
+            // Immediately scroll to show thinking indicator
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
 
             // Simulate typing delay (faster response)
@@ -6673,23 +6691,19 @@
             // Clear input
             chatInput.value = '';
             
-            // Scroll to bottom after user message
-            setTimeout(() => {
+            // Immediately scroll to bottom after user message
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 50);
+            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
             
-            // Show typing indicator
+            // Show thinking indicator
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
-            typingIndicator.textContent = 'Typing...';
+            typingIndicator.textContent = 'Thinking...';
             chatMessages.appendChild(typingIndicator);
             
-
-            // Scroll to show typing indicator
-
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 100);
+            // Immediately scroll to show thinking indicator
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
             
             // Generate response based on keywords (faster response)
