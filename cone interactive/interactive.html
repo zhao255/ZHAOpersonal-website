@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cone Volume - Interactive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Step buttons - Brilliant style */
+        .step-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .step-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            margin-right: 4px;
+        }
+
+        .step-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+
+            /* 3D effect */
+            background: #3d3d5c;
+            color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 0 #2a2a40, 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 0 #2a2a40, 0 8px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #2a2a40, 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-btn.active {
+            background: #6c5ce7;
+            color: white;
+            box-shadow: 0 4px 0 #5541d9, 0 6px 10px rgba(108, 92, 231, 0.4);
+        }
+
+        .step-btn.active:hover {
+            box-shadow: 0 5px 0 #5541d9, 0 8px 12px rgba(108, 92, 231, 0.4);
+        }
+
+        .step-btn.active:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #5541d9, 0 2px 4px rgba(108, 92, 231, 0.3);
+        }
+
+        .step-btn.completed {
+            background: #00b894;
+            color: white;
+            box-shadow: 0 4px 0 #009975, 0 6px 10px rgba(0, 184, 148, 0.3);
+        }
+
+        .step-btn.completed:hover {
+            box-shadow: 0 5px 0 #009975, 0 8px 12px rgba(0, 184, 148, 0.3);
+        }
+
+        .step-btn.completed:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #009975, 0 2px 4px rgba(0, 184, 148, 0.3);
+        }
+
+        /* Main controls */
+        .controls-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 70px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .controls.hidden {
+            opacity: 0;
+            transform: translateY(8px);
+            pointer-events: none;
+        }
+
+        /* Action buttons - 3D style */
+        .action-btn,
+        .back-btn {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn {
+            background: #6c5ce7;
+            color: white;
+            box-shadow: 0 4px 0 #5541d9, 0 6px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 0 #5541d9, 0 8px 14px rgba(108, 92, 231, 0.4);
+        }
+
+        .action-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #5541d9, 0 2px 4px rgba(108, 92, 231, 0.3);
+        }
+
+        .back-btn {
+            background: #636e72;
+            color: white;
+            box-shadow: 0 4px 0 #4a5256, 0 6px 12px rgba(99, 110, 114, 0.3);
+        }
+
+        .back-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 0 #4a5256, 0 8px 14px rgba(99, 110, 114, 0.4);
+        }
+
+        .back-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #4a5256, 0 2px 4px rgba(99, 110, 114, 0.3);
+        }
+
+        .action-btn:disabled,
+        .back-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading indicator */
+        .loading-indicator {
+            color: #6c5ce7;
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .loading-indicator.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loading-indicator span {
+            display: inline-block;
+            animation: bounce 0.5s infinite;
+        }
+
+        .loading-indicator span:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .loading-indicator span:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="step-buttons" id="stepButtons">
+        <span class="step-label">Steps</span>
+        <button class="step-btn active" data-step="0">1</button>
+        <button class="step-btn" data-step="1">2</button>
+        <button class="step-btn" data-step="2">3</button>
+        <button class="step-btn" data-step="3">4</button>
+        <button class="step-btn" data-step="4">5</button>
+        <button class="step-btn" data-step="5">6</button>
+    </div>
+
+    <div class="video-container">
+        <video id="video" preload="auto">
+            <source src="mediacone/videos/cone/1080p60/ConeCylinderVolume.mp4" type="video/mp4">
+            Your browser does not support video.
+        </video>
+    </div>
+
+    <div class="controls-wrapper">
+        <div class="controls" id="controls">
+            <button id="backBtn" class="back-btn" disabled>← Back</button>
+            <button id="actionBtn" class="action-btn">Pour</button>
+        </div>
+
+        <div class="loading-indicator" id="loading">Pouring<span>.</span><span>.</span><span>.</span></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const actionBtn = document.getElementById('actionBtn');
+        const backBtn = document.getElementById('backBtn');
+        const controls = document.getElementById('controls');
+        const loading = document.getElementById('loading');
+        const stepButtons = document.querySelectorAll('.step-btn');
+
+        // Sound effects
+        const soundEffects = {
+            pour: [
+                'cone game sound effect/Pour/pour1.mp3',
+                'cone game sound effect/Pour/pour2.mp3',
+                'cone game sound effect/Pour/pour3.mp3',
+                'cone game sound effect/Pour/pour4.mp3',
+                'cone game sound effect/Pour/pour5.mp3'
+            ],
+            show: [
+                'cone game sound effect/Show/Show_Equation_Pen_wr_%231-1764955973580.mp3',
+                'cone game sound effect/Show/Show_Equation_Pen_wr_%232-1764955973580.mp3',
+                'cone game sound effect/Show/Show_Equation_Pen_wr_%233-1764955973581.mp3',
+                'cone game sound effect/Show/Show_Equation_Pen_wr_%234-1764955985893.mp3'
+            ],
+            simplify: [
+                'cone game sound effect/Simplify/simplify1.mp3',
+                'cone game sound effect/Simplify/simplify2.mp3',
+                'cone game sound effect/Simplify/simplify3.mp3',
+                'cone game sound effect/Simplify/simplify4.mp3'
+            ],
+            back: [
+                'cone game sound effect/Back/back3.mp3'
+            ],
+            finish: [
+                'cone game sound effect/Finish/finish1.mp3',
+                'cone game sound effect/Finish/finish2.mp3',
+                'cone game sound effect/Finish/finish3.mp3'
+            ]
+        };
+
+        function playRandomSound(category) {
+            const sounds = soundEffects[category];
+            if (sounds && sounds.length > 0) {
+                const randomIndex = Math.floor(Math.random() * sounds.length);
+                const audio = new Audio(sounds[randomIndex]);
+                audio.volume = 0.5;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+
+        const states = [
+            { time: 0, label: 'Start', nextLabel: 'Pour', loadingText: 'Pouring', sound: 'pour', endSound: null },
+            { time: 1.2, label: 'Pour 1', nextLabel: 'Pour', loadingText: 'Pouring', sound: 'pour', endSound: null },
+            { time: 2.2, label: 'Pour 2', nextLabel: 'Pour', loadingText: 'Pouring', sound: 'pour', endSound: null },
+            { time: 3.2, label: 'Pour 3', nextLabel: 'Show Equation', loadingText: 'Setting up equation', sound: 'show', endSound: null },
+            { time: 6.5, label: 'Equation Shown', nextLabel: 'Simplify', loadingText: 'Simplifying', sound: 'simplify', endSound: 'finish' },
+            { time: 11, label: 'Final Formula', nextLabel: null, loadingText: '', sound: null, endSound: null }
+        ];
+
+        let currentState = 0;
+        let isPlaying = false;
+
+        function setPlaying(playing, loadingText = '') {
+            isPlaying = playing;
+            if (playing) {
+                loading.innerHTML = loadingText + '<span>.</span><span>.</span><span>.</span>';
+                controls.classList.add('hidden');
+                loading.classList.add('visible');
+            } else {
+                controls.classList.remove('hidden');
+                loading.classList.remove('visible');
+            }
+        }
+
+        function updateUI() {
+            backBtn.disabled = currentState === 0;
+
+            if (states[currentState].nextLabel) {
+                actionBtn.textContent = states[currentState].nextLabel;
+                actionBtn.disabled = false;
+            } else {
+                actionBtn.textContent = 'Done';
+                actionBtn.disabled = true;
+            }
+
+            // Update step buttons
+            stepButtons.forEach((btn, index) => {
+                btn.classList.remove('active', 'completed');
+                if (index === currentState) {
+                    btn.classList.add('active');
+                } else if (index < currentState) {
+                    btn.classList.add('completed');
+                }
+            });
+        }
+
+        function playToState(targetState) {
+            if (targetState < 0 || targetState >= states.length) return;
+
+            const targetTime = states[targetState].time;
+            const loadingText = targetState > currentState
+                ? states[currentState].loadingText
+                : 'Rewinding';
+
+            setPlaying(true, loadingText);
+
+            if (targetState > currentState) {
+                const previousState = currentState;
+                video.playbackRate = 1;
+                video.play();
+
+                const checkTime = () => {
+                    if (video.currentTime >= targetTime) {
+                        video.pause();
+                        video.currentTime = targetTime;
+                        currentState = targetState;
+                        setPlaying(false);
+                        updateUI();
+                        // Play end sound if defined
+                        if (states[previousState].endSound) {
+                            playRandomSound(states[previousState].endSound);
+                        }
+                    } else if (isPlaying) {
+                        requestAnimationFrame(checkTime);
+                    }
+                };
+                checkTime();
+            } else {
+                video.pause();
+                const frameTime = 1 / 60;
+
+                const playBackward = () => {
+                    video.currentTime -= frameTime * 2;
+
+                    if (video.currentTime <= targetTime) {
+                        video.currentTime = targetTime;
+                        currentState = targetState;
+                        setPlaying(false);
+                        updateUI();
+                    } else {
+                        requestAnimationFrame(playBackward);
+                    }
+                };
+                requestAnimationFrame(playBackward);
+            }
+        }
+
+        actionBtn.addEventListener('click', () => {
+            if (!isPlaying && currentState < states.length - 1) {
+                playRandomSound(states[currentState].sound);
+                playToState(currentState + 1);
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (!isPlaying && currentState > 0) {
+                playRandomSound('back');
+                playToState(currentState - 1);
+            }
+        });
+
+        // Step button click handlers - instant jump
+        stepButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isPlaying) return;
+                const targetStep = parseInt(btn.dataset.step);
+                if (targetStep !== currentState) {
+                    video.currentTime = states[targetStep].time;
+                    currentState = targetStep;
+                    updateUI();
+                }
+            });
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            video.currentTime = 0;
+            updateUI();
+        });
+
+        updateUI();
+    </script>
+</body>
+
+</html>
