@@ -786,15 +786,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Chat implementation (Final block)
 document.addEventListener('DOMContentLoaded', function() {
-    // SECURITY NOTE: Never hardcode API keys in client-side JavaScript.
-    // This key should be managed via a backend server or provided by the user.
-    
     // BACKEND CONFIGURATION
     // If you are using the portfolio-backend with ngrok, set your ngrok URL here:
     // Example: const BACKEND_URL = 'https://your-ngrok-url.ngrok-free.app';
-    const BACKEND_URL = ''; 
+    const BACKEND_URL = 'https://karl-unharrowed-communally.ngrok-free.dev'; 
 
-    let OPENROUTER_API_KEY = localStorage.getItem('OPENROUTER_API_KEY') || '';
     const MODEL_ID = 'deepseek/deepseek-r1-0528:free';
     
     const chatBox = document.getElementById('chat-box');
@@ -808,20 +804,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let isOpen = chatBox.classList.contains('open');
     const chatBody = chatMessages ? chatMessages.parentElement : null;
     let abortController = null;
-
-    // Helper to check for API key
-    function ensureApiKey() {
-        if (!OPENROUTER_API_KEY) {
-            const userKey = prompt("To protect Zhao Xuecen's security, please enter your own OpenRouter API Key to use the chat assistant (this is saved only in your browser):");
-            if (userKey) {
-                OPENROUTER_API_KEY = userKey;
-                localStorage.setItem('OPENROUTER_API_KEY', userKey);
-                return true;
-            }
-            return false;
-        }
-        return true;
-    }
 
     const SYSTEM_PROMPT = `You are an AI assistant helping visitors learn about ZHAO XUECEN (Jack Zhao) and his personal website. You should be friendly, informative, and helpful. Use the following information to answer questions about him and his website:
 
@@ -946,8 +928,13 @@ When answering questions:
         const message = input.value.trim();
         if (!message) return;
 
-        // If no backend is configured, we need a local API key
-        if (!BACKEND_URL && !ensureApiKey()) return;
+        // Check if backend is configured
+        if (!BACKEND_URL) {
+            appendMessage(message, 'user');
+            appendMessage('Please contact the website owner to turn on the server.', 'bot error');
+            input.value = '';
+            return;
+        }
 
         input.value = '';
         appendMessage(message, 'user');
@@ -958,55 +945,24 @@ When answering questions:
         abortController = new AbortController();
         
         try {
-            let response;
-            if (BACKEND_URL) {
-                // Call our local/ngrok backend
-                response = await fetch(`${BACKEND_URL}/chat`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message: message }),
-                    signal: abortController.signal
-                });
-            } else {
-                // Call OpenRouter directly
-                response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                        'HTTP-Referer': window.location.origin || 'http://localhost', 
-                        'X-Title': 'Zhao Xuecen Portfolio'
-                    },
-                    body: JSON.stringify({
-                        model: MODEL_ID,
-                        messages: [
-                            { role: 'system', content: SYSTEM_PROMPT },
-                            { role: 'user', content: message }
-                        ]
-                    }),
-                    signal: abortController.signal
-                });
-            }
+            // Call our local/ngrok backend
+            const response = await fetch(`${BACKEND_URL}/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message }),
+                signal: abortController.signal
+            });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({}));
                 console.error('API Error:', errorData);
-                
-                // If unauthorized and calling OpenRouter directly, clear the stored key
-                if (!BACKEND_URL && response.status === 401) {
-                    localStorage.removeItem('OPENROUTER_API_KEY');
-                    OPENROUTER_API_KEY = '';
-                    throw new Error('Invalid API Key. Please try again.');
-                }
-                
-                throw new Error(errorData.error?.message || errorData.error || 'API request failed');
+                throw new Error('Please contact the website owner to turn on the server.');
             }
 
             const data = await response.json();
-            // Backend returns {response: "..."} while OpenRouter returns {choices: [{message: {content: "..."}}]}
-            const botResponse = BACKEND_URL ? data.response : data.choices[0].message.content;
+            const botResponse = data.response;
             
             // Remove thinking message and append real response
             if (thinkingDiv && thinkingDiv.parentNode) {
@@ -1025,7 +981,7 @@ When answering questions:
                 if (thinkingDiv && thinkingDiv.parentNode) {
                     thinkingDiv.parentNode.removeChild(thinkingDiv);
                 }
-                appendMessage('Error: Could not connect to the AI assistant. Please check your connection or try again later.', 'bot error');
+                appendMessage('Please contact the website owner to turn on the server.', 'bot error');
             }
         } finally {
             setLoading(false);
