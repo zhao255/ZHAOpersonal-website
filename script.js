@@ -847,26 +847,26 @@ PROJECTS (Newest First):
    - Web-based app using Manim and AI to generate animated step-by-step math solution videos.
    - Features: Multi-row LaTeX steps, individual row styling, KaTeX real-time preview, synchronized audio, lesson generation with MCQ support, ZIP export.
    - Example Projects Created: 
-     * Cone Interactive (https://zhao255.github.io/cone interactive/interactive.html)
-     * Step-by-Step with Voice (https://zhao255.github.io/step by step with voice/index.html)
-     * Pythagoras' Theorem Lesson (https://zhao255.github.io/pythagoras' theorem Lesson/index.html)
-   - URL: https://zhao255.github.io/projects/interactive-math.html
+     * Cone Interactive (https://zhao255.github.io/ZHAOpersonal-website/cone interactive/interactive.html)
+     * Step-by-Step with Voice (https://zhao255.github.io/ZHAOpersonal-website/step by step with voice/index.html)
+     * Pythagoras' Theorem Lesson (https://zhao255.github.io/ZHAOpersonal-website/pythagoras' theorem Lesson/index.html)
+   - URL: https://zhao255.github.io/ZHAOpersonal-website/projects/interactive-math.html
 
 2. Smart Navigational Cane (2025) - Project Leader
    - Proposed an innovative smart cane with GPS, ultrasonic sensors, and haptic feedback.
-   - URL: https://zhao255.github.io/projects/smart-cane.html
+   - URL: https://zhao255.github.io/ZHAOpersonal-website/projects/smart-cane.html
 
 3. AI-Powered Automation Program Plugin (2025) - Personal Project
    - Python-based tool to automate Excel and computer tasks using scikit-learn and PyAutoGUI.
-   - URL: https://zhao255.github.io/projects/ai-automation.html
+   - URL: https://zhao255.github.io/ZHAOpersonal-website/projects/ai-automation.html
 
 4. Robot Basketball Competition (First semester 2024) - Team Leader
    - Led an 8-member team to design/build an autonomous basketball robot.
-   - URL: https://zhao255.github.io/projects/robot-basketball.html
+   - URL: https://zhao255.github.io/ZHAOpersonal-website/projects/robot-basketball.html
 
 5. Fuel Cell Powered Robot Car (2024)
    - Designed/built a robot car powered by Vanadium fuel cells.
-   - URL: https://zhao255.github.io/projects/fuel-cell-car.html
+   - URL: https://zhao255.github.io/ZHAOpersonal-website/projects/fuel-cell-car.html
 
 SKILLS:
 Technical Skills:
@@ -885,10 +885,15 @@ SOCIAL MEDIA & CONTACT:
 - GitHub: https://github.com/zhao255
 
 WEBSITE STRUCTURE & LINKS:
-- Base URL: https://zhao255.github.io/
-- Home Page: https://zhao255.github.io/index.html
+- Base URL: https://zhao255.github.io/ZHAOpersonal-website/
+- Home Page: https://zhao255.github.io/ZHAOpersonal-website/index.html
 - Project Detail Pages: /projects/ folder
 - Skill Detail Pages: /skills/ folder
+- Other Web Tools:
+  * Document Operator: https://zhao255.github.io/ZHAOpersonal-website/Document%20Operator/
+  * Order Management: https://zhao255.github.io/ZHAOpersonal-website/order2.html
+  * QR Generator: https://zhao255.github.io/ZHAOpersonal-website/QR.html
+  * Numerical Method Calculator: https://zhao255.github.io/ZHAOpersonal-website/num1.html
 
 INTERESTS:
 - AI applications in education, sustainable materials and fuel, and IoT innovation.

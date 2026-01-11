@@ -1,0 +1,6 @@
+# OpenRouter API Key
+# Copy this file to .env and replace the value below
+OPENROUTER_API_KEY=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
+
+# AI Model to use
+MODEL_ID=deepseek/deepseek-r1-0528:free
