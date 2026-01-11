@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Lesson</title>
+    <!-- KaTeX for button math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --accent: #6c5ce7;
+            --text: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .video-box {
+            position: relative;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            min-height: 60px;
+            padding: 10px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-back {
+            background: #475569;
+        }
+
+        .loading {
+            font-weight: 600;
+            color: var(--accent);
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        #step-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #334155;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .dot.completed {
+            background: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="title" style="text-align: center; margin-bottom: 30px; font-weight: 800;"></h1>
+
+        <div id="step-nav"></div>
+
+        <div class="video-box">
+            <video id="player" preload="auto">
+                <source id="video-source" src="" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="controls">
+            <button id="back-btn" class="btn btn-back">← Back</button>
+            <div id="loading" class="loading">Loading...</div>
+            <button id="next-btn" class="btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const projectData = {
+  "colors": {
+    "accent": "#6c5ce7",
+    "background": "#1a1a2e",
+    "secondary": "#636e72",
+    "success": "#00b894"
+  },
+  "createdAt": 1767067790143,
+  "finishConfig": {
+    "buttonText": "Finish",
+    "soundCategory": "Finish",
+    "specificSound": "random",
+    "useLatex": false
+  },
+  "id": "02bc21b2",
+  "lastModified": 1768131645356,
+  "soundEffects": {
+    "back": [],
+    "finish": [],
+    "pour": [],
+    "show": [],
+    "simplify": [],
+    "Finish": [
+      "sounds/Finish/finish1.mp3",
+      "sounds/Finish/finish2.mp3",
+      "sounds/Finish/finish3.mp3"
+    ]
+  },
+  "steps": [
+    {
+      "buttonText": "Q(i)",
+      "endTime": 9,
+      "expandPreview": false,
+      "id": "78ee",
+      "label": "Q(i)",
+      "loadingText": "Loading...",
+      "sound": "show",
+      "soundCategory": "ex1.7",
+      "specificSound": "/static/sounds/ex1.7/iQ.mp3",
+      "startTime": 8,
+      "useLatex": false,
+      "videoSource": "generated/8bf715cf",
+      "videoFilename": "videos/SolutionVideo_8bf715cf.mp4",
+      "soundFiles": [
+        "sounds/iQ.mp3"
+      ]
+    },
+    {
+      "buttonText": "Step 1",
+      "endTime": 11,
+      "expandPreview": false,
+      "id": "c100",
+      "label": "Q(i) Step 1",
+      "loadingText": "Loading...",
+      "sound": "show",
+      "soundCategory": "ex1.7",
+      "specificSound": "/static/sounds/ex1.7/iStep1.mp3",
+      "startTime": 9,
+      "useLatex": false,
+      "videoSource": "generated/8bf715cf",
+      "videoFilename": "videos/SolutionVideo_8bf715cf.mp4",
+      "soundFiles": [
+        "sounds/iStep1.mp3"
+      ]
+    },
+    {
+      "buttonText": "Step 2",
+      "endTime": 14,
+      "expandPreview": false,
+      "id": "a152",
+      "label": "Q(i) Step 2",
+      "loadingText": "Loading...",
+      "sound": "show",
+      "soundCategory": "ex1.7",
+      "specificSound": "/static/sounds/ex1.7/iStep2.mp3",
+      "startTime": 11,
+      "useLatex": false,
+      "videoSource": "generated/8bf715cf",
+      "videoFilename": "videos/SolutionVideo_8bf715cf.mp4",
+      "soundFiles": [
+        "sounds/iStep2.mp3"
+      ]
+    },
+    {
+      "buttonText": "Anwser",
+      "endTime": 17,
+      "expandPreview": false,
+      "id": "eb15",
+      "label": "Q(i) Answer",
+      "loadingText": "Loading...",
+      "sound": "show",
+      "soundCategory": "ex1.7",
+      "specificSound": "/static/sounds/ex1.7/iAns.mp3",
+      "startTime": 14,
+      "useLatex": false,
+      "videoSource": "generated/8bf715cf",
+      "videoFilename": "videos/SolutionVideo_8bf715cf.mp4",
+      "soundFiles": [
+        "sounds/iAns.mp3"
+      ]
+    }
+  ],
+  "title": "Additional Example 1.7"
+};
+
+        const state = {
+            currentStep: 0,
+            isPlaying: false,
+            audio: null,
+            isFinishScreen: false
+        };
+
+        const player = document.getElementById('player');
+        const nextBtn = document.getElementById('next-btn');
+        const backBtn = document.getElementById('back-btn');
+        const loading = document.getElementById('loading');
+        const titleEl = document.getElementById('title');
+        const navEl = document.getElementById('step-nav');
+
+        function init() {
+            if (typeof projectData === 'undefined') {
+                alert("Error: Project data missing!");
+                return;
+            }
+
+            document.documentElement.style.setProperty('--bg', projectData.colors.background);
+            document.documentElement.style.setProperty('--accent', projectData.colors.accent);
+            titleEl.textContent = projectData.title;
+            
+            // Apply title styles
+            if (projectData.titleFontFamily) titleEl.style.fontFamily = projectData.titleFontFamily;
+            if (projectData.titleBold) titleEl.style.fontWeight = '800';
+            else titleEl.style.fontWeight = 'normal';
+
+            // Create nav dots - include one for finish
+            navEl.innerHTML = '';
+            const totalSteps = projectData.steps.length;
+            for (let i = 0; i <= totalSteps; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.id = `dot-${i}`;
+                dot.onclick = () => {
+                    if (!state.isPlaying) loadStep(i);
+                };
+                navEl.appendChild(dot);
+            }
+
+            loadStep(0);
+        }
+
+        function loadStep(index) {
+            state.isPlaying = false;
+            loading.classList.remove('active');
+            
+            // Stop any playing audio
+            if (state.audio) {
+                state.audio.pause();
+                state.audio = null;
+            }
+
+            const totalSteps = projectData.steps.length;
+            if (index >= totalSteps) {
+                state.isFinishScreen = true;
+                state.currentStep = totalSteps;
+                showFinishScreen();
+                return;
+            }
+
+            state.isFinishScreen = false;
+            state.currentStep = index;
+            const step = projectData.steps[index];
+            const videoPath = step.videoFilename;
+
+            // Extract current filename from player source to avoid redundant reloads
+            const currentSrc = player.src.split('/').pop();
+            const targetFilename = videoPath.split('/').pop();
+
+            if (currentSrc !== targetFilename) {
+                player.src = videoPath;
+                player.load();
+            }
+
+            player.currentTime = step.startTime;
+            player.pause();
+            updateUI();
+        }
+
+        function updateUI() {
+            const totalSteps = projectData.steps.length;
+            
+            if (state.isFinishScreen) {
+                showFinishScreenUI();
+            } else {
+                const step = projectData.steps[state.currentStep];
+                // Render LaTeX on buttons
+                nextBtn.innerHTML = '';
+                const span = document.createElement('span');
+                nextBtn.appendChild(span);
+
+                if (step.useLatex !== false && window.katex) {
+                    katex.render(step.buttonText, span, { throwOnError: false });
+                } else {
+                    span.textContent = step.buttonText;
+                }
+                nextBtn.style.display = 'block';
+            }
+
+            backBtn.style.display = (state.currentStep === 0) ? 'none' : 'block';
+
+            // Nav dots
+            for (let i = 0; i <= totalSteps; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) {
+                    dot.classList.remove('active', 'completed');
+                    if (i === state.currentStep) dot.classList.add('active');
+                    if (i < state.currentStep) dot.classList.add('completed');
+                }
+            }
+        }
+
+        nextBtn.onclick = () => {
+            if (state.isPlaying) return;
+            
+            if (state.isFinishScreen) {
+                // Replay finish sound
+                playFinishSound();
+                return;
+            }
+
+            const step = projectData.steps[state.currentStep];
+            state.isPlaying = true;
+            updateUI(); // May hide or change buttons if we add logic for that
+
+            loading.textContent = step.loadingText || "Loading...";
+            loading.classList.add('active');
+            nextBtn.style.display = 'none';
+            backBtn.style.display = 'none';
+
+            // Reset video to start time for replayability
+            player.currentTime = step.startTime;
+            player.playbackRate = step.videoSpeed || 1.0;
+
+            let videoFinished = false;
+            let audioFinished = true;
+
+            function checkAllFinished() {
+                if (videoFinished && audioFinished) {
+                    onStepEnd();
+                }
+            }
+
+            function onStepEnd() {
+                state.isPlaying = false;
+                loading.classList.remove('active');
+                loadStep(state.currentStep + 1);
+            }
+
+            // Play sound if available
+            if (step.soundFiles && step.soundFiles.length > 0) {
+                audioFinished = false;
+                const randomFile = step.soundFiles[Math.floor(Math.random() * step.soundFiles.length)];
+                
+                if (state.audio) {
+                    state.audio.pause();
+                    state.audio.onended = null;
+                }
+                
+                state.audio = new Audio(randomFile);
+                state.audio.onended = () => {
+                    audioFinished = true;
+                    checkAllFinished();
+                };
+                state.audio.play().catch(e => {
+                    console.warn("Audio play blocked:", e);
+                    audioFinished = true;
+                    checkAllFinished();
+                });
+            }
+
+            // Start video playback
+            player.play().then(() => {
+                const checkTime = () => {
+                    if (!state.isPlaying) return;
+                    if (player.currentTime >= step.endTime) {
+                        videoFinished = true;
+                        player.pause();
+                        checkAllFinished();
+                    } else {
+                        requestAnimationFrame(checkTime);
+                    }
+                };
+                requestAnimationFrame(checkTime);
+            }).catch(e => {
+                console.error("Video play failed:", e);
+                videoFinished = true;
+                checkAllFinished();
+            });
+        };
+
+        function showFinishScreen() {
+            state.isFinishScreen = true;
+            state.isPlaying = false;
+            
+            // Ensure video stays on the last frame of the last step
+            const lastStep = projectData.steps[projectData.steps.length - 1];
+            if (lastStep) {
+                player.currentTime = lastStep.endTime;
+                player.pause();
+            }
+
+            playFinishSound();
+            updateUI();
+        }
+
+        function playFinishSound() {
+            const config = projectData.finishConfig || {};
+            if (config.soundCategory && config.soundCategory !== 'none') {
+                const categoryFiles = projectData.soundEffects ? projectData.soundEffects[config.soundCategory] : [];
+                let soundToPlay = null;
+                if (config.specificSound === 'random') {
+                    if (categoryFiles && categoryFiles.length > 0) {
+                        soundToPlay = categoryFiles[Math.floor(Math.random() * categoryFiles.length)];
+                    }
+                } else {
+                    soundToPlay = config.specificSound;
+                }
+
+                if (soundToPlay) {
+                    if (state.audio) state.audio.pause();
+                    state.audio = new Audio(soundToPlay);
+                    state.audio.play().catch(e => console.warn("Finish sound blocked"));
+                }
+            }
+        }
+
+        function showFinishScreenUI() {
+            const config = projectData.finishConfig || {
+                buttonText: 'Finish',
+                useLatex: false
+            };
+
+            nextBtn.innerHTML = '';
+            const span = document.createElement('span');
+            nextBtn.appendChild(span);
+
+            if (config.useLatex !== false && window.katex) {
+                katex.render(config.buttonText, span, { throwOnError: false });
+            } else {
+                span.textContent = config.buttonText;
+            }
+
+            nextBtn.style.display = 'block';
+            loading.classList.remove('active');
+        }
+
+        backBtn.onclick = () => {
+            if (state.currentStep > 0 && !state.isPlaying) {
+                loadStep(state.currentStep - 1);
+            }
+        };
+
+        init();
+    </script>
+</body>
+
+</html>
