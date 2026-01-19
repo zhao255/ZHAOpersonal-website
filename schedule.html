@@ -12,7 +12,7 @@
     .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
     .chip { background: #334155; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
     .chip:hover, .chip.active { background: #3b82f6; }
-    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
     .day-column { border: 1px solid #334155; border-radius: 4px; padding: 0.5rem; min-height: 300px; }
     .day-header { text-align: center; font-weight: bold; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.8rem; }
     .class-block { background: #1e293b; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px; border-left: 3px solid #a78bfa; font-size: 0.7rem; cursor: help; transition: all 0.2s; position: relative; }
@@ -27,17 +27,26 @@
     .tooltip .title { font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
     .tooltip .info { font-size: 0.8rem; color: #e2e8f0; }
     .tooltip .staff { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .tooltip { max-width: 90vw; padding: 1rem; font-size: 1rem; left: 5vw !important; right: 5vw; }
+      .tooltip .title { font-size: 1.1rem; margin-bottom: 8px; }
+      .tooltip .info { font-size: 0.95rem; }
+      .tooltip .staff { font-size: 0.9rem; }
+      .class-block { padding: 0.75rem; font-size: 0.85rem; }
+      .class-block .code { font-size: 0.8rem; }
+      .class-block .component, .class-block .time, .class-block .venue { font-size: 0.75rem; }
+      .chip { padding: 0.75rem 1.25rem; font-size: 0.9rem; }
+    }
   </style>
 </head>
 <body>
   <h1>My Schedule</h1>
-  <p class="subtitle">Weekly Preview • Generated 1/20/2026, 12:15:11 AM</p>
+  <p class="subtitle">Weekly Preview • Generated 1/20/2026, 3:13:47 AM</p>
   <div class="chips"><span class="chip" data-code="ENG4001">ENG4001</span><span class="chip" data-code="ISE404">ISE404</span><span class="chip" data-code="ME41001">ME41001</span><span class="chip" data-code="ME41003">ME41003</span><span class="chip" data-code="ME42001">ME42001</span><span class="chip" data-code="ME42004">ME42004</span><span class="chip" data-code="ME42005">ME42005</span><span class="chip" data-code="ME42007">ME42007</span><span class="chip" data-code="ME42011">ME42011</span><span class="chip" data-code="ME43003">ME43003</span><span class="chip" data-code="ME45002">ME45002</span><span class="chip" data-code="ME46003">ME46003</span></div>
   <div class="grid">
-        <div class="day-column">
-          <div class="day-header">Mon</div>
-          <div class="no-class">No classes</div>
-        </div>
         <div class="day-column">
           <div class="day-header">Tue</div>
           
@@ -161,10 +170,6 @@
             <div class="time">15:30-18:20</div>
             <div class="venue">BC302</div>
           </div>
-        </div>
-        <div class="day-column">
-          <div class="day-header">Sat</div>
-          <div class="no-class">No classes</div>
         </div></div>
   <p class="footer">Exported from PolyU Timetable Builder • Click subject chips to highlight</p>
   <div class="tooltip" id="tooltip"></div>
