@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My PolyU Schedule</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; padding: 2rem; background: #0f172a; color: #e2e8f0; }
+    h1 { color: #a78bfa; margin-bottom: 0.5rem; }
+    .subtitle { color: #64748b; margin-bottom: 1.5rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .chip { background: #334155; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+    .chip:hover, .chip.active { background: #3b82f6; }
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
+    .day-column { border: 1px solid #334155; border-radius: 4px; padding: 0.5rem; min-height: 300px; }
+    .day-header { text-align: center; font-weight: bold; margin-bottom: 0.5rem; color: #94a3b8; font-size: 0.8rem; }
+    .class-block { background: #1e293b; padding: 0.5rem; margin-bottom: 0.5rem; border-radius: 4px; border-left: 3px solid #a78bfa; font-size: 0.7rem; cursor: help; transition: all 0.2s; position: relative; }
+    .class-block:hover { background: #334155; }
+    .class-block.highlighted { background: #1e3a5f; border-left-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
+    .class-block .code { font-weight: bold; color: #e2e8f0; font-size: 0.65rem; }
+    .class-block .component, .class-block .time { font-size: 0.65rem; }
+    .class-block .venue { color: #94a3b8; font-size: 0.65rem; }
+    .no-class { color: #64748b; text-align: center; padding: 1rem; font-size: 0.8rem; }
+    .footer { margin-top: 2rem; color: #64748b; font-size: 0.75rem; }
+    .tooltip { position: fixed; background: #1e293b; border: 1px solid #475569; padding: 0.75rem; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 250px; pointer-events: none; display: none; }
+    .tooltip .title { font-weight: bold; color: #38bdf8; margin-bottom: 4px; }
+    .tooltip .info { font-size: 0.8rem; color: #e2e8f0; }
+    .tooltip .staff { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>My Schedule</h1>
+  <p class="subtitle">Weekly Preview • Generated 1/20/2026, 12:15:11 AM</p>
+  <div class="chips"><span class="chip" data-code="ENG4001">ENG4001</span><span class="chip" data-code="ISE404">ISE404</span><span class="chip" data-code="ME41001">ME41001</span><span class="chip" data-code="ME41003">ME41003</span><span class="chip" data-code="ME42001">ME42001</span><span class="chip" data-code="ME42004">ME42004</span><span class="chip" data-code="ME42005">ME42005</span><span class="chip" data-code="ME42007">ME42007</span><span class="chip" data-code="ME42011">ME42011</span><span class="chip" data-code="ME43003">ME43003</span><span class="chip" data-code="ME45002">ME45002</span><span class="chip" data-code="ME46003">ME46003</span></div>
+  <div class="grid">
+        <div class="day-column">
+          <div class="day-header">Mon</div>
+          <div class="no-class">No classes</div>
+        </div>
+        <div class="day-column">
+          <div class="day-header">Tue</div>
+          
+          <div class="class-block" data-code="ME42004" data-title="DEVELOPMENT OF GREEN PRODUCTS" data-group="2001" data-staff="ZHANG, Baoping (Prof.)">
+            <div class="code">ME42004</div>
+            <div class="component">LTL001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME41001" data-title="AUTOMATIC CONTROL SYSTEMS" data-group="2001" data-staff="FU, Yiqiang (Dr)">
+            <div class="code">ME41001</div>
+            <div class="component">LTL001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">PQ303</div>
+          </div>
+        </div>
+        <div class="day-column">
+          <div class="day-header">Wed</div>
+          
+          <div class="class-block" data-code="ME42007" data-title="DESIGN FOR PRODUCT SAFETY AND RELIABILITY" data-group="2001" data-staff="MA, Yuan (Prof.)">
+            <div class="code">ME42007</div>
+            <div class="component">LTL001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME45002" data-title="AIRCRAFT SYSTEMS" data-group="2001" data-staff="SU, Zhongqing (Prof.)">
+            <div class="code">ME45002</div>
+            <div class="component">LTL001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">CD301</div>
+          </div>
+          <div class="class-block" data-code="ISE404" data-title="TOTAL QUALITY MANAGEMENT" data-group="201" data-staff="ZHANG, Xiaoge">
+            <div class="code">ISE404</div>
+            <div class="component">LEC001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">FJ304</div>
+          </div>
+          <div class="class-block" data-code="ME42007" data-title="DESIGN FOR PRODUCT SAFETY AND RELIABILITY" data-group="2001" data-staff="MA, Yuan (Prof.)">
+            <div class="code">ME42007</div>
+            <div class="component">LAB001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME46003" data-title="NUMERICAL FLUID MECHANICS AND HEAT TRANSFER" data-group="2001" data-staff="TANG, Hui (Prof.)">
+            <div class="code">ME46003</div>
+            <div class="component">LAB001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">M409</div>
+          </div>
+          <div class="class-block" data-code="ENG4001" data-title="PROJECT MANAGEMENT" data-group="2008" data-staff="SUN, Chi Yin">
+            <div class="code">ENG4001</div>
+            <div class="component">LEC001/TUT001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">FJ302</div>
+          </div>
+          <div class="class-block" data-code="ME42005" data-title="CAD/CAE TECHNOLOGIES FOR PRODUCT DEVELOPMENT" data-group="2001" data-staff="FU, Mingwang (Prof.), TANG, Elsa WF (Ir.)">
+            <div class="code">ME42005</div>
+            <div class="component">LEC001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">BC302</div>
+          </div>
+        </div>
+        <div class="day-column">
+          <div class="day-header">Thu</div>
+          
+          <div class="class-block" data-code="ME42001" data-title="ARTIFICIAL INTELLIGENCE IN PRODUCTS" data-group="2001" data-staff="CHU, Henry (Prof.)">
+            <div class="code">ME42001</div>
+            <div class="component">LAB001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">W402a</div>
+          </div>
+          <div class="class-block" data-code="ME43003" data-title="PRODUCT TESTING TECHNOLOGY" data-group="2001" data-staff="ZHANG, Xiao (Prof.)">
+            <div class="code">ME43003</div>
+            <div class="component">LTL001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME41003" data-title="PRINCIPLES OF SOUND AND VIBRATION" data-group="2001" data-staff="YU, Xiang Lucien (Prof.)">
+            <div class="code">ME41003</div>
+            <div class="component">LTL001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">CD301</div>
+          </div>
+          <div class="class-block" data-code="ME42001" data-title="ARTIFICIAL INTELLIGENCE IN PRODUCTS" data-group="2001" data-staff="CHU, Henry (Prof.)">
+            <div class="code">ME42001</div>
+            <div class="component">LTL001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME42005" data-title="CAD/CAE TECHNOLOGIES FOR PRODUCT DEVELOPMENT" data-group="2001" data-staff="FU, Mingwang (Prof.), TANG, Elsa WF (Ir.)">
+            <div class="code">ME42005</div>
+            <div class="component">LAB001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">U204a, U204b</div>
+          </div>
+        </div>
+        <div class="day-column">
+          <div class="day-header">Fri</div>
+          
+          <div class="class-block" data-code="ME42011" data-title="FUNDAMENTALS OF ROBOTICS" data-group="2001" data-staff="ZHANG, Dan (Prof.)">
+            <div class="code">ME42011</div>
+            <div class="component">LAB001</div>
+            <div class="time">08:30-11:20</div>
+            <div class="venue">BC302</div>
+          </div>
+          <div class="class-block" data-code="ME41001" data-title="AUTOMATIC CONTROL SYSTEMS" data-group="2001" data-staff="FU, Yiqiang (Dr)">
+            <div class="code">ME41001</div>
+            <div class="component">LAB001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">U204c</div>
+          </div>
+          <div class="class-block" data-code="ME46003" data-title="NUMERICAL FLUID MECHANICS AND HEAT TRANSFER" data-group="2001" data-staff="TANG, Hui (Prof.)">
+            <div class="code">ME46003</div>
+            <div class="component">LTL001</div>
+            <div class="time">12:30-15:20</div>
+            <div class="venue">N001</div>
+          </div>
+          <div class="class-block" data-code="ME42011" data-title="FUNDAMENTALS OF ROBOTICS" data-group="2001" data-staff="ZHANG, Dan (Prof.)">
+            <div class="code">ME42011</div>
+            <div class="component">LTL001</div>
+            <div class="time">15:30-18:20</div>
+            <div class="venue">BC302</div>
+          </div>
+        </div>
+        <div class="day-column">
+          <div class="day-header">Sat</div>
+          <div class="no-class">No classes</div>
+        </div></div>
+  <p class="footer">Exported from PolyU Timetable Builder • Click subject chips to highlight</p>
+  <div class="tooltip" id="tooltip"></div>
+  <script>
+    let activeChip = null;
+    
+    // Click to highlight
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const code = chip.dataset.code;
+        if (activeChip === code) {
+          activeChip = null;
+          document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+          document.querySelectorAll('.class-block').forEach(b => b.classList.remove('highlighted'));
+        } else {
+          activeChip = code;
+          document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.code === code));
+          document.querySelectorAll('.class-block').forEach(b => b.classList.toggle('highlighted', b.dataset.code === code));
+        }
+      });
+    });
+    
+    // Hover tooltip
+    const tooltip = document.getElementById('tooltip');
+    document.querySelectorAll('.class-block').forEach(block => {
+      block.addEventListener('mouseenter', (e) => {
+        const rect = block.getBoundingClientRect();
+        const staff = block.dataset.staff ? '<div class="staff">Staff: ' + block.dataset.staff + '</div>' : '';
+        tooltip.innerHTML = '<div class="title">' + block.dataset.title + '</div><div class="info">' + block.dataset.code + ' - Group ' + block.dataset.group + '</div>' + staff;
+        tooltip.style.display = 'block';
+        tooltip.style.left = (rect.right + 10) + 'px';
+        tooltip.style.top = rect.top + 'px';
+      });
+      block.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
+    
